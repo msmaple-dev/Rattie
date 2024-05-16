@@ -10,7 +10,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "discord.js": "^14.7.1"
+    "@keyv/sqlite": "^3.6.7",
+    "discord.js": "^14.7.1",
+    "keyv": "^4.5.4",
+    "sequelize": "^6.28.0",
+    "sqlite3": "^5.1.4"
   },
   "devDependencies": {
     "eslint": "^8.32.0",
