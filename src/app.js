@@ -1,4 +1,3 @@
-const Sequelize = require('sequelize');
 const fs = require('node:fs');
 const path = require('node:path');
 const { Client, Collection, Events, GatewayIntentBits } = require('discord.js');
@@ -54,8 +53,7 @@ client.once(Events.ClientReady, c => {
 
 client.on(Events.InteractionCreate, async interaction => {
 	if (!interaction.isChatInputCommand()) return;
-
-	const command = interaction.client.commands.get(interaction.commandName);
+	const command = client.commands.get(interaction.commandName);
 
 	if (!command) {
 		console.error(`No command matching ${interaction.commandName} was found.`);
@@ -65,15 +63,16 @@ client.on(Events.InteractionCreate, async interaction => {
 	const { cooldowns } = interaction.client;
 
 	if (!cooldowns.has(command.data.name)) {
-		cooldowns.set(command.data.name, 0);
+		cooldowns.set(command.data.name, new Collection());
 	}
 
 	const now = Date.now();
-	let timestamp = cooldowns.get(command.data.name);
-	const cooldownAmount = (command.cooldown ?? 0) * 1000;
+	const timestamps = cooldowns.get(command.data.name);
+	const defaultCooldownDuration = 0;
+	const cooldownAmount = (command.cooldown ?? defaultCooldownDuration) * 1000;
 
-	if (timestamp) {
-		const expirationTime = timestamp + cooldownAmount;
+	if (timestamps.has(0)) {
+		const expirationTime = timestamps.get(0) + cooldownAmount;
 
 		if (now < expirationTime) {
 			const expiredTimestamp = Math.round(expirationTime / 1000);
@@ -81,15 +80,18 @@ client.on(Events.InteractionCreate, async interaction => {
 		}
 	}
 
-	timestamp = now;
-	setTimeout(() => cooldowns.delete(command.data.name), cooldownAmount);
-
+	timestamps.set(0, now);
+	setTimeout(() => timestamps.delete(0), cooldownAmount);
 
 	try {
 		await command.execute(interaction);
 	} catch (error) {
 		console.error(error);
-		await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
+		if (interaction.replied || interaction.deferred) {
+			await interaction.followUp({ content: 'There was an error while executing this command!', ephemeral: true });
+		} else {
+			await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
+		}
 	}
 });
 
