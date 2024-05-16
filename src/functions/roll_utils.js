@@ -13,7 +13,7 @@ function roll(die = 20) {
  * @param die - Die size to be rolled
  * @returns {number[]} - Array of roll results
  */
-function multiRoll(amt = 2, die = 20) {
+function multiRoll(amt = 1, die = 20) {
 	return [...Array(amt)].map((_, i) => roll(die))
 }
 
@@ -27,7 +27,7 @@ function arrayRoll(rolls){
 	return rolls.map(roll => multiRoll(roll[0], roll[1]))
 }
 
-function parseRoll(rollString = "3+4+4"){
+function parseRoll(rollString = "1+6+0"){
 	const noteSplit = rollString.indexOf(" ");
 	let splitCode = (noteSplit !== -1) ? [rollString.slice(0, noteSplit), rollString.slice(noteSplit)] : [rollString, ""];
 	let rollCode = splitCode[0]
@@ -51,7 +51,7 @@ function parseRoll(rollString = "3+4+4"){
 	let rolls = []
 	rolls.push(rollCode.match(/^\d+d\d+/m) && rollCode.match(/^\d+d\d+/m)[0].split("d").map(value => parseInt(value))
 		|| rollCode.match(/^\d+(?!\d*d\d)/m) && [parseInt(rollCode.match(/^\d+(?!\d*d\d)/m)[0]), 20]
-		|| [2, 20])
+		|| [1, 20])
 	rollCode = rollCode.replaceAll(/^\d+d\d+/gm, "").replaceAll(/^\d+(?!\d*d\d)/gm, "")
 	rolls.push(rollCode.match(/[\+-]\d+d\d+/) && rollCode.match(/[\+-]\d+d\d+/)[0].split("d").map(value => parseInt(value))
 		|| [1, rollCode.match(/[\+-]\d+(?!d)/) ? parseInt(rollCode.match(/[\+-]\d+(?!d)/)) : 6])
@@ -61,7 +61,7 @@ function parseRoll(rollString = "3+4+4"){
 	return [rolls, mod, note, multi]
 }
 
-function rollString(rolls = [[2, 20], [1, 6]], mod = 0, note = "", multi = 1){
+function rollString(rolls = [[1, 20], [1, 6]], mod = 0, note = "", multi = 1){
 	let outputArray = []
 	for (let rollNum = 0; rollNum < multi; rollNum++){
 		let results = arrayRoll(rolls)
