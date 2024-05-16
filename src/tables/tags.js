@@ -13,6 +13,10 @@ module.exports = db.define('tags', {
 		type: Sequelize.TEXT,
 		allowNull: false
 	},
+	isPrivate: {
+		type: Sequelize.BOOLEAN,
+		allowNull: false
+	},
 	usage_count: {
 		type: Sequelize.INTEGER,
 		defaultValue: 0,
