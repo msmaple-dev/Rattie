@@ -2,6 +2,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { Client, Collection, Events, GatewayIntentBits } = require('discord.js');
 const { token } = require('../config.json');
+const checkReminders = require('./functions/rem_utils');
 
 // Setup Client
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.GuildMembers,] });
@@ -49,6 +50,7 @@ client.cooldowns = new Collection();
 // We use 'c' for the event parameter to keep it separate from the already defined 'client'
 client.once(Events.ClientReady, c => {
 	console.log(`Ready! Logged in as ${c.user.tag}`);
+	// setInterval(async () => {await checkReminders(c)}, 60000)
 });
 
 client.on(Events.InteractionCreate, async interaction => {
