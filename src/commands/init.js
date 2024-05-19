@@ -7,10 +7,10 @@ module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('init')
 		.setDescription('Adds you to init')
-		.addStringOption(option => option.setName('init').setDescription('Init Rolled').setRequired(true))
+		.addIntegerOption(option => option.setName('init').setDescription('Init Rolled').setRequired(true))
 		.addStringOption(option => option.setName('identifier').setDescription('Identifier for Additional Users Linked to You').setRequired(false)),
 	async execute(interaction) {
-		const initVal = interaction.options.getString('init');
+		const initVal = interaction.options.getInteger('init');
 		const userIdentifier = interaction.options.getString('identifier') ?? null;
 		const channelId = interaction.channelId;
 		const userID = interaction.user.id;
