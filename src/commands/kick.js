@@ -32,7 +32,7 @@ module.exports = {
 		}
 
 		if(skipTurn){
-			outputText += await nextTurn(channelId)
+			outputText += `\n` + await nextTurn(channelId)
 		}
 		await interaction.reply(outputText);
 	},
