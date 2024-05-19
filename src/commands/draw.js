@@ -3,12 +3,14 @@ const init_keyv = require('../keyv_stores/init_keyv');
 const { statusEmbed } = require('../components/embeds');
 const { QueryTypes } = require('sequelize');
 const db = require('../database');
+const { selectWeighted } = require('../functions/roll_utils');
 
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('draw')
 		.setDescription('Draws a card from a deck, exhausting that card if in a fight.')
-		.addStringOption(option => option.setName('deck').setDescription('Deck').setRequired(true))
+		.addStringOption(option => option.setName('damagecode').setDescription('Damages and Types for an Attack (Eg: 4 Burn 3 Slash)').setRequired(false))
+		.addStringOption(option => option.setName('deck').setDescription('Deck to be Drawn From (Ignored if Damagecode is Defined)').setRequired(false))
 		.addStringOption(option => option.setName('identifier').setDescription('Init Name').setRequired(false))
 		.addIntegerOption(option => option.setName('cards').setDescription('Cards to Draw').setMaxValue(5).setRequired(false))
 		.addStringOption(option => option
@@ -20,7 +22,8 @@ module.exports = {
 				value: 'severe',
 			})),
 	async execute(interaction) {
-		const deckType = interaction.options.getString('deck').toLowerCase();
+		const damageCode = interaction.options.getString('damagecode')?.toLowerCase() || null;
+		const deckType = damageCode && selectWeighted(damageCode)?.toLowerCase() || interaction.options.getString('deck')?.toLowerCase() || null;
 		const drawCount = interaction.options.getInteger('cards') ? Math.min(5, interaction.options.getInteger('cards')) : 1;
 		const severity = interaction.options.getString('severity')?.toLowerCase() || null;
 		const userID = interaction.user.id;
@@ -28,7 +31,6 @@ module.exports = {
 		const identifier = interaction.options.getString('identifier') || null;
 		const channel = interaction.channelId;
 		let channelInit = await init_keyv.get(channel);
-		console.log(channelInit)
 		let channelUserIndex = channelInit && channelInit?.users ? channelInit.users.findIndex(user => user.userID === userID && user.identifier === identifier) : -1;
 		let channelUser = channelUserIndex >= 0 ? channelInit.users[channelUserIndex] : null;
 		let cardColors = await db.query('SELECT deckType, color FROM colors WHERE colors.`ownerId` IN (0, ?)', {
@@ -39,6 +41,10 @@ module.exports = {
 
 		let statusCards = [];
 
+		if(!deckType){
+			await interaction.reply({content: 'No Valid Deck Type(s) Entered!', ephemeral: true});
+		}
+
 		if (!channelUser) {
 			const baseCards = await db.query('SELECT * FROM cards WHERE ownerId IN (0, ?) AND deckType = ?', {
 				replacements: [sqlUserID, deckType],
@@ -46,7 +52,7 @@ module.exports = {
 			});
 			if (!baseCards || baseCards.length <= 0) {
 				console.log('Base Draw Error');
-				interaction.reply({content: 'Invalid Deck Type!', ephemeral: true});
+				await interaction.reply({content: `Invalid Deck Type "${deckType}"!`, ephemeral: true});
 				return;
 			}
 			else {
@@ -66,7 +72,7 @@ module.exports = {
 
 			if (!deck || deck.length <= 0) {
 				console.log('Init Draw Error');
-				interaction.reply({content: `Invalid Deck Type! Valid Decks: ${Object.keys(userCards).map(word => word[0].toUpperCase() + word.slice(1).toLowerCase()).join(", ")}`, ephemeral: true});
+				interaction.reply({content: `Invalid Deck Type "${deckType}"! Valid Decks: ${Object.keys(userCards).map(word => word[0].toUpperCase() + word.slice(1).toLowerCase()).join(", ")}`, ephemeral: true});
 				return;
 			}
 
