@@ -24,6 +24,6 @@ module.exports = {
 			outputText = "No Inits Entered!"
 		}
 
-		await interaction.reply(outputText);
+		await interaction.reply({ content: outputText, allowedMentions: {} });
 	},
 };
