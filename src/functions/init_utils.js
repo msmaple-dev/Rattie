@@ -4,6 +4,7 @@ async function nextTurn(channelId){
 	let currentInit = await init_keyv.get(channelId)
 	let returnText = ""
 	if(currentInit) {
+		// Trackers: userID, turnUserID, turnUserIdentifier, turns, content
 		if(currentInit.round <= 0){
 			currentInit.round = 1
 			currentInit.currentTurn = 1
@@ -18,11 +19,13 @@ async function nextTurn(channelId){
 		}
 		let turnUser = currentInit.users[currentInit.currentTurn - 1];
 		returnText += `Round ${currentInit.round}, ${turnUser.identifier ? `${turnUser.identifier} (<@${turnUser.userID}>)` : `<@${turnUser.userID}>`}'s Turn:`
-		let trackers = currentInit.trackers.map(a => [a[0]-1, a[1]])
-		for (const tracker of trackers.filter(a => a[0] <= 0)){
-			returnText += tracker[1]
+
+		let trackers = currentInit.trackers.map(a => {return {...a, rounds: (turnUser.userID == a.turnUserID && turnUser.identifier == a.turnUserIdentifier ? a.rounds-1 : a.rounds)}})
+
+		for (const tracker of trackers.filter(a => a.rounds <= 0)){
+			returnText += `\n<@${tracker.userID}>: ${tracker.content}`
 		}
-		trackers = trackers.filter(a => a[0] > 0)
+		trackers = trackers.filter(a => a.rounds > 0)
 		currentInit.trackers = trackers
 		await init_keyv.set(channelId, currentInit)
 	} else {
