@@ -3,16 +3,16 @@ const db = require('../database')
 
 module.exports = db.define('reminders', {
 	ownerId:  {
-		type: Sequelize.INTEGER,
+		type: Sequelize.TEXT,
 	},
 	content:  {
 		type: Sequelize.TEXT,
 	},
 	messageId:  {
-		type: Sequelize.INTEGER,
+		type: Sequelize.STRING,
 	},
 	channelId:  {
-		type: Sequelize.INTEGER,
+		type: Sequelize.STRING,
 	},
 	endTime: {
 		type: Sequelize.INTEGER,

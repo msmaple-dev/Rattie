@@ -50,7 +50,7 @@ client.cooldowns = new Collection();
 // We use 'c' for the event parameter to keep it separate from the already defined 'client'
 client.once(Events.ClientReady, c => {
 	console.log(`Ready! Logged in as ${c.user.tag}`);
-	// setInterval(async () => {await checkReminders(c)}, 60000)
+	setInterval(async () => {await checkReminders(c)}, 30000)
 });
 
 client.on(Events.InteractionCreate, async interaction => {

@@ -11,9 +11,9 @@ async function checkReminders(client){
 	if(expiredReminders?.length > 0){
 		for(let reminder of expiredReminders){
 			let channel = await client.channels.fetch(`${reminder.channelId}`)
-			if(channel){
-				let originalReminderMessage = channel.messages.fetch(reminder.messageId)
-				originalReminderMessage.reply(`<@${reminder.ownerId}: ${reminder.content}>`)
+			if(channel && channel?.messages){
+				let originalReminderMessage = await channel.messages.fetch(reminder.messageId)
+				originalReminderMessage.reply(`<@${reminder.ownerId}>: ${reminder.content}`)
 			}
 		}
 		await db.query('DELETE FROM reminders WHERE reminders.endTime <= ?', {
