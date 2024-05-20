@@ -20,12 +20,15 @@ module.exports = {
 			.addChoices({ name: 'Lesser', value: 'lesser' }, { name: 'Moderate', value: 'moderate' }, {
 				name: 'Severe',
 				value: 'severe',
-			})),
+			}))
+		.addBooleanOption(option => option.setName('base').setDescription('Draw from base decks, not init decks').setRequired(false))
+	,
 	async execute(interaction) {
 		const damageCode = interaction.options.getString('damagecode')?.toLowerCase() || null;
 		const deckType = damageCode && selectWeighted(damageCode)?.toLowerCase() || interaction.options.getString('deck')?.toLowerCase() || null;
 		const drawCount = interaction.options.getInteger('cards') ? Math.min(5, interaction.options.getInteger('cards')) : 1;
 		const severity = interaction.options.getString('severity')?.toLowerCase() || null;
+		const baseDraw = interaction.options.getBoolean('base') || false;
 		const userID = interaction.user.id;
 		const sqlUserID = BigInt(interaction.user.id);
 		const identifier = interaction.options.getString('identifier') || null;
@@ -41,18 +44,18 @@ module.exports = {
 
 		let statusCards = [];
 
-		if(!deckType){
-			await interaction.reply({content: 'No Valid Deck Type(s) Entered!', ephemeral: true});
+		if (!deckType) {
+			await interaction.reply({ content: 'No Valid Deck Type(s) Entered!', ephemeral: true });
 		}
 
-		if (!channelUser) {
+		if (baseDraw || !channelUser) {
 			const baseCards = await db.query('SELECT * FROM cards WHERE ownerId IN (0, ?) AND deckType = ?', {
 				replacements: [sqlUserID, deckType],
 				type: QueryTypes.SELECT,
 			});
 			if (!baseCards || baseCards.length <= 0) {
 				console.log('Base Draw Error');
-				await interaction.reply({content: `Invalid Deck Type "${deckType}"!`, ephemeral: true});
+				await interaction.reply({ content: `Invalid Deck Type "${deckType}"!`, ephemeral: true });
 				return;
 			}
 			else {
@@ -72,19 +75,23 @@ module.exports = {
 
 			if (!deck || deck.length <= 0) {
 				console.log('Init Draw Error');
-				interaction.reply({content: `Invalid Deck Type "${deckType}"! Valid Decks: ${Object.keys(userCards).map(word => word[0].toUpperCase() + word.slice(1).toLowerCase()).join(", ")}`, ephemeral: true});
+				interaction.reply({
+					content: `Invalid Deck Type "${deckType}"! Valid Decks: ${Object.keys(userCards).map(word => word[0].toUpperCase() + word.slice(1).toLowerCase()).join(', ')}`,
+					ephemeral: true,
+				});
 				return;
 			}
 
 			while (statusCards.length < drawCount) {
 				let usableCards = deck.filter(card => (!severity || card.severity === severity) && !card.used);
-				if(usableCards && usableCards.length > 0){
-					let drawnCard = usableCards[Math.floor(Math.random()*usableCards.length)];
-					statusCards.push(drawnCard)
-					deck[deck.indexOf(drawnCard)] = {...drawnCard, used: true};
-				} else {
-					for(let card of deck){
-						if(!severity || card.severity === severity){
+				if (usableCards && usableCards.length > 0) {
+					let drawnCard = usableCards[Math.floor(Math.random() * usableCards.length)];
+					statusCards.push(drawnCard);
+					deck[deck.indexOf(drawnCard)] = { ...drawnCard, used: true };
+				}
+				else {
+					for (let card of deck) {
+						if (!severity || card.severity === severity) {
 							card.used = false;
 						}
 					}
