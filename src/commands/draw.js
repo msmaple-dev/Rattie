@@ -46,6 +46,7 @@ module.exports = {
 
 		if (!deckType) {
 			await interaction.reply({ content: 'No Valid Deck Type(s) Entered!', ephemeral: true });
+			return;
 		}
 
 		if (baseDraw || !channelUser) {
