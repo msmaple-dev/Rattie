@@ -14,7 +14,8 @@ module.exports = {
 		const reminderContent = interaction.options.getString('content');
 		const timeString = interaction.options.getString('time').toLowerCase();
 
-		const logTime = timeFromString(timeString)
+		let endTime = timeFromString(timeString)
+		const logTime = `${endTime}`.slice(0, 10);
 		await interaction.reply(`Set a reminder for <t:${logTime}:D> @ <t:${logTime}:t> (<t:${logTime}:R>)`);
 		const replyMessage = await interaction.fetchReply();
 		const replyMessageChannel = replyMessage.channelId;

@@ -11,7 +11,7 @@ function timeFromString(timeString){
 		((((((timeYears * 365) + (timeWeeks * 7) + timeDays) * 24) + timeHours) * 60) + timeMinutes) * 60000
 	);
 
-	return parseInt(`${endTime}`.slice(0, 10))
+	return endTime
 }
 
 module.exports = timeFromString
