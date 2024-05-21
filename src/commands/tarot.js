@@ -9,7 +9,7 @@ module.exports = {
 		.setDescription('Draw a tarot card')
 		.addStringOption(option => option
 			.setName('tier')
-			.setDescription('Force a Draw of a Given Tier')
+			.setDescription('(Optional) Force a Draw of a Given Tier')
 			.setRequired(false)
 			.addChoices({ name: 'Minor', value: 'minor' }, { name: 'Major', value: 'major' })),
 	async execute(interaction) {

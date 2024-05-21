@@ -11,14 +11,14 @@ module.exports = {
 			subcommand
 				.setName('show')
 				.setDescription('View all your current decks, or all the cards in a deck')
-				.addStringOption(option => option.setName('decktype').setDescription('Deck Type').setRequired(false))
+				.addStringOption(option => option.setName('decktype').setDescription('Deck Type').setRequired(true))
 				.addBooleanOption(option => option.setName('private').setDescription('Display cards publicly?').setRequired(false)),
 		)
 		.addSubcommand(subcommand =>
 			subcommand
 				.setName('add')
 				.setDescription('Add a new card')
-				.addStringOption(option => option.setName('name').setDescription('Card Name'))
+				.addStringOption(option => option.setName('name').setDescription('Card Name').setRequired(true))
 				.addStringOption(option => option
 					.setName('severity')
 					.setDescription('Card Severity')
@@ -26,15 +26,16 @@ module.exports = {
 						name: 'Severe',
 						value: 'severe',
 					}))
-				.addStringOption(option => option.setName('decktype').setDescription('Deck Type'))
-				.addStringOption(option => option.setName('cardtext').setDescription('Card Text'))
+				.addStringOption(option => option.setName('decktype').setDescription('Deck Type').setRequired(true))
+				.addStringOption(option => option.setName('cardtext').setDescription('Card Text').setRequired(true))
 				.addStringOption(option => option.setName('deckcolor').setDescription('Deck Color (Optional)').setRequired(false)),
 		)
 		.addSubcommand(subcommand =>
 			subcommand
 				.setName('modify')
 				.setDescription('Modify a card')
-				.addStringOption(option => option.setName('name').setDescription('Card Name'))
+				.addStringOption(option => option.setName('name').setDescription('Card Name').setRequired(true))
+				.addStringOption(option => option.setName('decktype').setDescription('Deck Type').setRequired(true))
 				.addStringOption(option => option
 					.setName('severity')
 					.setDescription('Card Severity')
@@ -42,7 +43,6 @@ module.exports = {
 						name: 'Severe',
 						value: 'severe',
 					}).setRequired(false))
-				.addStringOption(option => option.setName('decktype').setDescription('Deck Type'))
 				.addStringOption(option => option.setName('cardtext').setDescription('Card Text').setRequired(false))
 				.addStringOption(option => option.setName('deckcolor').setDescription('Deck Color').setRequired(false)),
 		)
@@ -50,8 +50,8 @@ module.exports = {
 			subcommand
 				.setName('delete')
 				.setDescription('Delete a card')
-				.addStringOption(option => option.setName('name').setDescription('Card Name'))
-				.addStringOption(option => option.setName('decktype').setDescription('Deck Type')),
+				.addStringOption(option => option.setName('name').setDescription('Card Name').setRequired(true))
+				.addStringOption(option => option.setName('decktype').setDescription('Deck Type').setRequired(true)),
 		),
 	async execute(interaction) {
 		const userID = interaction.user.id;
