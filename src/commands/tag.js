@@ -10,7 +10,7 @@ module.exports = {
 			subcommand
 				.setName('show')
 				.setDescription('View a tag')
-				.addStringOption(option => option.setName('name').setDescription('Tag Name'))
+				.addStringOption(option => option.setName('name').setDescription('Tag Name').setRequired(true))
 				.addBooleanOption(option => option.setName('private').setDescription('Search for Private or Public Tags?').setRequired(false)),
 				// .addBooleanOption(option => option.setName('pin').setDescription('Pin the Tag?').setRequired(false)),
 		)
@@ -18,23 +18,23 @@ module.exports = {
 			subcommand
 				.setName('add')
 				.setDescription('Add a new tag')
-				.addStringOption(option => option.setName('name').setDescription('Tag Name'))
-				.addStringOption(option => option.setName('text').setDescription('Tag Content'))
+				.addStringOption(option => option.setName('name').setDescription('Tag Name').setRequired(true))
+				.addStringOption(option => option.setName('text').setDescription('Tag Content').setRequired(true))
 				.addBooleanOption(option => option.setName('private').setDescription('Make the tag Private?').setRequired(false)),
 		)
 		.addSubcommand(subcommand =>
 			subcommand
 				.setName('modify')
 				.setDescription('Modify a tag')
-				.addStringOption(option => option.setName('name').setDescription('Tag Name'))
-				.addStringOption(option => option.setName('text').setDescription('Tag Content'))
+				.addStringOption(option => option.setName('name').setDescription('Tag Name').setRequired(true))
+				.addStringOption(option => option.setName('text').setDescription('Tag Content').setRequired(true))
 				.addBooleanOption(option => option.setName('private').setDescription('Modify a Private or Public Tag?').setRequired(false)),
 		)
 		.addSubcommand(subcommand =>
 			subcommand
 				.setName('delete')
 				.setDescription('Delete a tag')
-				.addStringOption(option => option.setName('name').setDescription('Tag Name'))
+				.addStringOption(option => option.setName('name').setDescription('Tag Name').setRequired(true))
 				.addBooleanOption(option => option.setName('private').setDescription('Search for Private or Public Tags?').setRequired(false)),
 		),
 	async execute(interaction) {
@@ -61,7 +61,7 @@ module.exports = {
 		}
 		else if (interaction.options.getSubcommand() === 'add' || interaction.options.getSubcommand() === 'modify') {
 			const tagName = interaction.options.getString('name')?.toLowerCase();
-			const content = interaction.options.getString('text');
+			const content = interaction.options.getString('text').replaceAll('\\n', '\n');
 			const isPrivate = interaction.options.getBoolean('private') || false;
 
 			let query = `SELECT * from tags WHERE tags.name = ?${isPrivate ? ` AND tags.ownerId = ? AND tags.isPrivate = ?` : ""}`
