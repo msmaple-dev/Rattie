@@ -9,8 +9,7 @@ module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('draw')
 		.setDescription('Draws a card from a deck, exhausting that card if in a fight.')
-		.addStringOption(option => option.setName('damagecode').setDescription('Damages and Types for an Attack (Eg: 4 Burn 3 Slash)').setRequired(false))
-		.addStringOption(option => option.setName('deck').setDescription('Deck to be Drawn From (Ignored if Damagecode is Defined)').setRequired(false))
+		.addStringOption(option => option.setName('decks').setDescription('Deck(s) and amount of Damage (Valid: Burn, 1 Burn, 4 Burn 3 Slash)').setRequired(true))
 		.addStringOption(option => option.setName('identifier').setDescription('Init Name').setRequired(false))
 		.addIntegerOption(option => option.setName('cards').setDescription('Cards to Draw').setMaxValue(5).setRequired(false))
 		.addStringOption(option => option
@@ -24,8 +23,8 @@ module.exports = {
 		.addBooleanOption(option => option.setName('base').setDescription('Draw from base decks, not init decks').setRequired(false))
 	,
 	async execute(interaction) {
-		const damageCode = interaction.options.getString('damagecode')?.toLowerCase() || null;
-		const deckType = damageCode && selectWeighted(damageCode)?.toLowerCase() || interaction.options.getString('deck')?.toLowerCase() || null;
+		const deckString = interaction.options.getString('decks')?.toLowerCase();
+		const deckType = deckString && deckString.match(/(\d+ \w+)+/gm)?.length > 0 && selectWeighted(deckString)?.toLowerCase() || deckString;
 		const drawCount = interaction.options.getInteger('cards') ? Math.min(5, interaction.options.getInteger('cards')) : 1;
 		const severity = interaction.options.getString('severity')?.toLowerCase() || null;
 		const baseDraw = interaction.options.getBoolean('base') || false;
