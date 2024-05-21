@@ -33,6 +33,13 @@ module.exports = {
 			}
 		}
 
+		let initTags = await db.query('SELECT * FROM tags WHERE isPrivate > 0 AND name = ? AND ownerId = ?', {
+			replacements: ['init', sqlID],
+			type: QueryTypes.SELECT,
+		})
+		let userInitTag = initTags && initTags[0];
+		let postInitTag = false;
+
 		if (await init_keyv.has(channelId)) {
 			let currentInit = await init_keyv.get(channelId).catch(err => interaction.reply(err));
 			let currentUsers = currentInit.users;
@@ -45,6 +52,7 @@ module.exports = {
 			} else {
 				currentUsers.push({ userID: userID, identifier: userIdentifier, initVal: initVal, decks: decks})
 				outputText = `Added User ${userIdentifier ? `${userIdentifier} (<@${userID}>)` : `<@${userID}>`} at Init ${initVal}`
+				postInitTag = true;
 			}
 			currentUsers.sort((a, b) => (b.initVal - a.initVal))
 			currentInit.currentTurn = currentUsers.indexOf(currentTurnUser)+1
@@ -62,7 +70,13 @@ module.exports = {
 			};
 			await init_keyv.set(channelId, newInit)
 			outputText = `Started new Init with User ${userIdentifier ? `${userIdentifier} (<@${userID}>)` : `<@${userID}>`} at Init ${initVal}`
+			postInitTag = true;
 		}
 		await interaction.reply(outputText)
+		if(postInitTag && userInitTag){
+			await interaction.followUp(`\n${userInitTag.content}`).then(msg => {
+				msg.pin('Init Pin');
+			})
+		}
 	},
 };
