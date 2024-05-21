@@ -52,7 +52,9 @@ module.exports = {
 			} else {
 				currentUsers.push({ userID: userID, identifier: userIdentifier, initVal: initVal, decks: decks})
 				outputText = `Added User ${userIdentifier ? `${userIdentifier} (<@${userID}>)` : `<@${userID}>`} at Init ${initVal}`
-				postInitTag = true;
+				if(!userIdentifier){
+					postInitTag = true;
+				}
 			}
 			currentUsers.sort((a, b) => (b.initVal - a.initVal))
 			currentInit.currentTurn = currentUsers.indexOf(currentTurnUser)+1
@@ -70,7 +72,9 @@ module.exports = {
 			};
 			await init_keyv.set(channelId, newInit)
 			outputText = `Started new Init with User ${userIdentifier ? `${userIdentifier} (<@${userID}>)` : `<@${userID}>`} at Init ${initVal}`
-			postInitTag = true;
+			if(!userIdentifier){
+				postInitTag = true;
+			}
 		}
 		await interaction.reply(outputText)
 		if(postInitTag && userInitTag){
