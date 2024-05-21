@@ -52,7 +52,7 @@ module.exports = {
 				});
 
 				if(matchingTags?.length > 0) {
-					await interaction.reply(matchingTags[0].content)
+					await interaction.reply(matchingTags[0].content.replaceAll(/\/n/gm, '\n'))
 				}
 				else {
 					await interaction.reply(`${isPrivate ? 'Private ' : ""}Tag ${tagName} does not exist!`);
@@ -61,7 +61,7 @@ module.exports = {
 		}
 		else if (interaction.options.getSubcommand() === 'add' || interaction.options.getSubcommand() === 'modify') {
 			const tagName = interaction.options.getString('name')?.toLowerCase();
-			const content = interaction.options.getString('text').replaceAll('\\n', '\n');
+			const content = interaction.options.getString('text');
 			const isPrivate = interaction.options.getBoolean('private') || false;
 
 			let query = `SELECT * from tags WHERE tags.name = ?${isPrivate ? ` AND tags.ownerId = ? AND tags.isPrivate = ?` : ""}`
