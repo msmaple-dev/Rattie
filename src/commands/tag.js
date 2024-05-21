@@ -52,7 +52,7 @@ module.exports = {
 				});
 
 				if(matchingTags?.length > 0) {
-					await interaction.reply(matchingTags[0].content.replaceAll(/\/n/gm, '\n'))
+					await interaction.reply(matchingTags[0].content.replaceAll(/\\n/gm, '\n'))
 				}
 				else {
 					await interaction.reply(`${isPrivate ? 'Private ' : ""}Tag ${tagName} does not exist!`);
