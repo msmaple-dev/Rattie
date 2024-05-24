@@ -45,4 +45,7 @@ module.exports = db.define('wikis', {
 	color:  {
 		type: Sequelize.TEXT,
 	},
+	pronouns: {
+		type: Sequelize.TEXT,
+	}
 }, {timestamps: false});

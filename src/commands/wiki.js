@@ -25,6 +25,7 @@ module.exports = {
 				.setDescription('Modify a specific Wiki one field at a time or all at once, adding a field if it doesn\'t exist')
 				.addStringOption(option => option.setName('name').setDescription('Wiki Name').setRequired(true))
 				.addStringOption(option => option.setName('warlockname').setDescription('Warlock Name').setRequired(false))
+				.addStringOption(option => option.setName('pronouns').setDescription('Your Warlock\'s pronouns').setRequired(false))
 				.addStringOption(option => option.setName('quote').setDescription('Warlock Quote').setRequired(false))
 				.addStringOption(option => option.setName('about').setDescription('General Info on the Warlock').setRequired(false))
 				.addStringOption(option => option.setName('age').setDescription('Age').setRequired(false))
@@ -74,8 +75,9 @@ module.exports = {
 			let appearance = interaction.options.getString('appearance') || null;
 			let abilities = interaction.options.getString('abilities') || null;
 			let color = interaction.options.getString('color') || null;
-			let updatableValues = [warlockName, quote, about, age, scale, faction, appearance, image, source, icon, abilities, color];
-			let updatableFields = ['warlockName', 'quote', 'about', 'age', 'scale', 'faction', 'appearance', 'image', 'source', 'icon', 'abilities', 'color'];
+			let pronouns = interaction.options.getString('pronouns') || null;
+			let updatableValues = [warlockName, quote, about, age, scale, faction, appearance, image, source, icon, abilities, color, pronouns];
+			let updatableFields = ['warlockName', 'quote', 'about', 'age', 'scale', 'faction', 'appearance', 'image', 'source', 'icon', 'abilities', 'color', 'pronouns'];
 			let setFields = updatableValues.map((value, index) => value && `${updatableFields[index]} = ?`).filter(a => a).join(', ');
 
 			if (updatableValues.filter(a => a)?.length <= 0) {

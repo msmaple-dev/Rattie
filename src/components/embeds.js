@@ -78,6 +78,7 @@ function wikiEmbed(wiki) {
 		abilities,
 		faction,
 		color,
+		pronouns,
 	} = wiki;
 
 	let embed = new EmbedBuilder().setTitle(warlockName || name);
@@ -87,6 +88,7 @@ function wikiEmbed(wiki) {
 		(age && { name: `Age`, value: age, inline: true }),
 		(scale && { name: `Scale`, value: scale, inline: true }),
 		(faction && { name: `Faction`, value: faction, inline: true }),
+		(pronouns && { name: `Pronouns`, value: pronouns, inline: true }),
 	].filter(a => a);
 	let descFields = [
 		(about && { name: `About ${warlockName || name}`, value: `${parseLinebreaks(about)}` }),
@@ -97,15 +99,29 @@ function wikiEmbed(wiki) {
 		}),
 	].filter(a => a);
 
-	if (headerFields) { embed.addFields(...headerFields); }
-	if (descFields) { embed.addFields(descFields); }
+	if (headerFields) {
+		embed.addFields(...headerFields);
+	}
+	if (descFields) {
+		embed.addFields(descFields);
+	}
 
-	if (icon) {	embed.setThumbnail(icon); }
-	if (color && isValidColor(color)) {	embed.setColor(color); }
-	if (descriptionText) { embed.setDescription(descriptionText); }
+	if (icon) {
+		embed.setThumbnail(icon);
+	}
+	if (color && isValidColor(color)) {
+		embed.setColor(color);
+	}
+	if (descriptionText) {
+		embed.setDescription(descriptionText);
+	}
 
-	if (footerText) { embed.setFooter({ text: footerText }); }
-	if (image) { embed.setImage(image) }
+	if (footerText) {
+		embed.setFooter({ text: footerText });
+	}
+	if (image) {
+		embed.setImage(image);
+	}
 	return embed;
 }
 
