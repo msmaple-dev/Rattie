@@ -6,6 +6,15 @@ String.prototype.toProperCase = function() {
 	});
 };
 
+function parseLinebreaks(text) {
+	if (text) {
+		return text.replaceAll(/\\n/gm, '\n');
+	}
+	else {
+		return text;
+	}
+}
+
 function isValidColor(color) {
 	let validShortcuts = ['Default', 'Aqua', 'DarkAqua', 'Green', 'DarkGreen', 'Blue', 'DarkBlue', 'Purple', 'DarkPurple', 'LuminousVividPink', 'DarkVividPink', 'Gold', 'DarkGold', 'Orange', 'DarkOrange', 'Red', 'DarkRed', 'Grey', 'DarkGrey', 'DarkerGrey', 'LightGrey', 'Navy', 'DarkNavy', 'Yellow'];
 	return (color && (validShortcuts.indexOf(color) > -1 || /^#[0-9A-F]{6}$/i.test(color)));
@@ -48,4 +57,47 @@ function tarotEmbed(name, originalTarot, majorTarot, upright, reverse, descripti
 	return embed;
 }
 
-module.exports = { statusEmbed, tarotEmbed };
+function wikiEmbed(wiki) {
+	let {
+		name,
+		warlockName,
+		appearance,
+		quote,
+		scale,
+		age,
+		icon,
+		image,
+		source,
+		about,
+		abilities,
+		faction,
+		color,
+	} = wiki;
+
+	let embed = new EmbedBuilder().setTitle(warlockName || name);
+	let descriptionText = `${quote ? `*${parseLinebreaks(quote)}*\n` : ''}\n`;
+	let footerText = `${!isValidColor(color) ? `Invalid Color: ${color}` : ''}`;
+	let headerFields = [
+		(age && { name: `Age`, value: age, inline: true }),
+		(scale && { name: `Scale`, value: scale, inline: true }),
+		(faction && { name: `Faction`, value: faction, inline: true }),
+	].filter(a => a);
+	let descFields = [
+		(about && { name: `About ${warlockName || name}`, value: `${parseLinebreaks(about)}${source ? `\n*[Image Source](${source})*` : ''}` }),
+		(abilities && { name: 'Abilities', value: parseLinebreaks(abilities) }),
+		(appearance && { name: 'Appearance', value: parseLinebreaks(appearance) }),
+	].filter(a => a);
+
+	if (headerFields) { embed.addFields(...headerFields); }
+	if (descFields) { embed.addFields(descFields); }
+
+	if (icon) {	embed.setThumbnail(icon); }
+	if (color && isValidColor(color)) {	embed.setColor(color); }
+	if (descriptionText) { embed.setDescription(descriptionText); }
+
+	if (footerText) { embed.setFooter({ text: footerText }); }
+	if (image) { embed.setImage(image) }
+	return embed;
+}
+
+module.exports = { statusEmbed, tarotEmbed, wikiEmbed };
