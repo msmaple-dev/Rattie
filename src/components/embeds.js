@@ -15,6 +15,12 @@ function parseLinebreaks(text) {
 	}
 }
 
+function isValidUrl(text) {
+	// Credit to Stack Exchange user Matthew O'Riordan for this pattern (https://stackoverflow.com/a/8234912)
+	let pattern = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)/;
+	return text && pattern.test(text);
+}
+
 function isValidColor(color) {
 	let validShortcuts = ['Default', 'Aqua', 'DarkAqua', 'Green', 'DarkGreen', 'Blue', 'DarkBlue', 'Purple', 'DarkPurple', 'LuminousVividPink', 'DarkVividPink', 'Gold', 'DarkGold', 'Orange', 'DarkOrange', 'Red', 'DarkRed', 'Grey', 'DarkGrey', 'DarkerGrey', 'LightGrey', 'Navy', 'DarkNavy', 'Yellow'];
 	return (color && (validShortcuts.indexOf(color) > -1 || /^#[0-9A-F]{6}$/i.test(color)));
@@ -83,9 +89,12 @@ function wikiEmbed(wiki) {
 		(faction && { name: `Faction`, value: faction, inline: true }),
 	].filter(a => a);
 	let descFields = [
-		(about && { name: `About ${warlockName || name}`, value: `${parseLinebreaks(about)}${source ? `\n*[Image Source](${source})*` : ''}` }),
+		(about && { name: `About ${warlockName || name}`, value: `${parseLinebreaks(about)}` }),
 		(abilities && { name: 'Abilities', value: parseLinebreaks(abilities) }),
-		(appearance && { name: 'Appearance', value: parseLinebreaks(appearance) }),
+		((appearance || source) && {
+			name: 'Appearance',
+			value: (appearance ? parseLinebreaks(appearance) + '\n' : '') + (source ? (isValidUrl(source) ? `\n*[Image Source](${source})*` : `\nImage Source: ${source}`) : ''),
+		}),
 	].filter(a => a);
 
 	if (headerFields) { embed.addFields(...headerFields); }
