@@ -81,14 +81,13 @@ function wikiEmbed(wiki) {
 		pronouns,
 	} = wiki;
 
-	let embed = new EmbedBuilder().setTitle(warlockName || name);
+	let embed = new EmbedBuilder().setTitle((warlockName || name) + (pronouns ? ` (${pronouns})` : ''));
 	let descriptionText = `${quote ? `*${parseLinebreaks(quote)}*\n` : ''}\n`;
 	let footerText = `${!isValidColor(color) ? `Invalid Color: ${color}` : ''}`;
 	let headerFields = [
 		(age && { name: `Age`, value: age, inline: true }),
 		(scale && { name: `Scale`, value: scale, inline: true }),
 		(faction && { name: `Faction`, value: faction, inline: true }),
-		(pronouns && { name: `Pronouns`, value: pronouns, inline: true }),
 	].filter(a => a);
 	let descFields = [
 		(about && { name: `About ${warlockName || name}`, value: `${parseLinebreaks(about)}` }),
