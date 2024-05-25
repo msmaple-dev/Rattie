@@ -94,7 +94,7 @@ function wikiEmbed(wiki) {
 		(abilities && { name: 'Abilities', value: parseLinebreaks(abilities) }),
 		((appearance || source) && {
 			name: 'Appearance',
-			value: (appearance ? parseLinebreaks(appearance) + '\n' : '') + (source ? (isValidUrl(source) ? `\n*[Image Source](${source})*` : `\nImage Source: ${source}`) : ''),
+			value: (appearance ? parseLinebreaks(appearance) + '\n' : '') + (source ? (isValidUrl(source) ? `\n*[Image Source](${source})*` : `\n*Image Source: ${source}*`) : ''),
 		}),
 	].filter(a => a);
 
