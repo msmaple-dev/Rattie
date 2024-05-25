@@ -19,16 +19,16 @@ module.exports = {
 				.setName('add')
 				.setDescription('Add a new card')
 				.addStringOption(option => option.setName('name').setDescription('Card Name').setRequired(true))
+				.addStringOption(option => option.setName('decktype').setDescription('Deck Type').setRequired(true))
+				.addStringOption(option => option.setName('cardtext').setDescription('Card Text').setRequired(true))
+				.addStringOption(option => option.setName('deckcolor').setDescription('Deck Color (Optional)').setRequired(false))
 				.addStringOption(option => option
 					.setName('severity')
 					.setDescription('Card Severity')
 					.addChoices({ name: 'Lesser', value: 'lesser' }, { name: 'Moderate', value: 'moderate' }, {
 						name: 'Severe',
 						value: 'severe',
-					}))
-				.addStringOption(option => option.setName('decktype').setDescription('Deck Type').setRequired(true))
-				.addStringOption(option => option.setName('cardtext').setDescription('Card Text').setRequired(true))
-				.addStringOption(option => option.setName('deckcolor').setDescription('Deck Color (Optional)').setRequired(false)),
+					})),
 		)
 		.addSubcommand(subcommand =>
 			subcommand
