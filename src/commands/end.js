@@ -3,6 +3,7 @@ const init_keyv = require('../keyv_stores/init_keyv')
 const nextTurn = require('../functions/init_utils');
 
 module.exports = {
+	cooldown: 5,
 	data: new SlashCommandBuilder()
 		.setName('end')
 		.setDescription('Ends your turn')
