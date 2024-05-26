@@ -1,6 +1,7 @@
 const { SlashCommandBuilder } = require('discord.js');
 const db = require('../database');
 const { QueryTypes } = require('sequelize');
+const { clientId } = require('../../config.json');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -11,8 +12,8 @@ module.exports = {
 				.setName('show')
 				.setDescription('View a tag')
 				.addStringOption(option => option.setName('name').setDescription('Tag Name').setRequired(true))
-				.addBooleanOption(option => option.setName('private').setDescription('Search for Private or Public Tags?').setRequired(false)),
-				// .addBooleanOption(option => option.setName('pin').setDescription('Pin the Tag?').setRequired(false)),
+				.addBooleanOption(option => option.setName('private').setDescription('Search for Private or Public Tags?').setRequired(false))
+				.addBooleanOption(option => option.setName('pin').setDescription('Pin the Tag temporarily?').setRequired(false)),
 		)
 		.addSubcommand(subcommand =>
 			subcommand
@@ -36,6 +37,11 @@ module.exports = {
 				.setDescription('Delete a tag')
 				.addStringOption(option => option.setName('name').setDescription('Tag Name').setRequired(true))
 				.addBooleanOption(option => option.setName('private').setDescription('Search for Private or Public Tags?').setRequired(false)),
+		)
+		.addSubcommand(subcommand =>
+			subcommand
+				.setName('clear')
+				.setDescription('Clear all pinned tags in a channel'),
 		),
 	async execute(interaction) {
 		const userID = interaction.user.id;
@@ -43,6 +49,7 @@ module.exports = {
 		if (interaction.options.getSubcommand() === 'show') {
 			const tagName = interaction.options.getString('name')?.toLowerCase();
 			const isPrivate = interaction.options.getBoolean('private') || false;
+			const pinTag = interaction.options.getBoolean('pin') || false;
 
 			if (tagName) {
 				let query = `SELECT * from tags WHERE tags.name = ?${isPrivate ? ` AND tags.ownerId = ? AND tags.isPrivate = ?` : ""}`
@@ -52,7 +59,14 @@ module.exports = {
 				});
 
 				if(matchingTags?.length > 0) {
-					await interaction.reply(matchingTags[0].content.replaceAll(/\\n/gm, '\n'))
+					let tagContent = matchingTags[0].content.replaceAll(/\\n/gm, '\n');
+					await interaction.reply(tagContent);
+					if(pinTag){
+						const message = await interaction.fetchReply();
+						if(message){
+							await message.pin('Tag Pin Command')
+						}
+					}
 				}
 				else {
 					await interaction.reply(`${isPrivate ? 'Private ' : ""}Tag ${tagName} does not exist!`);
@@ -119,6 +133,16 @@ module.exports = {
 			} else {
 				await interaction.reply(`There are no ${isPrivate ? 'Private ' : ""}Tags named ${tagName} that you own!`);
 			}
+		}
+		else if (interaction.options.getSubcommand() === 'clear') {
+			await interaction.channel?.messages.fetchPinned().then((pinnedMessages) => {
+				pinnedMessages.forEach((msg) => {
+					if(msg.author.id == clientId){
+						msg.unpin().catch(console.error)
+					}
+				})
+			}).catch(console.error)
+			await interaction.reply('Cleared all Rattie Pins!')
 		}
 	},
 };
