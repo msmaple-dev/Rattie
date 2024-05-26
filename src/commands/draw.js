@@ -3,7 +3,7 @@ const init_keyv = require('../keyv_stores/init_keyv');
 const { statusEmbed } = require('../components/embeds');
 const { QueryTypes } = require('sequelize');
 const db = require('../database');
-const { selectWeighted } = require('../functions/roll_utils');
+const { selectFromWeightedString } = require('../functions/roll_utils');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -24,7 +24,7 @@ module.exports = {
 	,
 	async execute(interaction) {
 		const deckString = interaction.options.getString('decks')?.toLowerCase();
-		const deckType = deckString && deckString.match(/(\d+ \w+)+/gm)?.length > 0 && selectWeighted(deckString)?.toLowerCase() || deckString;
+		const deckType = deckString && deckString.match(/(\d+ \w+)+/gm)?.length > 0 && selectFromWeightedString(deckString)?.toLowerCase() || deckString;
 		const drawCount = interaction.options.getInteger('cards') ? Math.min(5, interaction.options.getInteger('cards')) : 1;
 		const severity = interaction.options.getString('severity')?.toLowerCase() || null;
 		const baseDraw = interaction.options.getBoolean('base') || false;

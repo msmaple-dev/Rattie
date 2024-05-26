@@ -99,7 +99,7 @@ function toWeightedArray(string) {
 	const deckArray = splitString.filter(a => isNaN(a));
 	const lastIteratableIndex = Math.min(numArray.length, deckArray.length);
 	const total = numArray.slice(0, lastIteratableIndex).reduce((a, b) => a + b);
-	let result = [];
+	let result = {};
 
 	for (let i = 0; i < lastIteratableIndex; i++) {
 		result[deckArray[i]] = Number(((numArray[i]) / total).toFixed(2));
@@ -107,8 +107,12 @@ function toWeightedArray(string) {
 	return result;
 }
 
-function selectWeighted(string) {
+function selectFromWeightedString(string) {
 	let spec = toWeightedArray(string);
+	return weightedSelect(spec)
+}
+
+function weightedSelect(spec){
 	var i, sum = 0, r = Math.random();
 	for (i in spec) {
 		sum += spec[i];
@@ -116,4 +120,4 @@ function selectWeighted(string) {
 	}
 }
 
-module.exports = { roll, multiRoll, arrayRoll, parseRoll, rollString, selectWeighted };
+module.exports = { roll, multiRoll, arrayRoll, parseRoll, rollString, weightedSelect, selectFromWeightedString };
