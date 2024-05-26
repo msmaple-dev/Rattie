@@ -86,7 +86,11 @@ client.on(Events.InteractionCreate, async interaction => {
 	setTimeout(() => timestamps.delete(0), cooldownAmount);
 
 	try {
-		await command.execute(interaction);
+		if(command?.needsClient){
+			await command.execute(interaction, client);
+		} else {
+			await command.execute(interaction);
+		}
 	} catch (error) {
 		console.error(error);
 		if (interaction.replied || interaction.deferred) {
