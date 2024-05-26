@@ -2,6 +2,7 @@ const { SlashCommandBuilder } = require('discord.js');
 
 module.exports = {
 	needsClient: true,
+	cooldown: 10,
 	data: new SlashCommandBuilder()
 		.setName('qping')
 		.setDescription('Pings all members who reacted to a message.')
