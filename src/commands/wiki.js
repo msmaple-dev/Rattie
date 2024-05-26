@@ -31,6 +31,8 @@ module.exports = {
 				.addStringOption(option => option.setName('age').setDescription('Age').setRequired(false))
 				.addStringOption(option => option.setName('scale').setDescription('Scale (Apparent and Real)').setRequired(false))
 				.addStringOption(option => option.setName('faction').setDescription('What Faction the Warlock is Aligned With').setRequired(false))
+				.addStringOption(option => option.setName('renown').setDescription('Your Warlock\'s renown, if relevant').setRequired(false))
+				.addStringOption(option => option.setName('scent').setDescription('The Warlock\'s Scent').setRequired(false))
 				.addStringOption(option => option.setName('appearance').setDescription('Warlock Appearance').setRequired(false))
 				.addStringOption(option => option.setName('image').setDescription('Appearance Image URL').setRequired(false))
 				.addStringOption(option => option.setName('source').setDescription('Appearance Image Source URL').setRequired(false))
@@ -67,7 +69,7 @@ module.exports = {
 			let quote = interaction.options.getString('quote') || null;
 			let age = interaction.options.getString('age') || null;
 			let about = interaction.options.getString('about') || null;
-			let scale = interaction.options.getString('scale') || null;
+			let scale = interaction.options.getString('scale') !== null ? interaction.options.getString('scale') : null;
 			let faction = interaction.options.getString('faction') || null;
 			let image = interaction.options.getString('image') || null;
 			let source = interaction.options.getString('source') || null;
@@ -76,9 +78,11 @@ module.exports = {
 			let abilities = interaction.options.getString('abilities') || null;
 			let color = interaction.options.getString('color') || null;
 			let pronouns = interaction.options.getString('pronouns') || null;
-			let updatableValues = [warlockName, quote, about, age, scale, faction, appearance, image, source, icon, abilities, color, pronouns];
-			let updatableFields = ['warlockName', 'quote', 'about', 'age', 'scale', 'faction', 'appearance', 'image', 'source', 'icon', 'abilities', 'color', 'pronouns'];
-			let setFields = updatableValues.map((value, index) => value && `${updatableFields[index]} = ?`).filter(a => a).join(', ');
+			let scent = interaction.options.getString('scent') || null;
+			let renown = interaction.options.getString('renown') !== null ? interaction.options.getString('renown') : null;
+			let updatableValues = [warlockName, quote, about, age, scale, faction, appearance, image, source, icon, abilities, color, pronouns, scent, renown];
+			let updatableFields = ['warlockName', 'quote', 'about', 'age', 'scale', 'faction', 'appearance', 'image', 'source', 'icon', 'abilities', 'color', 'pronouns', 'scent', 'renown'];
+			let setFields = updatableValues.map((value, index) => value && `${updatableFields[index]} = ?`).filter(a => a !== null).join(', ');
 
 			if (updatableValues.filter(a => a)?.length <= 0) {
 				await interaction.reply(`No valid fields given!`);
@@ -95,7 +99,7 @@ module.exports = {
                                     SET ${setFields}
                                     WHERE ownerId = ?
                                       AND name = ?`, {
-						replacements: [...updatableValues.filter(a => a), sqlUserID, wikiName],
+						replacements: [...updatableValues.filter(a => a !== null), sqlUserID, wikiName],
 						type: QueryTypes.UPDATE,
 					});
 					await interaction.reply(`Modified wiki ${wikiName}!`);

@@ -79,19 +79,23 @@ function wikiEmbed(wiki) {
 		faction,
 		color,
 		pronouns,
+		scent,
+		renown,
 	} = wiki;
 
 	let embed = new EmbedBuilder().setTitle((warlockName || name) + (pronouns ? ` (${pronouns})` : ''));
 	let descriptionText = `${quote ? `*${parseLinebreaks(quote)}*\n` : ''}\n`;
 	let footerText = `${!isValidColor(color) ? `Invalid Color: ${color}` : ''}`;
 	let headerFields = [
-		(age && { name: `Age`, value: age, inline: true }),
-		(scale && { name: `Scale`, value: scale, inline: true }),
-		(faction && { name: `Faction`, value: faction, inline: true }),
+		(age !== null && { name: `Age`, value: age, inline: true }),
+		(scale !== null && { name: `Scale`, value: scale, inline: true }),
+		(faction !== null && { name: `Faction`, value: faction, inline: true }),
+		(renown !== null && { name: `Renown`, value: renown, inline: true }),
 	].filter(a => a);
 	let descFields = [
-		(about && { name: `About ${warlockName || name}`, value: `${parseLinebreaks(about)}` }),
-		(abilities && { name: 'Abilities', value: parseLinebreaks(abilities) }),
+		(scent !== null && { name: `Warlock Scent`, value: scent }),
+		(about !== null && { name: `About ${warlockName || name}`, value: `${parseLinebreaks(about)}` }),
+		(abilities !== null && { name: 'Abilities', value: parseLinebreaks(abilities) }),
 		((appearance || source) && {
 			name: 'Appearance',
 			value: (appearance ? parseLinebreaks(appearance) + '\n' : '') + (source ? (isValidUrl(source) ? `\n*[Image Source](${source})*` : `\n*Image Source: ${source}*`) : ''),

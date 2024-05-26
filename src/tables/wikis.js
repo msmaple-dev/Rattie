@@ -47,5 +47,11 @@ module.exports = db.define('wikis', {
 	},
 	pronouns: {
 		type: Sequelize.TEXT,
-	}
+	},
+	scent: {
+		type: Sequelize.TEXT,
+	},
+	renown: {
+		type: Sequelize.TEXT,
+	},
 }, {timestamps: false});
