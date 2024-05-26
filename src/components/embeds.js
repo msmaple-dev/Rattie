@@ -26,13 +26,18 @@ function isValidColor(color) {
 	return (color && (validShortcuts.indexOf(color) > -1 || /^#[0-9A-F]{6}$/i.test(color)));
 }
 
-function statusEmbed(name, effect, severity, color, forcedSeverity = '') {
+function statusEmbed(name, effect, severity, color, identifier = '', forcedSeverity = '') {
 	let embed = new EmbedBuilder()
 		.setTitle(name + ` (${severity.toProperCase()})`)
 		.setDescription(effect);
 	let validColor = isValidColor(color);
-	if (forcedSeverity || !(validColor)) {
-		embed.setFooter({ text: `${forcedSeverity ? `Using Severity: ${forcedSeverity.toProperCase()}, ` : ''}${!(validColor) ? `Invalid Color: ${color}` : ''}` });
+	if (forcedSeverity || identifier || !(validColor)) {
+		let embedText = [
+			(identifier ? `Rolling for sub-user: ${identifier}` : ''),
+			(forcedSeverity ? `Using Severity: ${forcedSeverity.toProperCase()}` : ''),
+			(!(validColor) ? `Invalid Color: ${color}` : '')
+		].filter(a=>a).join(', ');
+		embed.setFooter({ text: embedText });
 	}
 	if (color && validColor) {
 		embed.setColor(color);

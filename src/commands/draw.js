@@ -102,7 +102,7 @@ module.exports = {
 		}
 		let replyArray = [];
 		for (let selectedCard of statusCards) {
-			let embed = statusEmbed(selectedCard.cardName, selectedCard.cardText, selectedCard.severity, (colorDictionary[selectedCard.deckType] || '#FFFFFF'), severity);
+			let embed = statusEmbed(selectedCard.cardName, selectedCard.cardText, selectedCard.severity, (colorDictionary[selectedCard.deckType] || '#FFFFFF'), identifier, severity);
 			replyArray.push(embed);
 		}
 		await interaction.reply({ embeds: replyArray });
