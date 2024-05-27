@@ -10,8 +10,9 @@ module.exports = {
 		.addSubcommand(subcommand =>
 			subcommand
 				.setName('show')
-				.setDescription('View all your current decks, or all the cards in a deck')
-				.addStringOption(option => option.setName('decktype').setDescription('Deck Type').setRequired(true))
+				.setDescription('View all your current decks, all the cards in a deck, or a specific card.')
+				.addStringOption(option => option.setName('decktype').setDescription('Deck Type').setRequired(false))
+				.addStringOption(option => option.setName('card').setDescription('Specific card').setRequired(false))
 				.addBooleanOption(option => option.setName('private').setDescription('Display cards publicly?').setRequired(false)),
 		)
 		.addSubcommand(subcommand =>
@@ -58,10 +59,11 @@ module.exports = {
 		const sqlUserID = BigInt(interaction.user.id);
 		if (interaction.options.getSubcommand() === 'show') {
 			const deckType = interaction.options.getString('decktype')?.toLowerCase() || null;
+			const specificCard = interaction.options.getString('card')?.toLowerCase() || null;
 			const isPrivate = interaction.options.getBoolean('private') || false;
 			let baseCards = null;
 
-			if (deckType) {
+			if (deckType || specificCard) {
 				let cardColors = await db.query('SELECT deckType, color FROM colors WHERE colors.`ownerId` IN (0, ?)', {
 					replacements: [sqlUserID],
 					type: QueryTypes.SELECT,
@@ -69,19 +71,33 @@ module.exports = {
 				let colorDictionary = Object.assign({}, ...cardColors.map((x) => ({ [x.deckType]: x.color })));
 
 				let replyArray = [];
-				baseCards = await db.query('SELECT * FROM cards WHERE ownerId IN (0, ?) AND deckType = ?', {
-					replacements: [sqlUserID, deckType],
+				let query = 'SELECT * FROM cards WHERE ownerId IN (0, ?)'
+				let queryReplacements = [sqlUserID]
+				if(deckType){
+					query += ' AND LOWER(deckType) = ?'
+					queryReplacements.push(deckType)
+				}
+				if (specificCard) {
+					query += ' AND LOWER(cardName) = ?'
+					queryReplacements.push(specificCard)
+				}
+				baseCards = await db.query(query, {
+					replacements: queryReplacements,
 					type: QueryTypes.SELECT,
 				});
 
-				for (let selectedCard of baseCards) {
-					let embed = statusEmbed(selectedCard.cardName, selectedCard.cardText, selectedCard.severity, (colorDictionary[selectedCard.deckType] || '#FFFFFF'));
-					replyArray.push(embed);
-				}
+				if(!baseCards || !(baseCards?.length)){
+					await interaction.reply('No valid cards found!')
+				} else {
+					for (let selectedCard of baseCards) {
+						let embed = statusEmbed(selectedCard.cardName, selectedCard.cardText, selectedCard.severity, (colorDictionary[selectedCard.deckType] || '#FFFFFF'));
+						replyArray.push(embed);
+					}
 
-				await interaction.reply({ embeds: replyArray.slice(0, 5), ephemeral: isPrivate });
-				if (replyArray.length > 5) {
-					await interaction.followUp({ embeds: replyArray.slice(5), ephemeral: isPrivate});
+					await interaction.reply({ embeds: replyArray.slice(0, 5), ephemeral: isPrivate });
+					if (replyArray.length > 5) {
+						await interaction.followUp({ embeds: replyArray.slice(5), ephemeral: isPrivate});
+					}
 				}
 			}
 			else {
