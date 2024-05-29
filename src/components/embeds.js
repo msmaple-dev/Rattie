@@ -45,7 +45,12 @@ function statusEmbed(name, effect, severity, color, identifier = '', forcedSever
 	return embed;
 }
 
-function tarotEmbed(name, originalTarot, majorTarot, upright, reverse, description, explanation, forcedTier) {
+function tarotEmbed(name, originalTarot, majorTarot, upright, reverse, description, explanation, forcedTier, specificCard) {
+	let footerText = [
+		(forcedTier !== null && `Forced Tier: ${forcedTier ? 'Major' : 'Minor'}`),
+		(specificCard !== null && `Drawing Specific Card: ${specificCard}`),
+	].filter(a => a)
+
 	let embed = new EmbedBuilder()
 		.setColor(majorTarot ? '#ff9441' : '#5e4415')
 		.setTitle(name + ` (${majorTarot ? `#${originalTarot}` : originalTarot})`);
@@ -62,8 +67,8 @@ function tarotEmbed(name, originalTarot, majorTarot, upright, reverse, descripti
 	if (explanation) {
 		embed.addFields({ name: 'Explanation', explanation });
 	}
-	if (forcedTier !== null) {
-		embed.setFooter({ text: `Forced Tier: ${forcedTier ? 'Major' : 'Minor'}` });
+	if (footerText?.length > 0) {
+		embed.setFooter({ text: footerText.join(', ') });
 	}
 	return embed;
 }

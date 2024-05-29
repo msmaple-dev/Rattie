@@ -3,6 +3,12 @@ const { tarotEmbed } = require('../components/embeds');
 const { QueryTypes } = require('sequelize');
 const db = require('../database');
 
+String.prototype.toProperCase = function() {
+	return this.replace(/\w\S*/g, function(txt) {
+		return txt.charAt(0).toUpperCase() + txt.substring(1).toLowerCase();
+	});
+};
+
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('tarot')
@@ -11,14 +17,28 @@ module.exports = {
 			.setName('tier')
 			.setDescription('(Optional) Force a Draw of a Given Tier')
 			.setRequired(false)
-			.addChoices({ name: 'Minor', value: 'minor' }, { name: 'Major', value: 'major' })),
+			.addChoices({ name: 'Minor', value: 'minor' }, { name: 'Major', value: 'major' }))
+		.addStringOption(option => option
+			.setName('card')
+			.setDescription('(Optional) Specific tarot card, by title (Eg: Judgement, Valor, Love)')
+			.setRequired(false)),
 	async execute(interaction) {
 
 		let forcedTier = interaction.options.getString('tier') && interaction.options.getString('tier') === 'major';
+		let specificCard = interaction.options.getString('card') && interaction.options.getString('card').toProperCase() || null;
 
-		let tarotCards = await db.query(`SELECT * FROM tarots`, {
-			type: QueryTypes.SELECT,
-		});
+		let tarotCards = []
+
+		if(specificCard){
+			tarotCards = await db.query(`SELECT * FROM tarots WHERE cardName = ?`, {
+				replacements: [specificCard, specificCard],
+				type: QueryTypes.SELECT,
+			});
+		} else {
+			tarotCards = await db.query(`SELECT * FROM tarots`, {
+				type: QueryTypes.SELECT,
+			});
+		}
 
 		if(forcedTier){
 			tarotCards = tarotCards.filter(a => a.majorTarot);
@@ -26,13 +46,13 @@ module.exports = {
 			tarotCards = tarotCards.filter(a => !a.majorTarot)
 		}
 
-		if (tarotCards) {
+		if (tarotCards?.length > 0) {
 			const drawnCard = tarotCards[Math.floor(Math.random() * tarotCards.length)];
 			const {cardName, originalTarot, majorTarot, upright, reverse, description, explanation} = drawnCard;
-			const cardEmbed = tarotEmbed(cardName, originalTarot, majorTarot, upright, reverse, description, explanation, forcedTier)
+			const cardEmbed = tarotEmbed(cardName, originalTarot, majorTarot, upright, reverse, description, explanation, forcedTier, specificCard)
 			await interaction.reply({ embeds: [cardEmbed] });
 		} else {
-			await interaction.reply("Tarot Cards Weren't Added!")
+			await interaction.reply("Invalid card name!")
 		}
 	},
 };
