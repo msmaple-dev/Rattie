@@ -4,6 +4,7 @@ const { statusEmbed } = require('../components/embeds');
 const { QueryTypes } = require('sequelize');
 const db = require('../database');
 const { selectFromWeightedString } = require('../functions/roll_utils');
+const { severities } = require('../components/constants');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -16,10 +17,8 @@ module.exports = {
 			.setName('severity')
 			.setDescription('Severity')
 			.setRequired(false)
-			.addChoices({ name: 'Lesser', value: 'lesser' }, { name: 'Moderate', value: 'moderate' }, {
-				name: 'Severe',
-				value: 'severe',
-			}))
+			.addChoices(...severities)
+		)
 		.addBooleanOption(option => option.setName('base').setDescription('Draw from base decks, not init decks').setRequired(false))
 	,
 	async execute(interaction) {

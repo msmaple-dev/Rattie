@@ -2,6 +2,7 @@ const { SlashCommandBuilder } = require('discord.js');
 const db = require('../database');
 const { QueryTypes } = require('sequelize');
 const { statusEmbed } = require('../components/embeds');
+const { severities } = require('../components/constants');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -26,10 +27,7 @@ module.exports = {
 				.addStringOption(option => option
 					.setName('severity')
 					.setDescription('Card Severity')
-					.addChoices({ name: 'Lesser', value: 'lesser' }, { name: 'Moderate', value: 'moderate' }, {
-						name: 'Severe',
-						value: 'severe',
-					})),
+					.addChoices(...severities)),
 		)
 		.addSubcommand(subcommand =>
 			subcommand
@@ -40,10 +38,7 @@ module.exports = {
 				.addStringOption(option => option
 					.setName('severity')
 					.setDescription('Card Severity')
-					.addChoices({ name: 'Lesser', value: 'lesser' }, { name: 'Moderate', value: 'moderate' }, {
-						name: 'Severe',
-						value: 'severe',
-					}).setRequired(false))
+					.addChoices(...severities).setRequired(false))
 				.addStringOption(option => option.setName('cardtext').setDescription('Card Text').setRequired(false))
 				.addStringOption(option => option.setName('deckcolor').setDescription('Deck Color').setRequired(false)),
 		)
