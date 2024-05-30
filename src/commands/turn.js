@@ -2,7 +2,7 @@ const { SlashCommandBuilder } = require('discord.js');
 const init_keyv = require('../keyv_stores/init_keyv');
 
 module.exports = {
-	cooldown: 5,
+	cooldown: 1,
 	data: new SlashCommandBuilder()
 		.setName('turn')
 		.setDescription('Sets a reminder for X rounds from now, based off the current turn in init.')
