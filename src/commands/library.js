@@ -1,12 +1,6 @@
 const { SlashCommandBuilder } = require('discord.js');
 const init_keyv = require('../keyv_stores/init_keyv');
 
-String.prototype.toProperCase = function() {
-	return this.replace(/\w\S*/g, function(txt) {
-		return txt.charAt(0).toUpperCase() + txt.substring(1).toLowerCase();
-	});
-};
-
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('library')

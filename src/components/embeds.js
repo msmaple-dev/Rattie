@@ -1,10 +1,5 @@
 const { EmbedBuilder } = require('discord.js');
-
-String.prototype.toProperCase = function() {
-	return this.replace(/\w\S*/g, function(txt) {
-		return txt.charAt(0).toUpperCase() + txt.substring(1).toLowerCase();
-	});
-};
+const { toProperCase } = require('../functions/string_utils');
 
 function parseLinebreaks(text) {
 	if (text) {
@@ -28,13 +23,13 @@ function isValidColor(color) {
 
 function statusEmbed(name, effect, severity, color, identifier = '', forcedSeverity = '') {
 	let embed = new EmbedBuilder()
-		.setTitle(name + ` (${severity.toProperCase()})`)
+		.setTitle(name + ` (${toProperCase(severity)})`)
 		.setDescription(effect);
 	let validColor = isValidColor(color);
 	if (forcedSeverity || identifier || !(validColor)) {
 		let embedText = [
 			(identifier ? `Rolling for sub-user: ${identifier}` : ''),
-			(forcedSeverity ? `Using Severity: ${forcedSeverity.toProperCase()}` : ''),
+			(forcedSeverity ? `Using Severity: ${toProperCase(forcedSeverity)}` : ''),
 			(!(validColor) ? `Invalid Color: ${color}` : '')
 		].filter(a=>a).join(', ');
 		embed.setFooter({ text: embedText });

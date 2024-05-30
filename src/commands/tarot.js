@@ -2,12 +2,7 @@ const { SlashCommandBuilder } = require('discord.js');
 const { tarotEmbed } = require('../components/embeds');
 const { QueryTypes } = require('sequelize');
 const db = require('../database');
-
-String.prototype.toProperCase = function() {
-	return this.replace(/\w\S*/g, function(txt) {
-		return txt.charAt(0).toUpperCase() + txt.substring(1).toLowerCase();
-	});
-};
+const { toProperCase } = require('../functions/string_utils');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -25,7 +20,7 @@ module.exports = {
 	async execute(interaction) {
 
 		let forcedTier = interaction.options.getString('tier') && interaction.options.getString('tier') === 'major';
-		let specificCard = interaction.options.getString('card') && interaction.options.getString('card').toProperCase() || null;
+		let specificCard = interaction.options.getString('card') && toProperCase(interaction.options.getString('card')) || null;
 
 		let tarotCards = []
 
