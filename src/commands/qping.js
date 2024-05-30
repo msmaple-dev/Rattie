@@ -27,7 +27,6 @@ module.exports = {
 							}
 						}
 					}
-					console.log(users)
 					let reply = `Quest Ping: ${users.map(user => `<@${user}>`).join(', ')}`;
 					await interaction.reply({ content: reply, allowedMentions: {} });
 				}
