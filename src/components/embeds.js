@@ -24,7 +24,7 @@ function isValidColor(color) {
 function statusEmbed(name, effect, severity, color, identifier = '', forcedSeverity = '') {
 	let embed = new EmbedBuilder()
 		.setTitle(name + ` (${toProperCase(severity)})`)
-		.setDescription(effect);
+		.setDescription(parseLinebreaks(effect));
 	let validColor = isValidColor(color);
 	if (forcedSeverity || identifier || !(validColor)) {
 		let embedText = [
