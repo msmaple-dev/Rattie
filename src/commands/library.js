@@ -1,5 +1,6 @@
 const { SlashCommandBuilder } = require('discord.js');
 const init_keyv = require('../keyv_stores/init_keyv');
+const { toProperCase } = require('../functions/string_utils');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -21,10 +22,10 @@ module.exports = {
 
 			for (const [deck, totalCards] of Object.entries(currentUser.decks)) {
 				let usableCards = totalCards.filter(card => !card.used);
-				outputText += `**${deck.toProperCase()} (${usableCards.length}/${totalCards.length})${usableCards?.length > 0 ? ': ' : ''}**`;
+				outputText += `**${toProperCase(deck)} (${usableCards.length}/${totalCards.length})${usableCards?.length > 0 ? ': ' : ''}**`;
 				console.log(usableCards, totalCards)
 				if (usableCards?.length > 0) {
-					outputText += usableCards.map(card => card.cardName = card.cardName.toProperCase()).sort((a, b) => (b.severity > a.severity) || (a.cardName > b.cardName)).join(', ');
+					outputText += usableCards.map(card => card.cardName = toProperCase(card.cardName)).sort((a, b) => (b.severity > a.severity) || (a.cardName > b.cardName)).join(', ');
 				}
 				outputText += "\n"
 			}
