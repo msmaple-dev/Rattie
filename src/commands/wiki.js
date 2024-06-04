@@ -45,6 +45,13 @@ module.exports = {
 				.setName('delete')
 				.setDescription('Delete a warlock Wiki')
 				.addStringOption(option => option.setName('name').setDescription('Wiki Name').setRequired(true)),
+		)
+		.addSubcommand(subcommand =>
+			subcommand
+				.setName('rename')
+				.setDescription('Rename a warlock Wiki')
+				.addStringOption(option => option.setName('name').setDescription('Old Wiki Name').setRequired(true))
+				.addStringOption(option => option.setName('newname').setDescription('New Wiki Name').setRequired(true)),
 		),
 	async execute(interaction) {
 		const userID = interaction.user.id;
@@ -140,6 +147,24 @@ module.exports = {
 					type: QueryTypes.DELETE,
 				});
 				await interaction.reply(`Deleted wiki ${wikiName}`);
+			}
+			else {
+				await interaction.reply(`No wikis you own are named ${wikiName}!`);
+			}
+		}
+		else if (interaction.options.getSubcommand() === 'rename') {
+			let newWikiName = interaction.options.getString('newname') || null;
+			let existingOwnedWikis = await db.query('SELECT * FROM wikis WHERE ownerId = ? AND name = ?', {
+				replacements: [sqlUserID, wikiName],
+				type: QueryTypes.SELECT,
+			});
+
+			if (existingOwnedWikis?.length > 0) {
+				await db.query('UPDATE wikis SET name = ? WHERE ownerId = ? AND name = ?', {
+					replacements: [newWikiName, sqlUserID, wikiName],
+					type: QueryTypes.DELETE,
+				});
+				await interaction.reply(`Renamed wiki ${wikiName} to ${newWikiName}`);
 			}
 			else {
 				await interaction.reply(`No wikis you own are named ${wikiName}!`);
