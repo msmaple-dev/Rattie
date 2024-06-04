@@ -136,12 +136,12 @@ module.exports = {
 			}
 		}
 		else if (interaction.options.getSubcommand() === 'delete') {
-			let existingWikis = await db.query('SELECT * FROM wikis WHERE ownerId = ? AND name = ?', {
+			let existingOwnedWikis = await db.query('SELECT * FROM wikis WHERE ownerId = ? AND name = ?', {
 				replacements: [sqlUserID, wikiName],
 				type: QueryTypes.SELECT,
 			});
 
-			if (existingWikis?.length > 0) {
+			if (existingOwnedWikis?.length > 0) {
 				await db.query('DELETE FROM wikis WHERE ownerId = ? AND name = ?', {
 					replacements: [sqlUserID, wikiName],
 					type: QueryTypes.DELETE,
