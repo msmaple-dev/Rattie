@@ -133,4 +133,12 @@ function wikiEmbed(wiki) {
 	return embed;
 }
 
-module.exports = { statusEmbed, tarotEmbed, wikiEmbed };
+function wikiListEmbed(wikis, currentPage, wikiCount){
+	let embed = new EmbedBuilder().setTitle(`List of Wikis (${currentPage*25+1}-${Math.min((currentPage+1)*25, wikiCount)}/${wikiCount})`)
+	let wikiList = wikis.map((wiki, index) => `${(index+1)+((currentPage)*25)}. ${wiki.warlockName ? `${wiki.name} - ${wiki.warlockName}` : wiki.name}`).join('\n')
+	embed.setDescription(wikiList);
+	embed.setColor('#5e4415')
+	return embed;
+}
+
+module.exports = { statusEmbed, tarotEmbed, wikiEmbed, wikiListEmbed };

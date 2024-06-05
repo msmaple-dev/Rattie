@@ -1,7 +1,20 @@
-const { SlashCommandBuilder } = require('discord.js');
+const { SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, ComponentType, ButtonStyle } = require('discord.js');
 const db = require('../database');
 const { QueryTypes } = require('sequelize');
-const { wikiEmbed } = require('../components/embeds');
+const { wikiEmbed, wikiListEmbed } = require('../components/embeds');
+
+async function findWiki(wikiName){
+	let wikis = await db.query('SELECT * FROM wikis WHERE name = ?', {
+		replacements: [wikiName],
+		type: QueryTypes.SELECT,
+	});
+	if (wikis && wikis?.length > 0) {
+		return wikiEmbed({name: wikiName, ...wikis[0]});
+	}
+	else {
+		return false;
+	}
+}
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -12,6 +25,11 @@ module.exports = {
 				.setName('show')
 				.setDescription('View a specific Warlock Wiki')
 				.addStringOption(option => option.setName('name').setDescription('Wiki Name').setRequired(true)),
+		)
+		.addSubcommand(subcommand =>
+			subcommand
+				.setName('list')
+				.setDescription('List all wikis'),
 		)
 		.addSubcommand(subcommand =>
 			subcommand
@@ -56,20 +74,83 @@ module.exports = {
 	async execute(interaction) {
 		const userID = interaction.user.id;
 		const sqlUserID = BigInt(interaction.user.id);
-		const wikiName = interaction.options.getString('name').toLowerCase();
+		const wikiName = interaction.options.getString('name')?.toLowerCase();
 		if (interaction.options.getSubcommand() === 'show') {
-			let wikis = await db.query('SELECT * FROM wikis WHERE name = ?', {
-				replacements: [wikiName],
-				type: QueryTypes.SELECT,
-			});
-			if (wikis && wikis?.length > 0) {
-				const embed = wikiEmbed({name: wikiName, ...wikis[0]});
-				await interaction.reply({ embeds: [embed] });
+			let foundWiki = await findWiki(wikiName)
+			if (foundWiki) {
+				await interaction.reply({ embeds: [foundWiki] });
 			}
 			else {
-
 				await interaction.reply(`No wikis named ${wikiName}`);
 			}
+		}
+		else if (interaction.options.getSubcommand() === 'list') {
+			let selectQuery = 'SELECT name, warlockName FROM wikis ORDER BY name LIMIT ? OFFSET ?'
+			let currentPage = 0;
+			let selectLimit = 25;
+			let pageWikis = await db.query(selectQuery, {
+				replacements: [selectLimit, currentPage*25],
+				type: QueryTypes.SELECT,
+			});
+			const wikiCountQuery = await db.query('SELECT COUNT(id) FROM wikis', {
+				type: QueryTypes.SELECT
+			})
+			const wikiCount = wikiCountQuery[0]['COUNT(id)']
+			let prev = new ButtonBuilder()
+				.setCustomId('prev')
+				.setEmoji({name: '⬅'})
+				.setStyle(ButtonStyle.Primary)
+				.setDisabled(currentPage <= 0);
+			let next = new ButtonBuilder()
+				.setCustomId('next')
+				.setEmoji({name: '➡'})
+				.setStyle(ButtonStyle.Primary)
+				.setDisabled((currentPage+1)*25 > (wikiCount));
+			let selectOptions = pageWikis.map((wiki) => new StringSelectMenuOptionBuilder()
+				.setLabel(`${wiki.warlockName ? `${wiki.name} - ${wiki.warlockName}` : wiki.name}`)
+				.setValue(wiki.name)
+			)
+			let select = new StringSelectMenuBuilder()
+				.setCustomId('select')
+				.setPlaceholder('Select a wiki listed')
+				.setOptions(selectOptions);
+			let selectRow = new ActionRowBuilder().addComponents(select)
+			let buttonRow = new ActionRowBuilder().addComponents(prev, next);
+			let wikiList = wikiListEmbed(pageWikis, currentPage, wikiCount)
+
+			const response = await interaction.reply({embeds: [wikiList], components: [selectRow, buttonRow], ephemeral: true});
+
+			const selectCollector = response.createMessageComponentCollector({ componentType: ComponentType.StringSelect, time: 120_000 });
+			selectCollector.on('collect', async i => {
+				console.log(i.values[0])
+				const foundWiki = await findWiki(i.values[0]);
+				if (foundWiki) {
+					await i.reply({ embeds: [foundWiki] });
+				}
+				else {
+					await i.reply(`No wikis named ${foundWiki}`);
+				}
+			})
+
+			const buttonCollector = response.createMessageComponentCollector({ componentType: ComponentType.Button, time: 120_000 });
+			buttonCollector.on('collect', async i => {
+				currentPage += (i.customId === 'next' ? 1 : -1);
+				pageWikis = await db.query(selectQuery, {
+					replacements: [selectLimit, currentPage*25],
+					type: QueryTypes.SELECT,
+				})
+				wikiList = wikiListEmbed(pageWikis, currentPage, wikiCount)
+				prev.setDisabled(currentPage <= 0)
+				next.setDisabled((currentPage+1)*25 > (wikiCount))
+				selectRow = new ActionRowBuilder().addComponents(select)
+				buttonRow = new ActionRowBuilder().addComponents(prev, next)
+				selectOptions = pageWikis.map((wiki) => new StringSelectMenuOptionBuilder()
+					.setLabel(`${wiki.warlockName ? `${wiki.name} - ${wiki.warlockName}` : wiki.name}`)
+					.setValue(wiki.name)
+				)
+				select.setOptions(selectOptions)
+				await i.update({embeds: [wikiList], components: [selectRow, buttonRow], ephemeral: true})
+			})
 		}
 		else if (interaction.options.getSubcommand() === 'modify') {
 			let warlockName = interaction.options.getString('warlockname') || null;
