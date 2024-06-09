@@ -7,8 +7,8 @@ module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('rem')
 		.setDescription('Sets a reminder, to an accuracy of ±30s')
-		.addStringOption(option => option.setName('content').setDescription('Reminder Content').setRequired(true))
-		.addStringOption(option => option.setName('time').setDescription('Time until Reminder Hits (1y10w4d3h2m = 1 [y]ear, 10 [w]eeks, 4 [d]ays, 3 [h]ours, 2 [m]inutes)').setRequired(true)),
+		.addStringOption(option => option.setName('time').setDescription('Time until Reminder Hits (1y10w4d3h2m = 1 [y]ear, 10 [w]eeks, 4 [d]ays, 3 [h]ours, 2 [m]inutes)').setRequired(true))
+		.addStringOption(option => option.setName('content').setDescription('Reminder Content').setRequired(true)),
 	async execute(interaction) {
 		const sqlUserID = `${BigInt(interaction.user.id)}`;
 		const reminderContent = interaction.options.getString('content');
