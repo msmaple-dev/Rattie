@@ -15,9 +15,6 @@ const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('
 const tablesPath = path.join(__dirname, 'tables');
 const tablesFiles = fs.readdirSync(tablesPath).filter(file => file.endsWith('.js'));
 
-// const keyvPath = path.join(__dirname, 'keyv_stores');
-// const keyvFiles = fs.readdirSync(tablesPath).filter(file => file.endsWith('.js'));
-
 for (const file of tablesFiles) {
 	const filePath = path.join(tablesPath, file);
 	const table = require(filePath);
@@ -36,12 +33,6 @@ for (const file of commandFiles) {
 	}
 }
 
-
-
-// for (const file of keyvFiles) {
-// 	const filePath = path.join(tablesPath, file);
-// 	const keyv = require(filePath);
-// }
 
 client.cooldowns = new Collection();
 
