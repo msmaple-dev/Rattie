@@ -17,8 +17,8 @@ module.exports = {
 
 		let currentInit = await init_keyv.get(channelId)
 
-		if(currentInit?.looting === true){
-			if(currentInit.monster && currentInit.monster?.id){
+		if(currentInit.monster && currentInit.monster?.id){
+			if(currentInit?.looting === false){
 				let encounterId = await getEncounterID(channelId);
 				await db.query("UPDATE encounters SET rounds = ?, endTime = ?, status = ? WHERE encounterId = ?", {
 					replacements: [currentInit.round, Date.now(), 'Conceded', encounterId],
@@ -27,13 +27,15 @@ module.exports = {
 				await logDPR(encounterId, currentInit.dpr)
 				await init_keyv.delete(channelId)
 				await unpinChannelPins(interaction.channel)
-			}
-			else {
+			} else {
 				outputText = `The following players need to do \`\`/monster loot\`\` in this channel with their ending hp: ${currentInit.users.map(usr => `<@${usr.userID}>`).join(", ")}.\nInit will close automatically once everyone has rolled loot.`
 			}
-		} else {
+		}
+		else {
 			await init_keyv.delete(channelId)
 		}
+
+
 		await interaction.reply({content: outputText, allowedMentions: {}});
 	},
 };
