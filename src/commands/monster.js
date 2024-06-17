@@ -74,13 +74,27 @@ module.exports = {
             if (monster) {
                 let embed = monsterEmbed(monster)
                 if (interaction.options.getSubcommand() === 'fight') {
-                    let startingInit = newInit([{
-                        userID: userID,
-                        identifier: `${monster.name}'s Draw`,
-                        initVal: 100,
-                        decks: {}
-                    }, {userID: userID, identifier: `${monster.name} Acts`, initVal: 1, decks: {}}], monster)
-                    await init_keyv.set(channelId, startingInit);
+                    if(await init_keyv.has(channelId)){
+                        let currentInit = await init_keyv.get(channelId);
+                        currentInit.users.push({
+                            userID: userID,
+                            identifier: `${monster.name}'s Draw`,
+                            initVal: 100,
+                            decks: {}
+                        })
+                        currentInit.users.push({userID: userID, identifier: `${monster.name} Acts`, initVal: 1, decks: {}})
+                        currentInit.monster = monster;
+                        await init_keyv.set(channelId, currentInit)
+                    }
+                    else {
+                        let startingInit = newInit([{
+                            userID: userID,
+                            identifier: `${monster.name}'s Draw`,
+                            initVal: 100,
+                            decks: {}
+                        }, {userID: userID, identifier: `${monster.name} Acts`, initVal: 1, decks: {}}], monster)
+                        await init_keyv.set(channelId, startingInit)
+                    }
 
                     // Checks if channel type is a thread, then logs if it is
                     if (interaction.channel?.type === 11) {
