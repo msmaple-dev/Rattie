@@ -2,6 +2,7 @@ const { SlashCommandBuilder } = require('discord.js');
 const db = require('../database');
 const { QueryTypes } = require('sequelize');
 const { clientId } = require('../../config.json');
+const {unpinChannelPins} = require("../functions/chat_utils");
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -46,7 +47,9 @@ module.exports = {
 	async execute(interaction) {
 		const userID = interaction.user.id;
 		const sqlUserID = BigInt(interaction.user.id);
-		if (interaction.options.getSubcommand() === 'show') {
+		const subCommand = interaction.options.getSubcommand();
+
+		if (subCommand === 'show') {
 			const tagName = interaction.options.getString('name')?.toLowerCase();
 			const isPrivate = interaction.options.getBoolean('private') || false;
 			const pinTag = interaction.options.getBoolean('pin') || false;
@@ -73,7 +76,7 @@ module.exports = {
 				}
 			}
 		}
-		else if (interaction.options.getSubcommand() === 'add' || interaction.options.getSubcommand() === 'modify') {
+		else if (subCommand === 'add' || subCommand === 'modify') {
 			const tagName = interaction.options.getString('name')?.toLowerCase();
 			const content = interaction.options.getString('text');
 			const isPrivate = interaction.options.getBoolean('private') || false;
@@ -84,7 +87,7 @@ module.exports = {
 				type: QueryTypes.SELECT,
 			});
 
-			if(interaction.options.getSubcommand() === 'add'){
+			if(subCommand === 'add'){
 				if(matchingTags?.length > 0){
 					if(matchingTags[0].ownerId != sqlUserID){
 						await interaction.reply(`${isPrivate ? 'Private ' : ""}Tag ${tagName} already exists`);
@@ -96,7 +99,7 @@ module.exports = {
 						})
 					}
 				}
-			} else if(interaction.options.getSubcommand() === 'modify'){
+			} else if(subCommand === 'modify'){
 				if(matchingTags?.length > 0) {
 					await db.query(`DELETE FROM tags WHERE tags.name = ? AND tags.ownerId = ? AND tags.isPrivate = ?`, {
 						replacements: [tagName, sqlUserID, isPrivate],
@@ -112,9 +115,9 @@ module.exports = {
 			await db.query('REPLACE INTO tags(name, ownerId, content, isPrivate) VALUES (?, ?, ?, ?)', {
 				replacements: [tagName, sqlUserID, content, isPrivate]
 			})
-			interaction.reply(`${interaction.options.getSubcommand() === 'modify' ? 'Modified' : 'Added'} Tag ${tagName}!`)
+			interaction.reply(`${subCommand === 'modify' ? 'Modified' : 'Added'} Tag ${tagName}!`)
 		}
-		else if (interaction.options.getSubcommand() === 'delete') {
+		else if (subCommand === 'delete') {
 			const tagName = interaction.options.getString('name')?.toLowerCase();
 			const isPrivate = interaction.options.getBoolean('private') || false;
 
@@ -134,14 +137,8 @@ module.exports = {
 				await interaction.reply(`There are no ${isPrivate ? 'Private ' : ""}Tags named ${tagName} that you own!`);
 			}
 		}
-		else if (interaction.options.getSubcommand() === 'clear') {
-			await interaction.channel?.messages.fetchPinned().then((pinnedMessages) => {
-				pinnedMessages.forEach((msg) => {
-					if(msg.author.id == clientId){
-						msg.unpin().catch(console.error)
-					}
-				})
-			}).catch(console.error)
+		else if (subCommand === 'clear') {
+			await unpinChannelPins(interaction.channel)
 			await interaction.reply('Cleared all Rattie Pins!')
 		}
 	},
