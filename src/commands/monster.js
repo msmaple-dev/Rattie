@@ -8,12 +8,18 @@ const {newInit, nextTurn, uniqueUsers} = require("../functions/init_utils");
 const {unpinChannelPins} = require("../functions/chat_utils");
 const {unweightedSelect} = require("../functions/roll_utils");
 
-const monsterChoices = getValidMonsters().map(monster => {return {name:monster, value: monster}})
+const validMonsters = getValidMonsters();
+const monsterChoices = validMonsters.map(monster => {return {name:monster, value: monster}})
 
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('monster')
         .setDescription('Lets you fight or view Monster Info')
+        .addSubcommand(subcommand =>
+            subcommand
+                .setName('list')
+                .setDescription('Shows all monsters available to fight in Cursedice')
+        )
         .addSubcommand(subcommand =>
             subcommand
                 .setName('show')
@@ -57,7 +63,13 @@ module.exports = {
         const monsterName = interaction.options.getString('name');
         const subCommand = interaction.options.getSubcommand();
 
-        if (subCommand === 'show' || subCommand === 'fight') {
+        if (subCommand === 'list'){
+            let outputText = "__**List of Fightable Monsters**__\n"
+            let sortedMonsters = validMonsters.map(monsterId => getMonster(monsterId)).sort((a, b) => a.name.localeCompare(b.name)).sort((a, b) => a.scale - b.scale)
+            sortedMonsters.forEach(monster => {outputText+= `**${monster.name}** [${monster.id}] - Scale ${monster.scale}\n`})
+            interaction.reply(outputText);
+        }
+        else if (subCommand === 'show' || subCommand === 'fight') {
             let monster = getMonster(monsterName);
             if (monster) {
                 let embed = monsterEmbed(monster)
