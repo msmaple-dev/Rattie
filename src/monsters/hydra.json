@@ -1,0 +1,35 @@
+{
+  "ID": "hydra",
+  "Name": "The Sewer Hydra",
+  "Description": "Living in darkness, water, and filth, the Sewer Hydra channels Curse from a long bloodline of fable and history, of the Greek Hydra and the European Dragon. Each Head carries its own power, and destroying them is not nearly enough to take it down.",
+  "Scale": 3,
+  "Mechanics": "Has three differently colored heads: Cyan, Magenta, Yellow. Hitting the Hydra with 4 or more damage allows you to reduce your damage by 3 to Sever a head of your choice.\nAt the start of every round, the Hydra regrows all Severed Heads.",
+  "BasicAction": "If in melee, or a terrain effect, will Step out of it. Will Stride if a step is not enough. Spends remaining actions on Two Headed Breath, targeting the closest two Warlocks (targets the same Warlock twice if only one valid target).\n\n**Step**: 2 Squares\n**Stride**: 8 Squares\n\n**Two Headed Breath**: 1 Action. Agile. Targets two enemies for 9 Pierce. 10 Square range.",
+  "Size": "3x3",
+  "ArmorClass": [ 14, 15, 15, 15, 16 ],
+  "DamageThreshold": [
+    175,
+    176,
+    177,
+    178,
+    179,
+    179,
+    180,
+    180,
+    180,
+    181,
+    181,
+    182,
+    183,
+    184,
+    185
+  ],
+  "AttackCards": [
+    "Consume Cyan Pneuma | Two Headed Breath deals Hollow damage this round.\nTwo Headed Breath draws an additional Status Card per victim unless Cyan Head is Severed.",
+    "Consume Magenta Pneuma | Two Headed Breath deals Burn damage this round.\nTwo Headed Breath deals 3 additional damage enemy unless Magenta Head is Severed.",
+    "Consume Yellow Pneuma | Two Headed Breath deals Shock damage this round.\nTwo Headed Breath has +3 to hit unless Yellow Head is Severed.",
+    "Consume Red Pneuma | Two Headed Breath deals Burn damage this round.\nTwo Headed Breath has +2 to hit unless Yellow Head is Severed.\nTwo Headed Breath deals 2 Additional damage unless Magenta Head is Severed.",
+    "Consume Blue Pneuma | Two Headed Breath deals Hollow damage this round.\nTwo Headed Breath deals 2 Additional damage unless Magenta Head is Severed.\nTwo Headed Breath draws an additional Status Card per victim unless Cyan Head is Severed.",
+    "Consume Green Pneuma | Two Headed Breath deals Shock damage this round.\nTwo Headed Breath draws an additional Status Card per victim unless Cyan Head is Severed.\nTwo Headed Breath has +2 to hit unless Yellow Head is Severed."
+  ]
+}

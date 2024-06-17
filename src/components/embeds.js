@@ -122,4 +122,36 @@ function wikiListEmbed(wikis, currentPage, wikiCount){
 	return embed;
 }
 
-module.exports = { statusEmbed, tarotEmbed, wikiEmbed, wikiListEmbed };
+function monsterEmbed(monster){
+	let {id, name, description, scale, mechanics, basicAction, size} = monster;
+	let embed = new EmbedBuilder().setTitle(`${name} (${id})`).setDescription(`*${description}*`).setColor(monster_color);
+	let fields = [
+		(scale !== null && { name: `Scale`, value: `${scale}`, inline: true }),
+		(size !== null && { name: `Size`, value: `${size}`, inline: true }),
+		(mechanics !== null && { name: `Mechanics`, value: mechanics}),
+		(basicAction !== null && { name: `Instinct`, value: basicAction }),
+	].filter(a => a);
+	embed.addFields(...fields)
+	return embed
+}
+
+function lootEmbed(monsterId, lootString){
+	return new EmbedBuilder().setTitle(`Looting Monster: ${toProperCase(monsterId)}`).setDescription(lootString.replaceAll(/\*/gm, toProperCase(monsterId))).setColor(monster_color)
+}
+
+function monsterAttackedEmbed(monster, damage, currentDamage, attackRoll, monsterAC){
+	let embed = new EmbedBuilder().setTitle(attackRoll ? `Attacking ${monster.name} for ${damage} damage:` : `Applying ${damage} damage to ${monster.name}:`)
+	if(attackRoll){
+		embed.setDescription(`(${attackRoll}) vs (${monsterAC}): ${attackRoll >= monsterAC ? `Hit! ${damage} Dealt (${currentDamage} Total)` : `Missed by ${attackRoll - monsterAC}`}`)
+	} else {
+		embed.setDescription(`${damage} Damage Dealt (${currentDamage} Total)`)
+	}
+	embed.setColor(monster_color)
+	return embed;
+}
+
+function monsterDefeatedEmbed(users){
+	return new EmbedBuilder().setTitle(`Monster Down!`).setDescription(`The following users must do \`\`/monster loot\`\` before init will close:${users.map(usr => `<@${usr}>`).join(", ")}`).setColor(monster_color);
+}
+
+module.exports = { statusEmbed, tarotEmbed, wikiEmbed, wikiListEmbed, monsterEmbed, lootEmbed, monsterAttackedEmbed, monsterDefeatedEmbed };

@@ -1,0 +1,35 @@
+﻿{
+  "ID": "statue",
+  "Name": "The Living Statue",
+  "Description": "Hewn from Marble, Steel, or Stone, this once art-piece now roams like a man, bent on destroying every last bit of the world around it. Built of no flesh, it is unyielding to all but the fiercest of blows.",
+  "Scale": 5,
+  "Mechanics": "Reduces all damage from Strikes and Terrain Effects by 4.",
+  "BasicAction": "If outside of melee, steps into melee using a Stride if a Step is not enough. Otherwise, uses the rest of its actions on Stone Fists.\n\n**Step**: 1 Square\n**Stride**: 4 Squares\n\n**Stone Fists**: 1 Action. 18 Bash.",
+  "Size": "1x1",
+  "ArmorClass": [ 13, 14, 14, 14, 15 ],
+  "DamageTaken": 0,
+  "DamageThreshold": [
+    205,
+    206,
+    207,
+    208,
+    209,
+    209,
+    210,
+    210,
+    210,
+    211,
+    211,
+    212,
+    213,
+    214,
+    215
+  ],
+  "AttackCards": [
+    "Concrete Cannonball | Destroy all terrain features in a 3x3 area around me, then Strike two enemies within 6 for 12 Bash.",
+    "Roil and Rumble | Create Difficult Terrain in Starburst 2 centered on me that reduces Stride length of enemies by 2. Strike all enemies in the created terrain for 20 Bash.",
+    "Summon Crystal Heart | Create a Crystal Heart in an adjacent empty square. Can be destroyed with a Strike of DC 16.\nAt the end of every round, repair the Living Statue for 5 health as long as the Crystal Heart lives.",
+    "Rock Solid | This Round, increase my damage reduction by 2.",
+    "Destructive Divebomb | Step 12 towards the farthest away enemy in the most direct line possible, ignoring and destroying all terrain effects in its way.\nStrike all enemies within Starburst 2 of the target or along the line of travel for 5 Bash."
+  ]
+}

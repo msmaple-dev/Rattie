@@ -1,0 +1,36 @@
+﻿{
+  "ID": "inkwyrm",
+  "Name": "The Inkwyrm",
+  "Description": "Some implacable quality of this serpentine beast seems garish and offensive, like a careless stroke of blood-red paint on a restrained pencil sketch.",
+  "Scale": 3,
+  "Mechanics": "Paint damage always applies the **Melancholy** status.\n\n**Melancholy**\nWhen you Strike, suffer 2 damage for every stack of Melancholy you have. \n1 Stack of Melancholy can be removed for an Action.",
+  "BasicAction": "If it would hit somebody, its first Action is Staining Spray. If out of melee, or in a terrain effect, will Step to the closest safe position adjacent a Warlock. Will Stride if a Step is a not enough. Spends remaining actions on Tinted Teeth, targeting all adjacent Warlocks.\n\n**Step**: 2 Squares\n**Stride**: 8 Squares\n\n**Staining Spray**: 1 Action. 5 Normal Cone. 14 Paint.\n**Tinted Teeth**: 1 Action. 11 Paint.",
+  "Size": "2x2",
+  "ArmorClass": [ 14, 15, 15, 15, 16 ],
+  "DamageTaken": 0,
+  "DamageThreshold": [
+    175,
+    176,
+    177,
+    178,
+    179,
+    179,
+    180,
+    180,
+    180,
+    181,
+    181,
+    182,
+    183,
+    184,
+    185
+  ],
+  "AttackCards": [
+    "Proliferating Paint | The enemy with the largest stack of Melancholy explodes in a Starbust 3 pattern, Striking all enemies for 10 Paint. The source of the explosion cannot block this attack.",
+    "Flash of Inspiration | Strike the enemy with the lowest stack of Melancholy within 6 for 18 Paint. Then, that enemy gains 3 stacks of Melancholy.",
+    "Defend the Hoard | Strike the most enemies possible with a length 7 Normal Cone for 10 Paint.",
+    "Evoke Emotion: Grief | This Round, Melancholy reduces the Value of Strikes in addition to the damage.\nStrike an enemy in melee for 12 Paint.",
+    "Evoke Emotion: Fear | This Round, Melancholy reduces the distance of Strides in addition to the damage.\nStrike an enemy within range 6 for 10 Paint.",
+    "Evoke Emotion: Hatred | This Round, Melancholy deals double damage.\nAll enemies suffer 5 Paint."
+  ]
+}

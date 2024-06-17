@@ -1,6 +1,6 @@
 const { SlashCommandBuilder } = require('discord.js');
 const init_keyv = require('../keyv_stores/init_keyv')
-const nextTurn = require('../functions/init_utils');
+const {nextTurn} = require("../functions/init_utils");
 
 module.exports = {
 	cooldown: 3,
@@ -21,7 +21,9 @@ module.exports = {
 
 		if(currentInit){
 			if(currentInit?.round >= 0 && currentInit.currentTurn >= 0){
-				if(roundEnd || count || endTrue || currentInit.users[currentInit.currentTurn - 1].userID === interaction.user.id){
+				if((roundEnd || count > 1 || currentInit.currentTurn === currentInit.users.length) && currentInit.monster && currentInit.monster?.id){
+					outputText = "You are in a monster hunt! Please do /monster pass to end the round"
+				} else if(roundEnd || count || endTrue || currentInit.users[currentInit.currentTurn - 1].userID === interaction.user.id){
 					outputText = await nextTurn(channelId, (roundEnd ? -1 : (count || 1)))
 				} else {
 					outputText = "It's not your turn!"

@@ -1,0 +1,35 @@
+{
+  "ID": "soulless",
+  "Name": "The Soulless Husk",
+  "Description": "A mentally weak human whose Soul has disappeared, drained to nothing. The majority simply die, but some become monsters all their own. These pale white monsters have digit-less, long and thick limbs, and hunger for Pneuma- taking it from anything that lives, voracious in their appetites.",
+  "Scale": 4,
+  "Mechanics": "The Soulless Husk's Hollow damage heals it for the damage dealt.",
+  "BasicAction": "If out of melee, or in a terrain effect, will Step to the closest safe position adjacent a Warlock. Will Stride if a Step is a not enough. First attack will always be Siphoning Strike. Spends the rest of its Actions on Blunted Blows.\n\n**Step**: 2 Squares\n**Stride**: 8 Squares\n\n**Siphoning Strike**: 1 Action. Strikes weakest adjacent Warlock at +3 to hit. 14 Hollow.\n**Blunted Blows**: 1 Action. Strikes a random adjacent Warlock. 16 Bash.",
+  "Size": "2x2",
+  "ArmorClass": [ 14, 15, 15, 15, 16 ],
+  "DamageTaken": 10,
+  "DamageThreshold": [
+    173,
+    174,
+    175,
+    176,
+    177,
+    177,
+    178,
+    178,
+    178,
+    179,
+    179,
+    180,
+    181,
+    182,
+    183
+  ],
+  "AttackCards": [
+    "Lacking Grace | This round, all enemies have -2 to hit. My attacks this round to not suffer the Multi-Attack Penalty.",
+    "Lacking Vigor | This round, all enemies suffer 3 additional damage from all sources. I reduce all incoming damage by 2, to a minimum of 1.",
+    "Lacking Skill | This round, all enemies do not benefit from their Temperament. I deal half damage on a Secondary Success this round.",
+    "Lacking Speed | This round, all enemies halve their movement, rounding up. I gain an additional Action this turn.",
+    "Lacking Life | Strike all enemies within 6 Squares and in Line of Sight for 4 Hollow."
+  ]
+}

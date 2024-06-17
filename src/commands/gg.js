@@ -1,6 +1,10 @@
 const { SlashCommandBuilder } = require('discord.js');
 const init_keyv = require('../keyv_stores/init_keyv')
 const { clientId } = require('../../config.json');
+const {unpinChannelPins} = require("../functions/chat_utils");
+const db = require("../database");
+const {QueryTypes} = require("sequelize");
+const {logDPR, getEncounterID} = require("../functions/monster_utils");
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -11,15 +15,25 @@ module.exports = {
 
 		let outputText = "GG!"
 
-		await init_keyv.delete(channelId)
+		let currentInit = await init_keyv.get(channelId)
 
-		await interaction.channel?.messages.fetchPinned().then((pinnedMessages) => {
-			pinnedMessages.forEach((msg) => {
-				if(msg.author.id == clientId){
-					msg.unpin().catch(console.error)
-				}
-			})
-		}).catch(console.error)
-		await interaction.reply(outputText);
+		if(currentInit?.looting === false){
+			if(currentInit.monster && currentInit.monster?.id){
+				let encounterId = await getEncounterID(channelId);
+				await db.query("UPDATE encounters SET rounds = ?, endTime = ?, status = ? WHERE encounterId = ?", {
+					replacements: [currentInit.round, Date.now(), 'Conceded', encounterId],
+					type: QueryTypes.UPDATE
+				})
+				await logDPR(encounterId, currentInit.dpr)
+				await init_keyv.delete(channelId)
+				await unpinChannelPins(interaction.channel)
+			}
+			else {
+				outputText = `The following players need to do \`\`/monster loot\`\` in this channel with their ending hp: ${currentInit.users.map(usr => `<@${usr.userID}>`).join(", ")}.\nInit will close automatically once everyone has rolled loot.`
+			}
+		} else {
+			await init_keyv.delete(channelId)
+		}
+		await interaction.reply({content: outputText, allowedMentions: {}});
 	},
 };

@@ -2,6 +2,7 @@ const { SlashCommandBuilder } = require('discord.js');
 const init_keyv = require('../keyv_stores/init_keyv');
 const db = require('../database');
 const { QueryTypes } = require('sequelize');
+const {getUserDecks, newInit} = require("../functions/init_utils");
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -18,20 +19,7 @@ module.exports = {
 
 		let outputText = '';
 
-		let userCards = await db.query('SELECT * FROM cards WHERE ownerId IN (0, ?)', {
-			replacements: [sqlID],
-			type: QueryTypes.SELECT,
-		});
-
-		let decks = {};
-		for (const card of userCards) {
-			if (card.deckType in decks) {
-				decks[card.deckType].push({ ...card, used: false });
-			}
-			else {
-				decks[card.deckType] = [{ ...card, used: false }];
-			}
-		}
+		let decks = getUserDecks(sqlID)
 
 		let initTags = await db.query('SELECT * FROM tags WHERE isPrivate > 0 AND name = ? AND ownerId = ?', {
 			replacements: ['init', sqlID],
@@ -59,18 +47,10 @@ module.exports = {
 			currentUsers.sort((a, b) => (b.initVal - a.initVal))
 			currentInit.currentTurn = currentUsers.indexOf(currentTurnUser)+1
 			await init_keyv.set(channelId, currentInit)
-
 		}
 		else {
-			let newInit = {
-				currentTurn: 0,
-				round: 0,
-				users: [
-					{ userID: userID, identifier: userIdentifier, initVal: initVal, decks: decks},
-				],
-				trackers: [],
-			};
-			await init_keyv.set(channelId, newInit)
+			let startingInit = newInit([{ userID: userID, identifier: userIdentifier, initVal: initVal, decks: decks }])
+			await init_keyv.set(channelId, startingInit)
 			outputText = `Started new Init with User ${userIdentifier ? `${userIdentifier} (<@${userID}>)` : `<@${userID}>`} at Init ${initVal}`
 			if(!userIdentifier){
 				postInitTag = true;

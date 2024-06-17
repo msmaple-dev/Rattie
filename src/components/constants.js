@@ -847,4 +847,6 @@ let colors_data = [
 	{ ownerId: 0, deckType: 'hollow', color: '#000000' },
 ];
 
-module.exports = { severities, base_deck_data, colors_data, tarot_data }
+let monster_color = "#1f4913";
+
+module.exports = { severities, base_deck_data, colors_data, tarot_data, monster_color }
