@@ -17,7 +17,7 @@ module.exports = {
 
 		let currentInit = await init_keyv.get(channelId)
 
-		if(currentInit?.looting === false){
+		if(currentInit?.looting === true){
 			if(currentInit.monster && currentInit.monster?.id){
 				let encounterId = await getEncounterID(channelId);
 				await db.query("UPDATE encounters SET rounds = ?, endTime = ?, status = ? WHERE encounterId = ?", {

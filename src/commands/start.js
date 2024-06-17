@@ -1,8 +1,6 @@
 const { SlashCommandBuilder } = require('discord.js');
 const init_keyv = require('../keyv_stores/init_keyv')
 const {nextTurn, uniqueUsers} = require('../functions/init_utils');
-const {drawDeck} = require("../functions/roll_utils");
-const {unpinLatestEmbed} = require("../functions/chat_utils");
 const {statusEmbed} = require("../components/embeds");
 const {drawMonsterCard, initializeParticipants, getEncounterID} = require("../functions/monster_utils");
 
@@ -20,7 +18,7 @@ module.exports = {
 		if(currentInit){
 			if(currentInit?.round === 0){
 				outputText = await nextTurn(channelId)
-				if(currentInit.monster){initialMonsterDraw = true}
+				if(currentInit.monster && currentInit.monster?.id){initialMonsterDraw = true}
 			} else {
 				outputText = "Combat Has Already Started!"
 			}
@@ -34,7 +32,6 @@ module.exports = {
 			}
 			let encounterId = await getEncounterID(channelId);
 			let filteredUsers = uniqueUsers(currentInit.users)
-			console.log(encounterId, filteredUsers, currentInit.users)
 			await initializeParticipants(encounterId, filteredUsers)
 		}
 	},

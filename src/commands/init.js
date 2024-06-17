@@ -19,7 +19,7 @@ module.exports = {
 
 		let outputText = '';
 
-		let decks = getUserDecks(sqlID)
+		let decks = await getUserDecks(sqlID)
 
 		let initTags = await db.query('SELECT * FROM tags WHERE isPrivate > 0 AND name = ? AND ownerId = ?', {
 			replacements: ['init', sqlID],

@@ -70,7 +70,6 @@ module.exports = {
 		else {
 			let userCards = channelUser.decks;
 			let deck = userCards[deckType];
-			// console.log("Init Draw!")
 
 			if (!deck || deck.length <= 0) {
 				console.log('Init Draw Error');
