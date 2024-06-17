@@ -3,7 +3,7 @@ const init_keyv = require('../keyv_stores/init_keyv');
 const { statusEmbed } = require('../components/embeds');
 const { QueryTypes } = require('sequelize');
 const db = require('../database');
-const { selectFromWeightedString } = require('../functions/roll_utils');
+const { selectFromWeightedString, drawDeck} = require('../functions/roll_utils');
 const { severities } = require('../components/constants');
 
 module.exports = {
@@ -81,21 +81,8 @@ module.exports = {
 				return;
 			}
 
-			while (statusCards.length < drawCount) {
-				let usableCards = deck.filter(card => (!severity || card.severity === severity) && !card.used);
-				if (usableCards && usableCards.length > 0) {
-					let drawnCard = usableCards[Math.floor(Math.random() * usableCards.length)];
-					statusCards.push(drawnCard);
-					deck[deck.indexOf(drawnCard)] = { ...drawnCard, used: true };
-				}
-				else {
-					for (let card of deck) {
-						if (!severity || card.severity === severity) {
-							card.used = false;
-						}
-					}
-				}
-			}
+			statusCards = drawDeck(deck, drawCount, severity)
+			userCards[deckType] = deck;
 
 			await init_keyv.set(channel, channelInit);
 		}

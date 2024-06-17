@@ -39,12 +39,12 @@ function parseRoll(rollString = '1+6+0') {
 	rollCode = rollCode.replace(/x\d+/gm, '');
 
 	// Get Explicit Modifiers
-	let mod = rollCode.match(/[\+\-][\+\-]+\d+/g) ?
-		rollCode.match(/[\+\-][\+\-]+\d+/g).map(match => parseInt(match.replaceAll(/(?<=[\+-])[\+-]/g, ''))).flat().reduce((a, b) => a + b)
+	let mod = rollCode.match(/[+\-][+\-]+\d+/g) ?
+		rollCode.match(/[+\-][+\-]+\d+/g).map(match => parseInt(match.replaceAll(/(?<=[+-])[+-]/g, ''))).flat().reduce((a, b) => a + b)
 		: 0;
 	rollCode = rollCode
-		.replaceAll(/[\+\-][\+\-]+\d+/g, '')
-		.replace(/[\+\-][\+\-]+\d+/g, result => 'm' + result.slice(0, 1) + result.replace(/[\+\-]/g, ''))
+		.replaceAll(/[+\-][+\-]+\d+/g, '')
+		.replace(/[+\-][+\-]+\d+/g, result => 'm' + result.slice(0, 1) + result.replace(/[+\-]/g, ''))
 		.replace(/^\d+(?!\d?d\d+)/, result => result + 'd20');
 
 	// Get primary and secondary rolls
@@ -53,10 +53,10 @@ function parseRoll(rollString = '1+6+0') {
 		|| rollCode.match(/^\d+(?!\d*d\d)/m) && [parseInt(rollCode.match(/^\d+(?!\d*d\d)/m)[0]), 20]
 		|| [1, 20]);
 	rollCode = rollCode.replaceAll(/^\d+d\d+/gm, '').replaceAll(/^\d+(?!\d*d\d)/gm, '');
-	rolls.push(rollCode.match(/[\+-]\d+d\d+/) && rollCode.match(/[\+-]\d+d\d+/)[0].split('d').map(value => parseInt(value))
-		|| [1, rollCode.match(/[\+-]\d+(?!d)/) ? parseInt(rollCode.match(/[\+-]\d+(?!d)/)) : 6]);
-	rollCode = rollCode.match(/[\+-]\d+d\d+/gm) ? rollCode.replaceAll(/[\+-]\d+d\d+/gm, '') : rollCode.replace(/[\+-]\d+(?!d)/, '');
-	mod += rollCode.match(/[\+-]\d+(?!d)/g) && rollCode.match(/[\+-]\d+(?!d)/g).map(result => parseInt(result)).reduce((a, b) => a + b);
+	rolls.push(rollCode.match(/[+-]\d+d\d+/) && rollCode.match(/[+-]\d+d\d+/)[0].split('d').map(value => parseInt(value))
+		|| [1, rollCode.match(/[+-]\d+(?!d)/) ? parseInt(rollCode.match(/[+-]\d+(?!d)/)) : 6]);
+	rollCode = rollCode.match(/[+-]\d+d\d+/gm) ? rollCode.replaceAll(/[+-]\d+d\d+/gm, '') : rollCode.replace(/[+-]\d+(?!d)/, '');
+	mod += rollCode.match(/[+-]\d+(?!d)/g) && rollCode.match(/[+-]\d+(?!d)/g).map(result => parseInt(result)).reduce((a, b) => a + b);
 
 	return [rolls, mod, note, multi];
 }
@@ -88,7 +88,7 @@ function rollString(rolls = [[1, 20], [1, 6]], mod = 0, note = '', multi = 1) {
 			}
 		}).reduce((sum, a) => sum + a, 0) + mod;
 		let outputText = rollText + ((mod !== 0 || rollText === '') ? `${mod < 0 ? mod : '+' + mod}` : '') + `= **${Math.max(...results[0]) === rolls[0][1] ? '__' + resultsSum + '__' : resultsSum}**`;
-		outputArray.push(outputText.replaceAll(/^[\+-]+|[\+-]+$/g, ''));
+		outputArray.push(outputText.replaceAll(/^[+-]+|[+-]+$/g, ''));
 	}
 	return (note && note + ': ') + outputArray.join(', ');
 }
@@ -113,6 +113,7 @@ function selectFromWeightedString(string) {
 }
 
 function weightedSelect(spec){
+	console.log(spec)
 	var i, sum = 0, r = Math.random();
 	for (i in spec) {
 		sum += spec[i];
@@ -120,4 +121,28 @@ function weightedSelect(spec){
 	}
 }
 
-module.exports = { roll, multiRoll, arrayRoll, parseRoll, rollString, weightedSelect, selectFromWeightedString };
+function unweightedSelect(array){
+	return array[Math.floor(Math.random() * array.length)]
+}
+
+function drawDeck(deck, drawCount = 1, severity){
+	let statusCards = [];
+	while (statusCards.length < drawCount) {
+		let usableCards = deck.filter(card => (!severity || card.severity === severity) && !card.used);
+		if (usableCards && usableCards.length > 0) {
+			let drawnCard = usableCards[Math.floor(Math.random() * usableCards.length)];
+			statusCards.push(drawnCard);
+			deck[deck.indexOf(drawnCard)] = { ...drawnCard, used: true };
+		}
+		else {
+			for (let card of deck) {
+				if (!severity || card.severity === severity) {
+					card.used = false;
+				}
+			}
+		}
+	}
+	return statusCards;
+}
+
+module.exports = { roll, multiRoll, arrayRoll, parseRoll, rollString, weightedSelect, selectFromWeightedString, unweightedSelect, drawDeck };

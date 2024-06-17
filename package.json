@@ -11,13 +11,14 @@
   "license": "ISC",
   "dependencies": {
     "@keyv/sqlite": "^3.6.7",
-    "discord.js": "^14.8",
+    "discord.js": "^14.7.1",
     "keyv": "^4.5.4",
+    "lodash.camelcase": "^4.3.0",
     "sequelize": "^6.28.0",
     "sqlite3": "^5.1.4"
   },
   "devDependencies": {
     "eslint": "^8.32.0",
-    "jsdoc": "^4.0.3"
+    "jsdoc": "^4.0.0"
   }
 }

@@ -1,6 +1,6 @@
 const { SlashCommandBuilder } = require('discord.js');
 const init_keyv = require('../keyv_stores/init_keyv')
-const nextTurn = require('../functions/init_utils');
+const {nextTurn} = require('../functions/init_utils');
 
 module.exports = {
 	cooldown: 5,
