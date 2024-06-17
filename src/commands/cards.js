@@ -52,7 +52,9 @@ module.exports = {
 	async execute(interaction) {
 		const userID = interaction.user.id;
 		const sqlUserID = BigInt(interaction.user.id);
-		if (interaction.options.getSubcommand() === 'show') {
+		const subCommand = interaction.options.getSubcommand();
+
+		if (subCommand === 'show') {
 			const deckType = interaction.options.getString('decktype')?.toLowerCase() || null;
 			const specificCard = interaction.options.getString('card')?.toLowerCase() || null;
 			const isPrivate = interaction.options.getBoolean('private') || false;
@@ -111,7 +113,7 @@ module.exports = {
 			}
 
 		}
-		else if (interaction.options.getSubcommand() === 'add' || interaction.options.getSubcommand() === 'modify') {
+		else if (subCommand === 'add' || subCommand === 'modify') {
 			let cardName = interaction.options.getString('name') || null;
 			let deckType = interaction.options.getString('decktype')?.toLowerCase() || null;
 			let severity = interaction.options.getString('severity')?.toLowerCase() || null;
@@ -125,24 +127,29 @@ module.exports = {
 
 			const deckColor = interaction.options.getString('deckcolor') || colorDictionary[deckType] || `#FFFFFF`;
 
-			if(interaction.options.getSubcommand() === 'modify'){
-				let existingCards = await db.query('SELECT * FROM cards WHERE ownerId = ? AND deckType = ? AND cardName = ?', {
-					replacements: [sqlUserID, deckType, cardName],
-					type: QueryTypes.SELECT,
-				})
+			let existingCards = await db.query('SELECT * FROM cards WHERE ownerId = ? AND deckType = ? AND cardName = ?', {
+				replacements: [sqlUserID, deckType, cardName],
+				type: QueryTypes.SELECT,
+			})
+
+			if(subCommand === 'modify'){
 				if(existingCards?.length){
 					let existingCard = existingCards[0]
 					severity = severity || existingCard.severity
 					cardText = cardText || existingCard.cardText
-				} else {
-					interaction.reply(`No cards in deck ${deckType} are named ${cardName}!`)
-				}
-			}
 
-			await db.query('DELETE FROM cards WHERE ownerId = ? AND deckType = ? AND cardName = ?', {
-				replacements: [sqlUserID, deckType, cardName],
-				type: QueryTypes.DELETE,
-			})
+					await db.query('DELETE FROM cards WHERE ownerId = ? AND deckType = ? AND cardName = ?', {
+						replacements: [sqlUserID, deckType, cardName],
+						type: QueryTypes.DELETE,
+					})
+				} else {
+					await interaction.reply(`No cards in deck ${deckType} are named ${cardName}!`)
+					return
+				}
+			} else if(existingCards?.length){
+				await interaction.reply(`Card ${cardName} already exists in ${deckType}!`)
+				return
+			}
 
 			await db.query ('REPLACE INTO cards (ownerId, cardName, deckType, severity, cardText) VALUES (?, ?, ?, ?, ?)', {
 				replacements: [sqlUserID, cardName, deckType, severity, cardText],
@@ -156,19 +163,21 @@ module.exports = {
 			await db.query('REPLACE INTO colors(ownerId, deckType, color) VALUES (?, ?, ?)', {
 				replacements: [sqlUserID, deckType, deckColor]
 			})
-			interaction.reply(`${interaction.options.getSubcommand() === 'modify' ? 'Modified' : 'Added'} card ${cardName} ${interaction.options.getSubcommand() === 'modify' ? 'Of' : 'To'} Deck ${deckType}`)
+
+			await interaction.reply(`${subCommand === 'modify' ? 'Modified' : 'Added'} card ${cardName} ${subCommand === 'modify' ? 'Of' : 'To'} Deck ${deckType}`)
 		}
-		else if (interaction.options.getSubcommand() === 'delete') {
+		else if (subCommand === 'delete') {
 			const cardName = interaction.options.getString('name') || null;
 			const deckType = interaction.options.getString('decktype')?.toLowerCase() || null;
-			await db.query('DELETE FROM cards WHERE ownerId = ? AND deckType = ? AND cardName = ?', {
-				replacements: [sqlUserID, deckType, cardName],
-				type: QueryTypes.DELETE,
-			})
 
 			let existingCards = await db.query('SELECT * FROM cards WHERE ownerId = ? AND deckType = ? AND cardName = ?', {
 				replacements: [sqlUserID, deckType, cardName],
 				type: QueryTypes.SELECT,
+			})
+
+			await db.query('DELETE FROM cards WHERE ownerId = ? AND deckType = ? AND cardName = ?', {
+				replacements: [sqlUserID, deckType, cardName],
+				type: QueryTypes.DELETE,
 			})
 
 			if(!(existingCards?.length > 0)){
@@ -176,8 +185,10 @@ module.exports = {
 					replacements: [sqlUserID, deckType, cardName],
 					type: QueryTypes.DELETE,
 				})
+				await interaction.reply(`Deleted card ${cardName} of Deck ${deckType}`)
+			} else {
+				await interaction.reply(`No cards in deck ${deckType} are named ${cardName}!`)
 			}
-			interaction.reply(`Deleted card ${cardName} of Deck ${deckType}`)
 		}
 	},
 };
