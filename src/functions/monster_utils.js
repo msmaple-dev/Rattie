@@ -1,4 +1,4 @@
-const {weightedSelect, drawDeck, roll, unweightedSelect } = require("./roll_utils");
+const {weightedSelect, drawDeck, roll, unweightedSelect, rollString, arrayRoll } = require("./roll_utils");
 const {toProperCase, camelizeKeys} = require("./string_utils");
 const path = require("node:path");
 const fs = require("node:fs");
@@ -94,7 +94,11 @@ function getMonsterCards(monsterName){
 }
 
 function rollAC(baseAC, curseDie = 5){
-    return [baseAC, roll(curseDie)];
+    if(Array.isArray[baseAC]){
+        return [arrayRoll(baseAC), roll(curseDie)]
+    } else {
+        return [baseAC, roll(curseDie)];
+    }
 }
 
 async function logDPR(encounterId, dprArray){

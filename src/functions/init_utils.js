@@ -57,7 +57,7 @@ function getACModifiers(modifiers){
 	let categoryModifiers = modifiers.filter(modifier => modifier.category === 'defend');
 	let flatMod = categoryModifiers.filter(modifier => modifier.type === 'flat').reduce((a, current) => a + current.amount, 0);
 	let curseMod = categoryModifiers.filter(modifier => modifier.type === 'curse').reduce((a, current) => a + current.amount, 0);
-	return [flatMod, 5+curseMod]
+	return [flatMod, curseMod]
 }
 
 function getModifierString(modifier){

@@ -19,7 +19,7 @@ function multiRoll(amt = 1, die = 20) {
 
 /**
  * Takes an array of 2-long arrays (amt, die), then returns the results for each of those arrays
- * Eg: [[2, 20], [1, 6], [3, 4]] -> [[14, 2], [6, 5], [4, 1, 2]]
+ * Eg: [[2, 20], [1, 6], [3, 4]] -> [[14, 2], [6], [4, 1, 2]]
  * @param rolls - 2d Array of Roll Codes to perform
  * @returns {*}
  */

@@ -211,8 +211,8 @@ module.exports = {
             let monster = currentInit?.monster;
             let monsterHit = false;
             if(monster){
-                let [flatMod, monsterCurseDieSize] = getACModifiers(currentInit.modifiers);
-                let [baseAC, monsterCurseDieResult] = rollAC(monster.armorClass, monsterCurseDieSize);
+                let [flatMod, curseMod] = getACModifiers(currentInit.modifiers);
+                let [baseAC, monsterCurseDieResult] = rollAC(monster.armorClass, (monster.curseDie || 5)+curseMod);
                 if (subCommand === 'damage' || attackRoll >= parseInt(baseAC) + monsterCurseDieResult + parseInt(flatMod)) {
                     monsterHit = dmg > 0;
                     currentInit.damageDealt += dmg;

@@ -1,0 +1,33 @@
+ {
+    "ID": "Storm",
+    "Name": "Localized Storm",
+    "Description": "El Encantador itself. The Storm's pneuma wells in fronts and hotspots, creating localized points of unreality and ruin. This is one such hotspot.",
+    "Scale": 4,
+    "Mechanics": "The Localized Storm does not place on the map. Instead, when its card is drawn, it will place a **Phenomena** which can be targeted to damage the Localized Storm. Each **Phenomena** has a Threshold, an amount of damage that can be dealt to it to destabilize it, weakening the Localized Storm’s card. When enough damage is dealt to meet the Destabilization Threshold, the effects of the Localized Storm’s are replaced by a secondary effect.",
+    "Size": "???",
+    "ArmorClass": [[1, 20]],
+    "DamageThreshold": [
+      230,
+      240,
+      240,
+      240,
+      245,
+      245,
+      250,
+      250,
+      250,
+      255,
+      255,
+      265,
+      265,
+      270,
+      270
+    ],
+    "AttackCards": [
+      "Acidic Torrent | *Phenomena:* 3x3 Square placed adjacent to a random character\n*Destabilization Threshold:* 20\nSquares of Phenomena count as Flaming terrain.\nThe Localized Storm’s Instinct becomes: Step 8 squares, prioritizing moving over as many targets as possible. Each character it moves over saves against Flaming terrain and each square it moves over becomes Rugged terrain. Then it performs **Caustic Deluge** twice or **Acidic Spritz** twice if it is Destabilized.\n***Caustic Deluge:*** *Melee. Targets everyone. 35-X Burn, X is the distance between the Localized Storm and the target, X is doubled if the target does not have LoS of the Localized Storm.*\n***Acidic Spritz:*** *Melee. Targets everyone within four squares of the Localized Storm. 19 Burn.*",
+      "Spontaneous Outpour | *Phenomena:* Four squares, each one adjacent to a different character, if possible.\n*Destabilization Threshold:* 28\nThe Localized Storm’s Instinct becomes: All squares of Phenomena use **Geyser**, then perform **Gaseous Fog** twice. If Destabilized, instead two squares of Phenomena use **Geyser** (targeting as many as possible), then perform **Gaseous Fog**.\n***Geyser:*** *Starburst 3 centered on the Phenomena. All characters within must make a DC 15 Save against 8 Bash, 8 Shock. If a character is targeted by multiple Geysers, increase the damage by 2 Bash and 2 Shock, and up the DC by 2 per additional Geyser.*\n***Gaseous Fog:*** *Create a Starburst 5 Cloud centered on a Phenomena. Strikes have -2 to hit if entering or exiting this cloud, and Line of Sight cannot be drawn across it. Characters who end an action within the cloud must make a DC 18 Save against Aflame and Jolt. The Localized Storm ignores these effects.*",
+      "Sidereal Lightning | *Phenomena:* 3xInfinity line, touching map edge, prioritizing overlapping as many characters as possible.\n*Destabilization Threshold:* 28\nSquares of Phenomena count as Flaming terrain.\nThe Localized Storm’s Instinct becomes: Uses **Brilliant Heaven** twice, then uses **Castigate**. If it is Destabilized, it instead uses **Brilliant Heaven** once, then uses **Lightning Strikes** twice against random targets.\n***Brilliant Heaven:*** *Strike with +4 to hit. Targets all characters for 20 Burn. Takes -1 to hit per 3 squares of distance from the Phenomena. Full Cover counts as partial cover against this strike.*\n***Castigate:*** *All characters who are Ablaze take 5 Burn.*\n***Lightning Strikes:*** *Strike. Ignore Cover and LoS. Deals 16 Shock.*",
+      "Hungry Frost | *Phenomena:* Starburst 2 centered on a random character.\n*Destabilization Threshold:* 20\nThe character the Phenomena is centered on cannot leave the area of the Phenomena unless it is Destabilized.\nThe Localized Storm’s Instinct becomes: Uses **Encase**, then **Bite of Winter** twice. If it is Destabilized, it instead uses **Flurry**, then **Bite of Winter** twice.\n***Encase:*** *All targets within the Phenomena must make a DC 24 Save against X*4 Shock, where X is the difference between the DC and your Save roll. Caps at 30 Shock.*\n***Flurry:*** *All targets in a Starburst 5 centered on the Phenomena must make a DC 20 Save against X*4 Shock, where X is the difference between the DC and your Save roll. Caps at 30 Shock.*\n***Bite of Winter:*** *Targets the character closest to the center of the Phenomena who has not been targeted by this action this turn. Character makes a DC 18 Save. On a failure, they take Daze at the start of their next 3 turns. While any stacks of this Daze linger, their Strides have -2 squares of distance.*",
+      "Duplicating Hurricane | *Phenomena:* The Entire Map.\n*Destabilization Threshold:* 28\nThe Localized Storm’s Instinct becomes: Uses **Hurricane** thrice. If it is Destabilized, it instead uses **Hurricane** once, then **Twister** twice.\n***Hurricane:*** *All targets make a DC18 Save against 18 Bash.*\n***Twister:*** *Melee. Starburst 4 centered on any square. Agile. 16 Bash.*"
+        ]
+  }
