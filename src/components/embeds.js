@@ -159,7 +159,7 @@ function monsterAttackedEmbed(monster, damage, currentDamage, attackRoll, baseAC
 	let monsterAC = baseAC + monsterCurseDie + flatMod;
 	let embed = new EmbedBuilder().setTitle(attackRoll ? `Attacking ${monster.name} for ${damage} damage:` : `Applying ${damage} damage to ${monster.name}:`)
 	if(attackRoll){
-		embed.setDescription(`${attackRoll >= monsterAC ? `**${attackRoll}**` : attackRoll} vs ${monsterAC > attackRoll ? `**${monsterAC}**`: monsterAC} [${baseAC}+1d${monsterCurseDieSize}(${monsterCurseDie})${flatMod > 0 ? `+${flatMod}` : flatMod}]: ${attackRoll >= monsterAC ? `**Hit!** ${damage} Dealt (${currentDamage} Total)` : `Missed by ${attackRoll - monsterAC}`}`)
+		embed.setDescription(`${attackRoll >= monsterAC ? `**${attackRoll}**` : attackRoll} vs ${monsterAC > attackRoll ? `**${monsterAC}**`: monsterAC} [${baseAC}+1d${monsterCurseDieSize}(${monsterCurseDie})${flatMod ? (flatMod > 0 ? `+${flatMod}` : flatMod) : ''}]: ${attackRoll >= monsterAC ? `**Hit!** ${damage} Dealt (${currentDamage} Total)` : `Missed by ${attackRoll - monsterAC}`}`)
 	} else {
 		embed.setDescription(`${damage} Damage Dealt (${currentDamage} Total)`)
 	}

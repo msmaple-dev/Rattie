@@ -285,7 +285,7 @@ module.exports = {
                                     typeSums[modifier.type] += modifier.amount;
                                 }
                             }
-                            outputText += `\n\n**${modifierCategories[category]} Modifiers** (Rolling at 1d20+1d${typeSums['curse'] && typeSums['curse'] !== 0 ? Math.max(1, 6-typeSums['curse']) : 6}${typeSums['flat'] !== 0 ? (typeSums['flat'] > 0 ? `+${typeSums['flat']}` : `${typeSums['flat']}`) : ''})\n`
+                            outputText += `\n\n**${modifierCategories[category]} Modifiers** (Rolling at 1d20+1d${typeSums['curse'] && typeSums['curse'] !== 0 ? Math.max(1, 6+typeSums['curse']) : 6}${typeSums['flat'] !== 0 ? (typeSums['flat'] > 0 ? `+${typeSums['flat']}` : `${typeSums['flat']}`) : ''})\n`
                             outputText += `${categoryModifiers.map(modifier => getModifierString(modifier)).join('\n')}`
                         }
                     }
