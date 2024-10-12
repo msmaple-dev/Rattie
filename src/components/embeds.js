@@ -138,7 +138,7 @@ function wikiListEmbed(wikis, currentPage, wikiCount){
 function monsterEmbed(monster){
 	let {id, name, description, scale, mechanics, basicAction, size, damageThreshold} = monster;
 	const midpoint = damageThreshold && damageThreshold?.length && Math.floor(damageThreshold?.length / 2); // 2.
-	const medianHP = midpoint ? (damageThreshold.length % 2 === 1 ?	damageThreshold[midpoint] :	(damageThreshold[midpoint - 1] + damageThreshold[midpoint]) / 2) : null;
+	const medianHP = midpoint ? (damageThreshold.length % 2 === 1 ?	damageThreshold[midpoint] :	(damageThreshold[midpoint - 1] + damageThreshold[midpoint]) / 2) : (damageThreshold || null);
 	let embed = new EmbedBuilder().setTitle(`${name} (${id})`).setDescription(`*${description}*`).setColor(monster_color);
 	let fields = [
 		(scale !== null && { name: `Scale`, value: `${scale}`, inline: true }),
