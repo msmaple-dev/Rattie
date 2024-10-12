@@ -1,8 +1,7 @@
  {
     "ID": "serpent",
     "Name": "Nacre-Scaled",
-    "Description2": "Nacre-Scaled are a broad strain of monsters known for dwelling in the ocean depths. They draw upon the archetypes of world-serpents, coiling in slumber deep underwater. Mermaids tame and domesticate them, using their gullets to imbue tools with pneuma. Lately, their scales have begun to grow pearlescent, a side-effect of the pearls the mermaids have recently begun to feed them.",
-    "Description": "???",
+    "Description": "Nacre-Scaled are a broad strain of monsters known for dwelling in the ocean depths. They draw upon the archetypes of world-serpents, coiling in slumber deep underwater. Mermaids tame and domesticate them, using their gullets to imbue tools with pneuma. Lately, their scales have begun to grow pearlescent, a side-effect of the pearls the mermaids have recently begun to feed them.",
     "Scale": 4,
     "Mechanics": "The Nacre-Scaled places *Pearls* with its actions. When a character performs a non-Movement action while adjacent or diagonal to a *Pearl*, the Nacre-Scaled interrupts and performs **Coiling Charge**, consuming that *Pearl*. When beginning movement adjacent to a *Pearl*, a character may halve their movement (rounding down) to inflict up to 3 Knockback to that *Pearl*.",
     "BasicAction": "If not adjacent to a target, move towards the nearest target. Use **Pearlescent Retch**. Uses **Barrel Through** with remaining actions.\n\n**Step:** 2 Squares\n**Stride:** 4 Squares\n\n**Pearlescent Retch:** Place a **Pearl** within 5 squares, placed so it is adjacent or diagonal to as many targets as possible.\n**Barrel Through:** Step 2 squares, moving to be adjacent or sharing the space of as many targets as possible. All targets adjacent or sharing its space are targeted by this Strike. Melee. 17 Bash.\n**Coiling Charge:** The Nacre-Scaled Steps adjacent to the acting character by the most direct path, then targets them. Melee. 17 Bash, On-Hit: The Nacre-Scaled gains +2 to hit with Strikes this turn.",
@@ -15,7 +14,8 @@
       "Retched Sword | Targets all characters within three squares of the Nacre-Scaled. Melee. 16 Slash, On-Hit: Draw an additional Slash status",
       "Parasitic Pearl | When this card is drawn, the *Pearl* nearest to the most characters becomes a *Pearlhusk*. It has a Defense roll of 14 and is destroyed when it is hit by 2-Scale of Strikes. It acts before the Nacre-Scaled, Striding 6 squares towards the nearest character and then exploding, forcing characters within a Centered Starburst 3 to a DC18 Save against 15 Hollow. It then becomes a *Pearl*.",
       "Coil The World | When this card is drawn, the Nacre-Scaled doubles in size, then selects the side of its body with the most characters. The Nacre-Scaled Steps in the chosen direction until it reaches a piece of full cover, destroying all terrain and partial cover it moves over (without saving against it). All characters it overlaps as part of this movement take 20 Bash."
-        ]
+    ],
+    "IsPreview": true
   }
 
 

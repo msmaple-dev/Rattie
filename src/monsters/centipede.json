@@ -2,8 +2,7 @@
   {
     "ID": "centipede",
     "Name": "Sky Centipede",
-    "Description2": "Bearers of fickle winds, Sky Centipedes are blown about by the currents of pneuma that come with great misfortune and disastrous storms. Their segmented insectoid bodies are held aloft by a thousand and one wings, each flap stirring up ill omen and misfortune as they scurry through the air.",
-    "Description": "???",
+    "Description": "Bearers of fickle winds, Sky Centipedes are blown about by the currents of pneuma that come with great misfortune and disastrous storms. Their segmented insectoid bodies are held aloft by a thousand and one wings, each flap stirring up ill omen and misfortune as they scurry through the air.",
     "Scale": 3,
     "Mechanics": "The Sky Centipede inflicts Misfortune with some of its actions. The current card will list a number of action types that are Ill Omens, when a character performs an action of that type, that character clears all Misfortune and takes 6 Typeless damage per Misfortune cleared. One instance of Misfortune can be cleared as an action.",
     "BasicAction": "If not adjacent to a target, move to the nearest target. Uses **Jaws That Catch** twice. Uses **Tail Whip** with remaining actions.\n\n**Step:** 4 Squares\n**Stride:** 10 Squares\n\n**Jaws That Catch:** Melee. 16 Typeless, On-Hit: Misfortune\n**Tail Whip:** The Sky Centipede’s tail rotates halfway around its head. All characters the tail moves adjacent to during this rotation are targeted by this Strike. Melee. 24 Bash.",
@@ -32,7 +31,8 @@
       "Whirlwind | *Ill Omen: Boost, Movement (Grimoire-granted Movement actions, not Stride and Step).*\nInflict Knockback 5 towards the Sky Centipede on all characters. Characters who end this Knockback adjacent to the Sky Centipede take 16 Typeless and Misfortune.",
       "Fickle Gale | *Ill Omen: Boost, Utility.*\nMelee. Wide 8 Cone. 12 Bash and Knockback 6.",
       "Wanton Misfortune | *Ill Omen: Strike.*\nInflict one Misfortune on all characters."
-        ]
+    ],
+    "IsPreview": true
   }
 
 

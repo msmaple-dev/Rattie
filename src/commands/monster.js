@@ -128,43 +128,47 @@ module.exports = {
             if (monster) {
                 let embed = monsterEmbed(monster)
                 if (interaction.options.getSubcommand() === 'fight') {
-                    if(await init_keyv.has(channelId)){
-                        let currentInit = await init_keyv.get(channelId);
-                        currentInit.users.push({
-                            userID: userID,
-                            identifier: `${monster.name}'s Draw`,
-                            initVal: 100,
-                            decks: {}
-                        })
-                        currentInit.users.push({userID: userID, identifier: `${monster.name} Acts`, initVal: 1, decks: {}})
-                        currentInit.monster = monster;
-                        currentInit.looting = false;
-                        currentInit.damageDealt = 0;
-                        currentInit.dpr = [];
-                        currentInit.monsterCards = monster && monster.attackCards ? monster.attackCards.map(card => {return {name: card.split(" | ")[0], effect: card.split(" | ")[1], severity: 'Monster', color: monster_color}}) : null;
-                        currentInit.modifiers = [];
-                        currentInit.modifiersApplied = 0;
-                        await init_keyv.set(channelId, currentInit)
-                    }
-                    else {
-                        let startingInit = newInit([{
-                            userID: userID,
-                            identifier: `${monster.name}'s Draw`,
-                            initVal: 100,
-                            decks: {}
-                        }, {userID: userID, identifier: `${monster.name} Acts`, initVal: 1, decks: {}}], monster)
-                        await init_keyv.set(channelId, startingInit)
-                    }
+                    if(monster.isPreview){
+                        await interaction.reply("You cannot fight that monster yet!")
+                    } else {
+                        if(await init_keyv.has(channelId)){
+                            let currentInit = await init_keyv.get(channelId);
+                            currentInit.users.push({
+                                userID: userID,
+                                identifier: `${monster.name}'s Draw`,
+                                initVal: 100,
+                                decks: {}
+                            })
+                            currentInit.users.push({userID: userID, identifier: `${monster.name} Acts`, initVal: 1, decks: {}})
+                            currentInit.monster = monster;
+                            currentInit.looting = false;
+                            currentInit.damageDealt = 0;
+                            currentInit.dpr = [];
+                            currentInit.monsterCards = monster && monster.attackCards ? monster.attackCards.map(card => {return {name: card.split(" | ")[0], effect: card.split(" | ")[1], severity: 'Monster', color: monster_color}}) : null;
+                            currentInit.modifiers = [];
+                            currentInit.modifiersApplied = 0;
+                            await init_keyv.set(channelId, currentInit)
+                        }
+                        else {
+                            let startingInit = newInit([{
+                                userID: userID,
+                                identifier: `${monster.name}'s Draw`,
+                                initVal: 100,
+                                decks: {}
+                            }, {userID: userID, identifier: `${monster.name} Acts`, initVal: 1, decks: {}}], monster)
+                            await init_keyv.set(channelId, startingInit)
+                        }
 
-                    // Checks if channel type is a thread, then logs if it is
-                    if (interaction.channel?.type === 11) {
-                        await db.query("INSERT INTO encounters (channelId, rounds, startTime, endTime, monster) VALUES (?, ?, ?, ?, ?)", {
-                            replacements: [channelId, null, Date.now(), null, monster.id],
-                            type: QueryTypes.INSERT,
-                        })
+                        // Checks if channel type is a thread, then logs if it is
+                        if (interaction.channel?.type === 11) {
+                            await db.query("INSERT INTO encounters (channelId, rounds, startTime, endTime, monster) VALUES (?, ?, ?, ?, ?)", {
+                                replacements: [channelId, null, Date.now(), null, monster.id],
+                                type: QueryTypes.INSERT,
+                            })
+                        }
+                        await interaction.reply(`Started new fight against ${monster.name}, managed by <@${userID}>!`)
+                        await interaction.followUp({embeds: [embed]}).then(msg => msg.pin('Monster Hunt Pin'))
                     }
-                    await interaction.reply(`Started new fight against ${monster.name}, managed by <@${userID}>!`)
-                    await interaction.followUp({embeds: [embed]}).then(msg => msg.pin('Monster Hunt Pin'))
                 } else {
                     await interaction.reply({embeds: [embed]})
                 }

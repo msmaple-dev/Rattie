@@ -136,10 +136,10 @@ function wikiListEmbed(wikis, currentPage, wikiCount){
 }
 
 function monsterEmbed(monster){
-	let {id, name, description, scale, mechanics, basicAction, size, damageThreshold, armorClass, curseDie} = monster;
+	let {id, name, description, scale, mechanics, basicAction, size, damageThreshold, armorClass, curseDie, isPreview} = monster;
 	const midpoint = damageThreshold && damageThreshold?.length && Math.floor(damageThreshold?.length / 2); // 2.
 	const medianHP = midpoint ? (damageThreshold.length % 2 === 1 ?	damageThreshold[midpoint] :	(damageThreshold[midpoint - 1] + damageThreshold[midpoint]) / 2) : (damageThreshold || null);
-	let embed = new EmbedBuilder().setTitle(`${name} (${id}) - Scale ${scale}`).setDescription(`*${description}*`).setColor(monster_color);
+	let embed = new EmbedBuilder().setTitle(`${name} (${id}) - Scale ${scale}`).setDescription(`*${isPreview ? "???\n[This monster is not yet available to fight.]" : description}*`).setColor(monster_color);
 	let fields = [
 		(size !== null && { name: `Size`, value: `${size}`, inline: true }),
 		(medianHP !== null && { name: `Median HP`, value: `${medianHP}`, inline: true }),
