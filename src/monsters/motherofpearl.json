@@ -30,5 +30,6 @@
     "Unintended Outburst | When this is drawn, designate the direction from the Mother of Pearl which has the most characters.\nAll targets in the designated direction of the Mother of Pearl take 15 Shock.",
     "Drown in Lapiz | This round, Fracture places a Lazuli Effigy adjacent to the nearest character.\n\n**Lazuli Effigy** - Destroyed when struck by a Strike at Scale 1, or two at Scale 0.5. Explodes in a Starburst 3 when destroyed, all targets within the area make a Stun save at Scale 1.5. On a failure, they cannot move out of or target characters outside of the Starburst 2 next turn.\n**Attack** - Lapiz Beam. Ranged. Normal 5 Cone. 15 Shock, Knocked Back 4 towards it.",
     "Lapidarist's Nightmare | If there are three or more Effigies, the Instinct becomes **Facet, Facet, Facet.**\nOtherwise, the Instinct becomes: **Fracture, Fracture, Facet**\n"
-  ]
+  ],
+  "isRetired": true
 }
