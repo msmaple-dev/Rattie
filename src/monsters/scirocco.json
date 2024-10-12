@@ -1,34 +1,19 @@
 {
-    "ID": "Scirocco",
+    "ID": "scirocco",
     "Name": "The Scirocco Skirmisher",
-    "Description": "A rider atop a sand horse, the Scirocco Skirmisher is nothing more than a mirage. Cloth billowed by the wind, it somehow appears resplendant and imposing. The Scirocco Skirmisher wields a shortbow made of wind and a lance made of sand, carrying with it the heat of desert sandstorms and cruel noontime suns. It rides along El Encantador's winds, drawing from the pneuma and fighting those caught in its wake.",
+    "Description2": "A rider atop a sand horse, the Scirocco Skirmisher is nothing more than a mirage. Cloth billowed by the wind, it somehow appears resplendant and imposing. The Scirocco Skirmisher wields a shortbow made of wind and a lance made of sand, carrying with it the heat of desert sandstorms and cruel noontime suns. It rides along El Encantador's winds, drawing from the pneuma and fighting those caught in its wake.",
+    "Description": "???",
     "Scale": 3,
     "Mechanics": "The Scirocco does not provoke reactions when performing actions. When the Scirocco gains a Secondary Success on a Strike, it inflicts 2 Typeless damage to the contesting character. The Scirocco’s Instinct is determined by the turn’s card, selected from its Ranged Instinct or its Melee Instinct.",
-    "BasicAction": "Ranged Instinct - Step. Then uses Gale Shortbow twice.\nMelee Instinct - If not adjacent, Step adjacent to any target, preferring a position where it can hit multiple targets with Dune Lance. Then, use Dune Lance with remaining actions.\n**Step:** 6 Squares\n**Gale Shortbow:** 2xInfinity Line beginning adjacent. Ranged. 14 Rend, On-Hit: Ablaze\n**Dune Lance:** 1x3 Line beginning adjacent. 16 Rend",
+    "BasicAction": "**Ranged Instinct** - Step. Then uses **Gale Shortbow** twice.\n**Melee Instinct** - If not adjacent, Step adjacent to any target, preferring a position where it can hit multiple targets with **Dune Lance**. Then, use **Dune Lance** with remaining actions.\n\n**Step:** 6 Squares\n\n**Gale Shortbow:** 2xInfinity Line beginning adjacent. Ranged. 14 Rend, On-Hit: Ablaze\n**Dune Lance:** 1x3 Line beginning adjacent. 16 Rend",
     "Size": "2x2",
     "ArmorClass": 12,
-    "DamageThreshold": [
-      203,
-      203,
-      205,
-      206,
-      208,
-      209,
-      210,
-      210,
-      210,
-      211,
-      212,
-      213,
-      214,
-      214,
-      220
-    ],
+    "DamageThreshold": 210,
     "AttackCards": [
       "On The Horizon | Step to the nearest map edge. **Gale Shortbow** is a 5xInfinity Line. Instinct becomes: Use **Gale Shortbow** thrice.",
       "Sandstorm Dance | Instinct becomes: If adjacent to a target, Step 3 away; if not adjacent to a target, perform **Dervish Charge**. Repeat with remaining actions.\n**Dervish Charge:** *Step adjacent to the nearest target. Melee. 20 Burn, On-Hit: Knockback 3.*",
       "Sunset | *Ranged Instinct.*\nRanged. Starburst 5 centered within 6 squares. 15 Burn. The Scirocco Skirmisher freely Steps to any square in that Starburst after the attack, prioritzing squares that aren’t adjacent to a target.",
       "Crashing Dunes | *Melee Instinct.*\nAll characters are targeted by this Strike. Melee. 25 Burn. Targets with cover against this Strike only take 10 Burn.\nThe Scirocco has halved movement this turn.",
       "Swallowed By The Storm | *Melee Instinct.*\nThe Scirocco Skirmisher Steps adjacent to the last character to successfully Strike it, then forces a DC23 Save against the effects of the Grapple quirk. This DC is reduced by 2 for each time the Scirocco Skirmisher is struck this turn, to a minimum of 15. If a character is grappled by the Scirocco Skirmisher, it gains an additional action and its Instinct becomes: Use **Red Horizon** with all actions.\n**Red Horizon:** *Melee. Agile. 16 Burn.*"
-        ]
+    ]
   }
