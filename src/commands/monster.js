@@ -120,7 +120,7 @@ module.exports = {
         if (subCommand === 'list'){
             let outputText = "__**List of Fightable Monsters**__\n"
             let sortedMonsters = validMonsters.map(monsterId => getMonster(monsterId)).sort((a, b) => a.name.localeCompare(b.name)).sort((a, b) => a.scale - b.scale)
-            sortedMonsters.forEach(monster => {outputText+= `**${monster.name}** [${monster.id}] - Scale ${monster.scale}\n`})
+            sortedMonsters.forEach(monster => {outputText+= `${monster.isPreview ? `*${monster.name}`: `**${monster.name}**`} [${monster.id}] - Scale ${monster.scale}${monster.isPreview ? ' [Preview]*': ''}\n`})
             interaction.reply(outputText);
         }
         else if (subCommand === 'show' || subCommand === 'fight') {
