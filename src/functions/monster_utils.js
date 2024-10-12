@@ -1,4 +1,4 @@
-const {weightedSelect, drawDeck} = require("./roll_utils");
+const {weightedSelect, drawDeck, roll, unweightedSelect } = require("./roll_utils");
 const {toProperCase, camelizeKeys} = require("./string_utils");
 const path = require("node:path");
 const fs = require("node:fs");
@@ -8,6 +8,8 @@ const DPR = require("../tables/dpr");
 const db = require("../database");
 const {QueryTypes} = require("sequelize");
 const Participants = require("../tables/participants");
+const { statusEmbed } = require('../components/embeds');
+const { monster_color } = require('../components/constants');
 
 const monstersPath = path.join(__dirname.replace('\\functions', ''), 'monsters');
 const monsterFiles = fs.readdirSync(monstersPath).filter(file => file.endsWith('.json'));
@@ -31,6 +33,30 @@ function getMonster(name) {
     return monsters[name.toLowerCase()];
 }
 
+function concCheck(damage, damageThreshold){
+    if(Array.isArray(damageThreshold)){
+        return damage >= unweightedSelect(damageThreshold);
+    } else {
+        return damage >= (damageThreshold + unweightedSelect([
+            -8,
+            -5,
+            -4,
+            -3,
+            -2,
+            -1,
+            0,
+            0,
+            0,
+            1,
+            2,
+            3,
+            5,
+            8,
+            10
+        ]))
+    }
+}
+
 function getValidMonsters(){
     return Object.keys(monsters)
 }
@@ -52,8 +78,27 @@ async function drawMonsterCard(channelId, channel, clearLast = true){
     return [cardDrawn, outputText]
 }
 
+function attackCardsToObject(attackCards){
+    return attackCards ? attackCards.map(card => {return {name: card.split(" | ")[0], effect: card.split(" | ")[1], severity: 'Monster', color: monster_color}}) : null
+}
+
+function getMonsterCards(monsterName){
+    let monster = getMonster(monsterName);
+    let monsterCards = attackCardsToObject(monster.attackCards);
+    let embedArray = [];
+    for (let selectedCard of monsterCards) {
+        let embed = statusEmbed(selectedCard.name, selectedCard.effect, selectedCard.severity, selectedCard.color);
+        embedArray.push(embed);
+    }
+    return embedArray;
+}
+
+function rollAC(baseAC, curseDie = 5){
+    return [baseAC, roll(curseDie)];
+}
+
 async function logDPR(encounterId, dprArray){
-    let dprValues = dprArray.map((dpr, index) => {return {encounterId: encounterId, round: index+1, damage: dpr}})
+    let dprValues = dprArray?.slice(1).map((dpr, index) => {return {encounterId: encounterId, round: index, damage: dpr}})
     await DPR.bulkCreate(dprValues)
 }
 
@@ -66,8 +111,8 @@ async function getEncounterID(channelId){
 }
 
 async function initializeParticipants(encounterId, users){
-    let userValues = users.map(usr => {return {encounterId: encounterId, userId: usr.userID, endHP: null}})
+    let userValues = users.map(usr => {return {encounterId: encounterId, userId: usr.userID, damageTaken: null}})
     await Participants.bulkCreate(userValues);
 }
 
-module.exports = {drawMonsterCard, drawDefaultLoot, getMonster, getValidMonsters, logDPR, getEncounterID, initializeParticipants}
+module.exports = {drawMonsterCard, drawDefaultLoot, getMonster, getValidMonsters, logDPR, getEncounterID, initializeParticipants, rollAC, getMonsterCards, attackCardsToObject, concCheck}

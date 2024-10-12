@@ -48,6 +48,11 @@ module.exports = {
 				.setDescription('Delete a card')
 				.addStringOption(option => option.setName('name').setDescription('Card Name').setRequired(true))
 				.addStringOption(option => option.setName('decktype').setDescription('Deck Type').setRequired(true)),
+		).addSubcommand(subcommand =>
+			subcommand
+				.setName('clear')
+				.setDescription('Clear out an entire deck you own.')
+				.addStringOption(option => option.setName('decktype').setDescription('Deck Type').setRequired(true)),
 		),
 	async execute(interaction) {
 		const userID = interaction.user.id;
@@ -93,7 +98,9 @@ module.exports = {
 
 					await interaction.reply({ embeds: replyArray.slice(0, 5), ephemeral: isPrivate });
 					if (replyArray.length > 5) {
-						await interaction.followUp({ embeds: replyArray.slice(5), ephemeral: isPrivate});
+						for(let i = 5; i < replyArray.length; i = i + 5){
+							await interaction.followUp({ embeds: replyArray.slice(i, i + 5), ephemeral: isPrivate});
+						}
 					}
 				}
 			}
@@ -155,14 +162,16 @@ module.exports = {
 				replacements: [sqlUserID, cardName, deckType, severity, cardText],
 			})
 
-			await db.query('DELETE FROM colors WHERE ownerId = ? AND deckType = ?', {
-				replacements: [sqlUserID, deckType],
-				type: QueryTypes.DELETE,
-			})
+			if(interaction.options.getString('deckcolor')){
+				await db.query('DELETE FROM colors WHERE ownerId = ? AND deckType = ?', {
+					replacements: [sqlUserID, deckType],
+					type: QueryTypes.DELETE,
+				})
 
-			await db.query('REPLACE INTO colors(ownerId, deckType, color) VALUES (?, ?, ?)', {
-				replacements: [sqlUserID, deckType, deckColor]
-			})
+				await db.query('REPLACE INTO colors(ownerId, deckType, color) VALUES (?, ?, ?)', {
+					replacements: [sqlUserID, deckType, deckColor]
+				})
+			}
 
 			await interaction.reply(`${subCommand === 'modify' ? 'Modified' : 'Added'} card ${cardName} ${subCommand === 'modify' ? 'Of' : 'To'} Deck ${deckType}`)
 		}
@@ -174,21 +183,40 @@ module.exports = {
 				replacements: [sqlUserID, deckType, cardName],
 				type: QueryTypes.SELECT,
 			})
+			if(!existingCards) {
+				await interaction.reply(`No cards in deck ${deckType} are named ${cardName}!`)
+			} else {
+				await db.query('DELETE FROM cards WHERE ownerId = ? AND deckType = ? AND cardName = ?', {
+					replacements: [sqlUserID, deckType, cardName],
+					type: QueryTypes.DELETE,
+				});
+				let remainingCards = await db.query('SELECT * FROM cards WHERE ownerId = ? AND deckType = ?', {
+					replacements: [sqlUserID, deckType, cardName],
+					type: QueryTypes.SELECT
+				});
 
-			await db.query('DELETE FROM cards WHERE ownerId = ? AND deckType = ? AND cardName = ?', {
-				replacements: [sqlUserID, deckType, cardName],
+				if(remainingCards && !remainingCards?.length){
+					await db.query('DELETE FROM colors WHERE ownerId = ? AND deckType = ?', {
+						replacements: [sqlUserID, deckType, cardName],
+						type: QueryTypes.DELETE,
+					});
+				}
+				await interaction.reply(`Deleted card ${cardName} of Deck ${deckType}`)
+			}
+		}
+		else if (subCommand === 'clear') {
+			const deckType = interaction.options.getString('decktype')?.toLowerCase();
+
+			await db.query('DELETE FROM cards WHERE ownerId = ? AND deckType = ?', {
+				replacements: [sqlUserID, deckType],
 				type: QueryTypes.DELETE,
 			})
 
-			if(!(existingCards?.length > 0)){
-				await db.query('DELETE FROM colors WHERE ownerId = ? AND deckType = ?', {
-					replacements: [sqlUserID, deckType, cardName],
+			await db.query('DELETE FROM colors WHERE ownerId = ? AND deckType = ?', {
+					replacements: [sqlUserID, deckType],
 					type: QueryTypes.DELETE,
-				})
-				await interaction.reply(`Deleted card ${cardName} of Deck ${deckType}`)
-			} else {
-				await interaction.reply(`No cards in deck ${deckType} are named ${cardName}!`)
-			}
+			})
+			await interaction.reply(`Deleted Deck ${deckType}`)
 		}
 	},
 };

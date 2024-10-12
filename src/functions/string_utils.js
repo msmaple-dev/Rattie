@@ -17,8 +17,8 @@ function parseLinebreaks(text) {
 
 function isValidUrl(text) {
 	// Credit to Stack Exchange user Matthew O'Riordan for this pattern (https://stackoverflow.com/a/8234912)
-	let pattern = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)/;
-	return text && pattern.test(text);
+	let isLinkPattern = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)/;
+	return text && isLinkPattern.test(text) && text.match(isLinkPattern)?.length;
 }
 
 function isValidColor(color) {

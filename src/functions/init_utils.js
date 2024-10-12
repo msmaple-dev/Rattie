@@ -2,6 +2,10 @@ const init_keyv = require('../keyv_stores/init_keyv');
 const db = require("../database");
 const {QueryTypes} = require("sequelize");
 const {monster_color} = require("../components/constants");
+const { attackCardsToObject } = require('./monster_utils');
+
+const modifierTypes = {'curse': 'Curse Die Size', 'flat': 'Flat'}
+const modifierCategories = {'attack': 'Attack', 'defend': 'Defense', 'saves': 'Save'};
 
 function newInit(users = [], monster = {}){
 	return {
@@ -13,7 +17,9 @@ function newInit(users = [], monster = {}){
 		looting: false,
 		damageDealt: 0,
 		dpr: [],
-		monsterCards: monster && monster.attackCards ? monster.attackCards.map(card => {return {name: card.split(" | ")[0], effect: card.split(" | ")[1], severity: 'Monster', color: monster_color}}) : null
+		modifiers: [],
+		modifiersApplied: 0,
+		monsterCards: monster && attackCardsToObject(monster.attackCards),
 	}
 }
 
@@ -34,6 +40,58 @@ async function getUserDecks(sqlID){
 	}
 
 	return decks;
+}
+
+function getModifiedRollCode(modifiers, category){
+	let categoryModifiers = modifiers.filter(modifier => modifier.category === category)
+	let rollCode = [1, 6, 0, 1];
+	for(let modifier of categoryModifiers){
+		if(modifier.type === 'flat'){rollCode[2] += modifier.amount;}
+		else if (modifier.type === 'curse'){rollCode [1] += modifier.amount;}
+	}
+	rollCode[1] = Math.max(rollCode[1], 1);
+	return rollCode;
+}
+
+function getACModifiers(modifiers){
+	let categoryModifiers = modifiers.filter(modifier => modifier.category === 'defend');
+	let flatMod = categoryModifiers.filter(modifier => modifier.type === 'flat').reduce((a, current) => a + current.amount, 0);
+	let curseMod = categoryModifiers.filter(modifier => modifier.type === 'curse').reduce((a, current) => a + current.amount, 0);
+	return [flatMod, 5+curseMod]
+}
+
+function getModifierString(modifier){
+	let endText;
+	if(modifier.procs !== null && modifier.procs <= 0){
+		endText = 'No more Procs'
+	} else if (modifier.duration !== null && modifier.duration <= 0){
+		endText = 'End of Duration'
+	} else {
+		endText = `Ends in ${modifier.duration !== null ? modifier.duration + ' Turns' : ''}${modifier.duration !== null && modifier.procs !== null ? ' or ' : ''}${modifier.procs !== null ? modifier.procs + ' Procs' : ''}.`
+	}
+	return `Modifier **#${modifier.id}** (${modifier.note ? `${modifier.note} - ` : ''}${modifier.amount > 0 ? `+` : ''}${modifier.amount} ${modifierTypes[modifier.type]} ${modifierCategories[modifier.category]} [${endText}])`
+}
+
+function procModifiers(modifiers, category){
+	for (let modifier of modifiers) {
+		if(modifier.category === category && modifier.procs !== null){
+			modifier.procs--;
+		}
+	}
+	return clearedModifiers(modifiers);
+}
+
+function clearedModifiers(modifiers){
+	return modifiers.filter(modifier => (modifier.procs !== null && modifier.procs <= 0) || (modifier.duration !== null && modifier.duration <= 0)).map(modifier => `Expired: ${getModifierString(modifier)}`).join('\n');
+}
+
+function cullModifiers(modifiers){
+	return modifiers.filter(modifier => !((modifier.procs !== null && modifier.procs <= 0) || (modifier.duration !== null && modifier.duration <= 0)))
+}
+
+function roundModifiers(modifiers){
+	modifiers.forEach(modifier => {if(modifier.duration !== null){modifier.duration--}});
+	return clearedModifiers(modifiers);
 }
 
 async function nextTurn(channelId, count = 1){
@@ -58,8 +116,14 @@ async function nextTurn(channelId, count = 1){
 			if(currentInit.currentTurn > currentInit.users.length){
 				currentInit.round += 1
 				currentInit.currentTurn = 1
-				if(currentInit.monster){currentInit.dpr[currentInit.round] = 0;}
 				returnText += `\nBeginning Round ${currentInit.round}\n`
+				if(currentInit.monster){
+					currentInit.dpr[currentInit.round] = 0;
+					let modifiersRemoved = roundModifiers(currentInit.modifiers)
+					currentInit.modifiers = cullModifiers(currentInit.modifiers);
+					returnText += modifiersRemoved ? modifiersRemoved + '\n' : '';
+				}
+
 			}
 			let turnUser = currentInit.users[currentInit.currentTurn - 1];
 			if(count > 0 || i === (effectiveCount - 1)){
@@ -92,4 +156,4 @@ function uniqueUsers(users){
 	});
 }
 
-module.exports = { nextTurn, newInit, getUserDecks, uniqueUsers }
+module.exports = { nextTurn, newInit, getUserDecks, uniqueUsers, procModifiers, getACModifiers, getModifierString, getModifiedRollCode, cullModifiers, modifierCategories, modifierTypes }

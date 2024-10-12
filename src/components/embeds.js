@@ -68,10 +68,23 @@ function wikiEmbed(wiki) {
 		scent,
 		renown,
 	} = wiki;
-
+	for(let [key, value] of Object.entries(wiki)){
+		if(value?.toString().length >= 1024){
+			return new EmbedBuilder().setTitle(`The field ${key} is too long (Length: ${value.toString().length} >= 1024)`)
+		}
+	}
+	let totalLength = Object.values(wiki).reduce((sum, a) => (sum + (a?.length || 0)), 0)
+	if(totalLength > 5500){
+		return new EmbedBuilder().setTitle(`The wiki's total length is too long (Total Length: ${totalLength} >= 5500, Field Lengths: ${Object.entries(wiki).filter(entry => entry[1]).map((entry) => `${toProperCase(entry[0])}: ${entry[1].length}`).join(", ")})`)
+	}
+	let usedSource = (source ? (isValidUrl(source) ? `\n*[Image Source](${source})*` : `\n*Image Source: ${source}*`) : '')
+	let usedAppearance = (appearance ? parseLinebreaks(appearance) + '\n' : '') + usedSource
+	if(usedAppearance && usedAppearance.toString().length > 1024){
+		return new EmbedBuilder().setTitle(`Your appearance section is too long${source ? ' when combined with your image source field ': ''} (Appearance Length: ${appearance.toString().length} >= ${1024 - ((usedSource && usedSource?.toString()?.length) || 0)})`)
+	}
 	let embed = new EmbedBuilder().setTitle((warlockName || name) + (pronouns ? ` (${pronouns})` : ''));
 	let descriptionText = `${quote ? `*${parseLinebreaks(quote)}*\n` : ''}\n`;
-	let footerText = `${!isValidColor(color) ? `Invalid Color: ${color}` : ''}`;
+	let footerText = `${!isValidColor(color) ? `Invalid Color: ${color}` : ''}${image && !isValidUrl(image) ? `Invalid Image Link: ${image}` : ''}`;
 	let headerFields = [
 		(age !== null && { name: `Age`, value: age, inline: true }),
 		(scale !== null && { name: `Scale`, value: scale, inline: true }),
@@ -88,10 +101,10 @@ function wikiEmbed(wiki) {
 		}),
 	].filter(a => a);
 
-	if (headerFields) {
+	if (headerFields && headerFields?.length) {
 		embed.addFields(...headerFields);
 	}
-	if (descFields) {
+	if (descFields && descFields?.length) {
 		embed.addFields(...descFields);
 	}
 
@@ -108,7 +121,7 @@ function wikiEmbed(wiki) {
 	if (footerText) {
 		embed.setFooter({ text: footerText });
 	}
-	if (image) {
+	if (image && isValidUrl(image)) {
 		embed.setImage(image);
 	}
 	return embed;
@@ -123,11 +136,14 @@ function wikiListEmbed(wikis, currentPage, wikiCount){
 }
 
 function monsterEmbed(monster){
-	let {id, name, description, scale, mechanics, basicAction, size} = monster;
+	let {id, name, description, scale, mechanics, basicAction, size, damageThreshold} = monster;
+	const midpoint = damageThreshold && damageThreshold?.length && Math.floor(damageThreshold?.length / 2); // 2.
+	const medianHP = midpoint ? (damageThreshold.length % 2 === 1 ?	damageThreshold[midpoint] :	(damageThreshold[midpoint - 1] + damageThreshold[midpoint]) / 2) : null;
 	let embed = new EmbedBuilder().setTitle(`${name} (${id})`).setDescription(`*${description}*`).setColor(monster_color);
 	let fields = [
 		(scale !== null && { name: `Scale`, value: `${scale}`, inline: true }),
 		(size !== null && { name: `Size`, value: `${size}`, inline: true }),
+		(medianHP !== null && { name: `Median HP`, value: `${medianHP}`, inline: true }),
 		(mechanics !== null && { name: `Mechanics`, value: mechanics}),
 		(basicAction !== null && { name: `Instinct`, value: basicAction }),
 	].filter(a => a);
@@ -139,10 +155,11 @@ function lootEmbed(monsterId, lootString){
 	return new EmbedBuilder().setTitle(`Looting Monster: ${toProperCase(monsterId)}`).setDescription(lootString.replaceAll(/\*/gm, toProperCase(monsterId))).setColor(monster_color)
 }
 
-function monsterAttackedEmbed(monster, damage, currentDamage, attackRoll, monsterAC){
+function monsterAttackedEmbed(monster, damage, currentDamage, attackRoll, baseAC, monsterCurseDie, monsterCurseDieSize, flatMod){
+	let monsterAC = baseAC + monsterCurseDie + flatMod;
 	let embed = new EmbedBuilder().setTitle(attackRoll ? `Attacking ${monster.name} for ${damage} damage:` : `Applying ${damage} damage to ${monster.name}:`)
 	if(attackRoll){
-		embed.setDescription(`(${attackRoll}) vs (${monsterAC}): ${attackRoll >= monsterAC ? `Hit! ${damage} Dealt (${currentDamage} Total)` : `Missed by ${attackRoll - monsterAC}`}`)
+		embed.setDescription(`${attackRoll >= monsterAC ? `**${attackRoll}**` : attackRoll} vs ${monsterAC > attackRoll ? `**${monsterAC}**`: monsterAC} [${baseAC}+1d${monsterCurseDieSize}(${monsterCurseDie})${flatMod > 0 ? `+${flatMod}` : flatMod}]: ${attackRoll >= monsterAC ? `**Hit!** ${damage} Dealt (${currentDamage} Total)` : `Missed by ${attackRoll - monsterAC}`}`)
 	} else {
 		embed.setDescription(`${damage} Damage Dealt (${currentDamage} Total)`)
 	}

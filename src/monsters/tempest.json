@@ -1,0 +1,34 @@
+{
+  "ID": "tempest",
+  "Name": "Tempest Elemental",
+  "Description": "Always accompanied by sudden squalls and untimely downpours, Tempest Elementals are the eyes of raging storms. They are, and command, the winds and rains of these storms, bending them towards seemingly-mindless destruction before vanishing just as quickly.",
+  "Scale": 6,
+  "Mechanics": "The Storm fills all squares within 4 squares of the Tempest Elemental. The Storm is Rugged terrain: The edge of The Storm inflicts 1 Shock on anyone who is forcibly moved into it, and attacks from outside The Storm are made at -4 to hit and -3 to CD size. The Storm is terrain and can be overwritten.",
+  "BasicAction": "**Thunderous Gale**. Then, if in melee, Step 4 while keeping as many people in The Storm as possible. Otherwise, **Lightning Bolt**. Spend remaining actions to **Lightning Bolt**\n\n**Thunderous Gale** - Melee. Targets everyone in The Storm. 10 Bash and Knocked Back 4. Places The Storm again, overwriting terrain in the area.\n**Lightning Bolt** - Ranged. 2xInfinite line starting with at least 1 square adjacent. Targets as many people as possible, prioritizing farthest. 19 Shock.\n",
+  "Size": "3x3",
+  "ArmorClass": 12,
+  "DamageThreshold": [
+    292,
+    295,
+    296,
+    297,
+    298,
+    299,
+    300,
+    300,
+    300,
+    302,
+    304,
+    305,
+    305,
+    306,
+    310
+  ],
+  "AttackCards": [
+    "Thunderbolts and Lightning | The Tempest Elemental may Step 4 after attacking this round. The Elemental's Instinct becomes **Thunderous Gale**, **Thunderous Gale**, **Thunderous Gale**.",
+    "Jolting Downpour | When this is drawn, The Storm doubles in size until the end of this round.\nWhen a character in The Storm does not gain a Secondary Success, they take 2 Shock.\n The Elemental's Instinct becomes the following: Step 4 if in melee or terrain, spend remaining actions on **Lightning Bolt**.\n",
+    "Sudden Squall | The Elemental Steps 12 towards the furthest character, moving to the opposite side of them if possible. A Strike is made against everyone within a 6 Normal Cone in the direction of that character, dealing 45 Shock. Split this damage evenly by Scale with all targets of this Strike.",
+    "Lightning Rod | Strike the nearest character for 8 Shock with +4 to my CD size. If this Strike is successful, it arcs to another character within 5 squares, repeating the Strike. This can arc any number of times, but not against the same character twice.",
+    "Eye of the Hurricane | The Elemental's Instinct becomes: **Draw Close**, **KRAKOOM**, **KRAKOOM**\n**Draw Close** - All targets must make a DC18 Save or suffer Knocked Back 10 towards the Tempest Elemental. This Knockback does not stop when it would draw a Status, continuing through cover. Places The Storm again, overwriting terrain in the area. \n**KRAKOOM** - Melee. Targets everyone within The Storm. 20 Shock.\n\n"
+  ]
+}

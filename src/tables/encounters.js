@@ -29,7 +29,10 @@ const Encounters = db.define('encounters', {
 		type: Sequelize.ENUM('Active', 'Finished', 'Lost', 'Conceded', 'Invalid'),
 		defaultValue: 'Active',
 		allowNull: false,
-	}
+	},
+	modifiersApplied: {
+		type: Sequelize.INTEGER,
+	},
 }, {timestamps: false});
 
 module.exports = Encounters

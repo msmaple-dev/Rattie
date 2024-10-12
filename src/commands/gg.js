@@ -9,10 +9,11 @@ const {logDPR, getEncounterID} = require("../functions/monster_utils");
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('gg')
-		.setDescription('Ends the match'),
+		.setDescription('Ends the match')
+		.addStringOption(option => option.setName('reason').setDescription('Reason for GG').addChoices({name: 'Loss', value: 'Lost'}, {name: 'Conceded/Quit', value: 'Conceded'}).setRequired(true)),
 	async execute(interaction) {
 		const channelId = interaction.channelId;
-
+		let reason = interaction.options.getString('reason')
 		let outputText = "GG!"
 
 		let currentInit = await init_keyv.get(channelId)
@@ -21,7 +22,7 @@ module.exports = {
 			if(currentInit?.looting === false){
 				let encounterId = await getEncounterID(channelId);
 				await db.query("UPDATE encounters SET rounds = ?, endTime = ?, status = ? WHERE encounterId = ?", {
-					replacements: [currentInit.round, Date.now(), 'Conceded', encounterId],
+					replacements: [currentInit.round, Date.now(), reason, encounterId],
 					type: QueryTypes.UPDATE
 				})
 				await logDPR(encounterId, currentInit.dpr)
@@ -34,7 +35,6 @@ module.exports = {
 		else {
 			await init_keyv.delete(channelId)
 		}
-
 
 		await interaction.reply({content: outputText, allowedMentions: {}});
 	},

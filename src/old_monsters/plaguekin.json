@@ -1,0 +1,35 @@
+{
+  "ID": "plaguekin",
+  "Name": "The Plaguekin Rat",
+  "Description": "A disgusting creature of wounds, pus, and fur. It radiates filth and hate, and its brood brings the slow death.",
+  "Scale": 4,
+  "Mechanics": "All Summoned Rats have a defense DC of 14 and die if struck. Summon Rats as close to the Plaguekin as possible according to player's choice.",
+  "BasicAction": "First action is always to Command Horde. If out of melee, or in a terrain effect, will Step to the closest safe position adjacent a Warlock. Will Stride if a Step is a not enough. Uses remaining actions on Ferocious Bite.\n\n**Step**: 2 Squares\n**Stride**: 8 Squares\n\n**Command Horde**: 1 Action. All summoned Rats act.\n**Ferocious Bite**: 1 Action. 16 Pierce, Melee.",
+  "Size": "2x2",
+  "ArmorClass": [ 14, 15, 15, 15, 16 ],
+  "DamageTaken": 0,
+  "DamageThreshold": [
+    235,
+    236,
+    237,
+    238,
+    239,
+    239,
+    240,
+    240,
+    240,
+    241,
+    241,
+    242,
+    243,
+    244,
+    245
+  ],
+  "AttackCards": [
+    "Summon Rat Spewer | Summons 2 Spewers.\nStrides out of melee range and attacks the most enemies in a 3x3 area for 10 Burn.",
+    "Summon Rat Swarmers | Summons 4 Swarmers.\nStrides into closest melee and Strikes for 6 Slash Damage.",
+    "Summon Rat Slashers | Summons 2 Slashers.\nStrides into melee with as many people and strikes each for 12 Slash Damage.",
+    "Summon Rat Slayer | Summons 1 Slayer.\nStrides into closest melee and strikes for 18 Rend Damage. I do not die the first time I am Struck.",
+    "Summon Rat Summoner | Summons 1 Summoner.\nStrides into closest melee and Strikes for 4 Bash damage. The Plaguekin Rat draws 1 additional Card for every Summoner alive."
+  ]
+}

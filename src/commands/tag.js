@@ -26,6 +26,12 @@ module.exports = {
 		)
 		.addSubcommand(subcommand =>
 			subcommand
+				.setName('init')
+				.setDescription('Adds a private init tag that displays whenever you enter init.')
+				.addStringOption(option => option.setName('text').setDescription('Tag Content').setRequired(true))
+		)
+		.addSubcommand(subcommand =>
+			subcommand
 				.setName('modify')
 				.setDescription('Modify a tag')
 				.addStringOption(option => option.setName('name').setDescription('Tag Name').setRequired(true))
@@ -55,9 +61,9 @@ module.exports = {
 			const pinTag = interaction.options.getBoolean('pin') || false;
 
 			if (tagName) {
-				let query = `SELECT * from tags WHERE tags.name = ?${isPrivate ? ` AND tags.ownerId = ? AND tags.isPrivate = ?` : ""}`
+				let query = `SELECT * from tags WHERE tags.name = ?${isPrivate ? ` AND tags.ownerId = ? AND tags.isPrivate = ?` : "AND tags.isPrivate = ?"}`
 				let matchingTags = await db.query(query, {
-					replacements: isPrivate ? [tagName, sqlUserID, isPrivate] : [tagName],
+					replacements: isPrivate ? [tagName, sqlUserID, isPrivate] : [tagName, isPrivate],
 					type: QueryTypes.SELECT,
 				});
 
@@ -116,6 +122,13 @@ module.exports = {
 				replacements: [tagName, sqlUserID, content, isPrivate]
 			})
 			interaction.reply(`${subCommand === 'modify' ? 'Modified' : 'Added'} Tag ${tagName}!`)
+		}
+		else if (subCommand === 'init') {
+			const content = interaction.options.getString('text');
+			await db.query('REPLACE INTO tags(name, ownerId, content, isPrivate) VALUES (?, ?, ?, ?)', {
+				replacements: ['init', sqlUserID, content, true]
+			})
+			interaction.reply(`Updated your init tag!`)
 		}
 		else if (subCommand === 'delete') {
 			const tagName = interaction.options.getString('name')?.toLowerCase();

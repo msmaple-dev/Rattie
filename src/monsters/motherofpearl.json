@@ -1,0 +1,34 @@
+{
+  "ID": "motherofpearl",
+  "Name": "Mother of Pearl",
+  "Description": "A creature seemingly made of pearls, like a large golem, showing shining in the light with long, graceful and slow movements. Its pearlescent creations are similar, and it radiates raw pneumic potential.",
+  "Scale": 4,
+  "Mechanics": "The Mother of Pearl places 2 Pearl Effigies 4 squares away on opposite sides of it at the start of the Hunt. Effigies are 1x1 impassible objects and are DC14 to hit. The Mother of Pearl is not damaged by Effigies.",
+  "BasicAction": "The Mother of Pearl will move if within a dangerous effect. Then it will Fracture, and Facet. Remaining actions are spent on Tidal Tumble\n\n**Step:** 2 Squares\n**Stride:** 6 Squares\n\n**Fracture** - Place a Pearl Effigy 4 squares away, as far from other Effigies as possible.\n\n**Facet** - All Effigies perform their listed attack.\n\n**Tidal Tumble** - Melee. 17 Rend.\n\n**Pearl Effigy** - Destroyed when struck by a Strike at Scale 1, or two at Scale 0.5. Explodes in a Starburst 2 when destroyed, all targets within the area make a DC18 Save against 5 Hollow.\n**Attack** - Pearlescent Beam. Ranged. 6 squares. 10 Hollow.",
+  "Size": "3x3",
+  "ArmorClass": 10,
+  "DamageThreshold": [
+    292,
+    295,
+    296,
+    297,
+    298,
+    299,
+    300,
+    300,
+    300,
+    302,
+    304,
+    305,
+    305,
+    306,
+    310
+  ],
+  "AttackCards": [
+    "Nacre Daydreams | This round, Fracture places a Nacre Effigy adjacent to the Mother of Pearl instead. Tidal Tumble has +4 to hit this turn.\n\n**Nacre Effigy** - Destroyed when struck by a Strike at Scale 2, or a number of Strikes whose Scale adds up to 2. Explodes in a Starburst 1 when destroyed, all targets within the area make a DC15 Save vs -2 Value on Strike (Recovery).\n\n**Attack** - If I was placed this turn: Nacre Static (Ranged. Targets all characters. 15 Hollow). Otherwise: Steps 2 towards The Mother of Pearl if not adjacent, then heals all adjacent allies 16HP or adds 0.5 worth of Scale to the # of strikes it can take if it is an Effigy.\n",
+    "Malachite Waves | This round, Fracture places a Malachite Effigy adjacent or diagonal to as many characters as possible.\n\n**Malachite Effigy** - Destroyed when struck by a Strike at Scale 2, or a number of Strikes whose Scale adds up to 2. Places a Pearl Effigy when destroyed.\n**Attack** - Malachite Pulse. Ranged. Centered Starburst 4. 10 Rend.",
+    "Unintended Outburst | When this is drawn, designate the direction from the Mother of Pearl which has the most characters.\nAll targets in the designated direction of the Mother of Pearl take 15 Shock.",
+    "Drown in Lapiz | This round, Fracture places a Lazuli Effigy adjacent to the nearest character.\n\n**Lazuli Effigy** - Destroyed when struck by a Strike at Scale 1, or two at Scale 0.5. Explodes in a Starburst 3 when destroyed, all targets within the area make a Stun save at Scale 1.5. On a failure, they cannot move out of or target characters outside of the Starburst 2 next turn.\n**Attack** - Lapiz Beam. Ranged. Normal 5 Cone. 15 Shock, Knocked Back 4 towards it.",
+    "Lapidarist's Nightmare | If there are three or more Effigies, the Instinct becomes **Facet, Facet, Facet.**\nOtherwise, the Instinct becomes: **Fracture, Fracture, Facet**\n"
+  ]
+}

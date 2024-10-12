@@ -3,15 +3,18 @@ const db = require('../database');
 const { QueryTypes } = require('sequelize');
 const { wikiEmbed, wikiListEmbed } = require('../components/embeds');
 
-async function findWiki(wikiName){
+async function findWiki(wikiName, getEmbed = true){
 	let wikis = await db.query('SELECT * FROM wikis WHERE name = ?', {
 		replacements: [wikiName],
 		type: QueryTypes.SELECT,
 	});
 	if (wikis && wikis?.length > 0) {
-		return wikiEmbed({name: wikiName, ...wikis[0]});
-	}
-	else {
+		if(getEmbed){
+			return wikiEmbed({name: wikiName, ...wikis[0]})
+		} else {
+			return wikis[0]
+		}
+	} else {
 		return false;
 	}
 }
@@ -70,15 +73,41 @@ module.exports = {
 				.setDescription('Rename a warlock Wiki')
 				.addStringOption(option => option.setName('name').setDescription('Old Wiki Name').setRequired(true))
 				.addStringOption(option => option.setName('newname').setDescription('New Wiki Name').setRequired(true)),
+		)
+		.addSubcommand(subcommand =>
+			subcommand
+				.setName('length')
+				.setDescription('Get the length of all fields in a warlock wiki')
+				.addStringOption(option => option.setName('name').setDescription('Wiki Name').setRequired(true)),
 		),
 	async execute(interaction) {
 		const userID = interaction.user.id;
 		const sqlUserID = BigInt(interaction.user.id);
 		const wikiName = interaction.options.getString('name')?.toLowerCase();
-		if (interaction.options.getSubcommand() === 'show') {
-			let foundWiki = await findWiki(wikiName)
+		if (interaction.options.getSubcommand() === 'show' || interaction.options.getSubcommand() === 'length') {
+			let lengthCheck = interaction.options.getSubcommand() === 'length';
+			let foundWiki = await findWiki(wikiName, !lengthCheck);
 			if (foundWiki) {
-				await interaction.reply({ embeds: [foundWiki] });
+				if(lengthCheck){
+					let wikiProperties = Object.entries(foundWiki);
+					let propertyLengths = []
+					let invalidFields = ["id", "ownerId", "showcaseUses"]
+					for (let [property, value] of wikiProperties){
+						if(value && !invalidFields.includes(property)){
+							propertyLengths.push([property, value?.length])
+						}
+					}
+					propertyLengths.sort((a, b) => (b[1] - a[1]))
+					let outputString = `__**Length of Fields in Wiki "${wikiName}"**__\n`
+					let checkedFields = ["warlockName", "quote", "about", "faction", "appearance", "abilities", "scent"];
+					let totalSum = propertyLengths.reduce((accumulator, currentVal) => (accumulator + currentVal[1]), 0)
+					let checkedPropertyLength = propertyLengths.filter((property => checkedFields.includes(property[0]))).reduce((accumulator, currentVal) => (accumulator + currentVal[1]), 0)
+					outputString += propertyLengths.map((property) => (`${checkedFields.includes(property[0]) ? `**${property[0]}**` : property[0]}: ${property[1]}`)).join("\n")
+					outputString += `\n**Total Length:** ${totalSum}\nLength of Checked Fields for Daily Showcase: ${checkedPropertyLength} (${checkedPropertyLength > 450 ? "V" : "Inv"}alid Choice for Wiki of the Day)`
+					await interaction.reply(outputString);
+				} else {
+					await interaction.reply({ embeds: [foundWiki] });
+				}
 			}
 			else {
 				await interaction.reply(`No wikis named ${wikiName}`);
@@ -122,7 +151,6 @@ module.exports = {
 
 			const selectCollector = response.createMessageComponentCollector({ componentType: ComponentType.StringSelect, time: 120_000 });
 			selectCollector.on('collect', async i => {
-				console.log(i.values[0])
 				const foundWiki = await findWiki(i.values[0]);
 				if (foundWiki) {
 					await i.reply({ embeds: [foundWiki] });
@@ -234,13 +262,13 @@ module.exports = {
 			}
 		}
 		else if (interaction.options.getSubcommand() === 'rename') {
-			let newWikiName = interaction.options.getString('newname') || null;
+			let newWikiName = interaction.options.getString('newname')?.toLowerCase() || null;
 			let existingOwnedWikis = await db.query('SELECT * FROM wikis WHERE ownerId = ? AND name = ?', {
 				replacements: [sqlUserID, wikiName],
 				type: QueryTypes.SELECT,
 			});
 
-			if (existingOwnedWikis?.length > 0) {
+			if (newWikiName && existingOwnedWikis?.length > 0) {
 				await db.query('UPDATE wikis SET name = ? WHERE ownerId = ? AND name = ?', {
 					replacements: [newWikiName, sqlUserID, wikiName],
 					type: QueryTypes.DELETE,

@@ -15,13 +15,13 @@ module.exports = {
 		const userIdentifier = interaction.options.getString('identifier') ?? null;
 		const channelId = interaction.channelId;
 		const userID = interaction.user.id;
-		const sqlID = BigInt(userID)
+		const sqlID = BigInt(userID);
 
 		let outputText = '';
 
 		let decks = await getUserDecks(sqlID)
 
-		let initTags = await db.query('SELECT * FROM tags WHERE isPrivate > 0 AND name = ? AND ownerId = ?', {
+		let initTags = await db.query('SELECT * FROM tags WHERE tags.isPrivate = TRUE AND tags.name = ? AND tags.ownerId = ?', {
 			replacements: ['init', sqlID],
 			type: QueryTypes.SELECT,
 		})
@@ -58,7 +58,7 @@ module.exports = {
 		}
 		await interaction.reply(outputText)
 		if(postInitTag && userInitTag){
-			await interaction.followUp(`\n${userInitTag.content}`).then(msg => {
+			await interaction.followUp(`\n${userInitTag.content.replaceAll(/\\n/gm, '\n')}`).then(msg => {
 				msg.pin('Init Pin');
 			})
 		}

@@ -3,7 +3,7 @@ const db = require('../database')
 
 module.exports = db.define('wikis', {
 	ownerId:  {
-		type: Sequelize.INTEGER
+		type: Sequelize.TEXT,
 	},
 	name: {
 		type: Sequelize.TEXT,
@@ -54,4 +54,8 @@ module.exports = db.define('wikis', {
 	renown: {
 		type: Sequelize.TEXT,
 	},
+	showcaseUses: {
+		type: Sequelize.INTEGER,
+		defaultValue: 0,
+	}
 }, {timestamps: false});

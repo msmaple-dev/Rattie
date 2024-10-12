@@ -1,0 +1,35 @@
+{
+  "ID": "neontalon",
+  "Name": "The Neontalon Roc",
+  "Description": "A creature born of gas and light, buoyed by electric life. From a distance, a beauty of the modern urban. From up close? A flashing death.",
+  "Scale": 5,
+  "Mechanics": "The first hit each turn knocks the Roc out of the sky, giving everyone else a +2 to hit bonus until the end of the round.",
+  "BasicAction": "First action is always to Neon Burst. If out of melee, or in a terrain effect, will Step to the closest safe position adjacent to a Warlock. Will Stride if a Step is not enough. Uses remaining actions on Whirling Talon.\n\n**Step**: 2 Squares\n**Stride**: 8 Squares\n\n**Neon Burst**: 1 Action. Targets all enemies within 6 squares, and in Line of Sight. Suffer 9 Hollow.\n**Whirling Talon**: 1 Action. Targets the weakest adjacent enemy. 10 Slashing.",
+  "Size": "2x2",
+  "ArmorClass": [ 18, 19, 19, 19, 20 ],
+  "DamageTaken": 0,
+  "DamageThreshold": [
+    235,
+    236,
+    237,
+    238,
+    239,
+    239,
+    240,
+    240,
+    240,
+    241,
+    241,
+    242,
+    243,
+    244,
+    245
+  ],
+  "AttackCards": [
+    "Flashbang Feathers | All enemies within 3 of me suffer 10 Hollow Damage.",
+    "Blazing Bombs | Target two enemies with the most characters adjacent to them. Strike everyone in a 3x3 centered on those targets for 10 Burn Damage.",
+    "Wailing Whirlwind | All enemies outside of 4 of me suffer 10 Slash Damage.",
+    "Piercing Plumage | All enemies who are not adjacent to another Character suffer 10 Pierce Damage",
+    "Blinding Blaze | Increase Neon Burst's damage by 2 this Round."
+  ]
+}

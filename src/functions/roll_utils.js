@@ -61,14 +61,39 @@ function parseRoll(rollString = '1+6+0') {
 	return [rolls, mod, note, multi];
 }
 
-function rollString(rolls = [[1, 20], [1, 6]], mod = 0, note = '', multi = 1) {
+function explicitParse(rollString = "1d20+1d6+0"){
+	// Get Note & Clean Up Rollstring
+
+	const noteSplit = rollString.indexOf(' ');
+	let splitCode = (noteSplit !== -1) ? [rollString.slice(0, noteSplit), rollString.slice(noteSplit)] : [rollString, ''];
+	let rollCode = splitCode[0];
+	let note = splitCode[1].trim();
+
+	// Get Multiplier
+	let multi = rollCode.match(/x\d+/gm) ?
+		rollCode.match(/x\d+/gm).map(match => parseInt(match.replaceAll('x', ''))).flat().reduce((a, b) => a + b)
+		: 1;
+
+	// Get Dice
+	let rolls = []
+
+	rolls.push(...[...rollCode.matchAll(/(\d+)d(\d+)/gm)].map(match => match.slice(1)))
+	rollCode = rollCode.replaceAll(/\+*\d+d\d+/gm, '');
+
+	// Get Mods
+	let mod = parseInt(rollCode.match(/[\-\+](\d+)/gm)?.map(match => match.replaceAll("+", "")).reduce((a, b) => parseInt(a)+parseInt(b)) || 0);
+
+	return [rolls, mod, note, multi];
+}
+
+function rollString(rolls = [[1, 20], [1, 6]], mod = 0, note = '', multi = 1, explicit = false) {
 	let outputArray = [];
 	for (let rollNum = 0; rollNum < multi; rollNum++) {
 		let results = arrayRoll(rolls);
 		let rollText = results
 			.map((subArray, index) => {
 				const rollParams = rolls[index];
-				if (rollParams.includes(0)) {
+				if (rollParams?.includes(0)) {
 					return '';
 				}
 				const max = Math.max(...subArray);
@@ -113,7 +138,6 @@ function selectFromWeightedString(string) {
 }
 
 function weightedSelect(spec){
-	console.log(spec)
 	var i, sum = 0, r = Math.random();
 	for (i in spec) {
 		sum += spec[i];
@@ -145,4 +169,10 @@ function drawDeck(deck, drawCount = 1, severity){
 	return statusCards;
 }
 
-module.exports = { roll, multiRoll, arrayRoll, parseRoll, rollString, weightedSelect, selectFromWeightedString, unweightedSelect, drawDeck };
+function rollFromString(inputText){
+	let parsedValues = parseRoll(inputText)
+	let rolledDice = parsedValues[0].reduce((a, b) => parseInt(a) + parseInt(b[0])) * parsedValues[3]
+	return rolledDice > 100 ? `Please keep rolls to under 100 dice. (Attempted to roll ${rolledDice} dice)` : rollString(parsedValues[0], parsedValues[1], parsedValues[2], parsedValues[3]);
+}
+
+module.exports = { roll, multiRoll, arrayRoll, parseRoll, rollString, weightedSelect, selectFromWeightedString, unweightedSelect, drawDeck, rollFromString, explicitParse };

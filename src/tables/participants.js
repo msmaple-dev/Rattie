@@ -16,7 +16,7 @@ const Participants = db.define('participants', {
 		allowNull: false,
 		primaryKey: true,
 	},
-	endHP: {
+	damageTaken: {
 		type: Sequelize.INTEGER,
 		allowNull: true,
 	}
