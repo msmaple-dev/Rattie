@@ -136,14 +136,14 @@ function wikiListEmbed(wikis, currentPage, wikiCount){
 }
 
 function monsterEmbed(monster){
-	let {id, name, description, scale, mechanics, basicAction, size, damageThreshold} = monster;
+	let {id, name, description, scale, mechanics, basicAction, size, damageThreshold, armorClass, curseDie} = monster;
 	const midpoint = damageThreshold && damageThreshold?.length && Math.floor(damageThreshold?.length / 2); // 2.
 	const medianHP = midpoint ? (damageThreshold.length % 2 === 1 ?	damageThreshold[midpoint] :	(damageThreshold[midpoint - 1] + damageThreshold[midpoint]) / 2) : (damageThreshold || null);
-	let embed = new EmbedBuilder().setTitle(`${name} (${id})`).setDescription(`*${description}*`).setColor(monster_color);
+	let embed = new EmbedBuilder().setTitle(`${name} (${id}) - Scale ${scale}`).setDescription(`*${description}*`).setColor(monster_color);
 	let fields = [
-		(scale !== null && { name: `Scale`, value: `${scale}`, inline: true }),
 		(size !== null && { name: `Size`, value: `${size}`, inline: true }),
 		(medianHP !== null && { name: `Median HP`, value: `${medianHP}`, inline: true }),
+		(armorClass !== null && { name: `AC Roll`, value: `${Array.isArray(armorClass) ? armorClass.map(rollCode => rollCode.join("d")).join("+") + "+1d" + (curseDie || 5) : armorClass + "+1d" + (curseDie || 5)}`, inline: true }),
 		(mechanics !== null && { name: `Mechanics`, value: mechanics}),
 		(basicAction !== null && { name: `Instinct`, value: basicAction }),
 	].filter(a => a);
