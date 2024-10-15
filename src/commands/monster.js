@@ -223,7 +223,7 @@ module.exports = {
                     currentInit.dpr[currentInit.round] = currentInit.dpr[currentInit.round] ? currentInit.dpr[currentInit.round] + dmg : dmg
                 }
 
-                await interaction.reply({embeds: [monsterAttackedEmbed(monster, dmg, currentInit.damageDealt, attackRoll, baseAC, monsterCurseDieResult, monsterCurseDieSize, flatMod)]});
+                await interaction.reply({embeds: [monsterAttackedEmbed(monster, dmg, currentInit.damageDealt, attackRoll, baseAC, monsterCurseDieResult, (monster.curseDie || 5)+curseMod, flatMod)]});
 
                 if (monsterHit && concCheck(currentInit.damageDealt, monster.damageThreshold)) {
                     currentInit.looting = true;
