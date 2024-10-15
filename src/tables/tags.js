@@ -8,6 +8,7 @@ module.exports = db.define('tags', {
 	},
 	ownerId:  {
 		type: Sequelize.INTEGER,
+		primaryKey: true,
 	},
 	content: {
 		type: Sequelize.TEXT,
@@ -15,7 +16,8 @@ module.exports = db.define('tags', {
 	},
 	isPrivate: {
 		type: Sequelize.BOOLEAN,
-		allowNull: false
+		allowNull: false,
+		primaryKey: true,
 	},
 	usage_count: {
 		type: Sequelize.INTEGER,

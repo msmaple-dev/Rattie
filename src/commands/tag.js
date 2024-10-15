@@ -94,22 +94,22 @@ module.exports = {
 			});
 
 			if(subCommand === 'add'){
-				if(matchingTags?.length > 0){
-					if(matchingTags[0].ownerId != sqlUserID){
-						await interaction.reply(`${isPrivate ? 'Private ' : ""}Tag ${tagName} already exists`);
-						return;
-					} else {
-						await db.query(`DELETE FROM tags WHERE tags.name = ? AND tags.ownerId = ? AND tags.isPrivate = ?`, {
-							replacements: [tagName, sqlUserID, isPrivate],
-							type: QueryTypes.DELETE,
-						})
-					}
+				if(matchingTags?.length > 0 || matchingTags.filter(tag => tag.isPrivate === isPrivate && tag.ownerId === sqlUserID)?.length) {
+					await interaction.reply(`${isPrivate ? 'Private ' : ""}Tag ${tagName} already exists`);
+					return;
+				} else {
+					await db.query('INSERT INTO tags(name, ownerId, content, isPrivate) VALUES (?, ?, ?, ?)', {
+						replacements: [tagName, sqlUserID, content, isPrivate]
+					})
 				}
 			} else if(subCommand === 'modify'){
 				if(matchingTags?.length > 0) {
 					await db.query(`DELETE FROM tags WHERE tags.name = ? AND tags.ownerId = ? AND tags.isPrivate = ?`, {
 						replacements: [tagName, sqlUserID, isPrivate],
 						type: QueryTypes.DELETE,
+					})
+					await db.query('INSERT INTO tags(name, ownerId, content, isPrivate) VALUES (?, ?, ?, ?)', {
+						replacements: [tagName, sqlUserID, content, isPrivate]
 					})
 				}
 				else {
@@ -118,9 +118,6 @@ module.exports = {
 				}
 			}
 
-			await db.query('REPLACE INTO tags(name, ownerId, content, isPrivate) VALUES (?, ?, ?, ?)', {
-				replacements: [tagName, sqlUserID, content, isPrivate]
-			})
 			interaction.reply(`${subCommand === 'modify' ? 'Modified' : 'Added'} Tag ${tagName}!`)
 		}
 		else if (subCommand === 'init') {
