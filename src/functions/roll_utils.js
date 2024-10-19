@@ -91,18 +91,7 @@ function rollString(rolls = [[1, 20], [1, 6]], mod = 0, note = '', multi = 1, ex
 	for (let rollNum = 0; rollNum < multi; rollNum++) {
 		let results = arrayRoll(rolls);
 		let rollText = results
-			.map((subArray, index) => {
-				const rollParams = rolls[index];
-				if (rollParams?.includes(0)) {
-					return '';
-				}
-				const max = Math.max(...subArray);
-				return (index === 0 ? '' : (rollParams[0] < 0 ? '-' : '+')) + '(' +
-					subArray.map((item) =>
-						((item === rollParams[1]) ? `**${item}**` : ((item === max) ? `${item}` : `~~${item}~~`)))
-						.join('+')
-					+ ')';
-			}).join('');
+			.map((subArray, index) => rollResultsToString(subArray, index, rolls[index])).join('');
 		let resultsSum = results.map((a, index) => {
 			if (a.length === 0) {
 				return 0;
@@ -169,10 +158,22 @@ function drawDeck(deck, drawCount = 1, severity){
 	return statusCards;
 }
 
+function rollResultsToString(subArray, index, rollParams){
+	if (rollParams?.includes(0)) {
+		return '';
+	}
+	const max = Math.max(...subArray);
+	return (index === 0 ? '' : (rollParams[0] < 0 ? '-' : '+')) + '(' +
+		subArray.map((item) =>
+			((item === rollParams[1]) ? `**${item}**` : ((item === max) ? `${item}` : `~~${item}~~`)))
+			.join('+')
+		+ ')';
+}
+
 function rollFromString(inputText){
 	let parsedValues = parseRoll(inputText)
 	let rolledDice = parsedValues[0].reduce((a, b) => parseInt(a) + parseInt(b[0])) * parsedValues[3]
 	return rolledDice > 100 ? `Please keep rolls to under 100 dice. (Attempted to roll ${rolledDice} dice)` : rollString(parsedValues[0], parsedValues[1], parsedValues[2], parsedValues[3]);
 }
 
-module.exports = { roll, multiRoll, arrayRoll, parseRoll, rollString, weightedSelect, selectFromWeightedString, unweightedSelect, drawDeck, rollFromString, explicitParse };
+module.exports = { roll, multiRoll, arrayRoll, parseRoll, rollString, weightedSelect, selectFromWeightedString, unweightedSelect, drawDeck, rollFromString, explicitParse, rollResultsToString };

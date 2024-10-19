@@ -94,7 +94,7 @@ function getMonsterCards(monsterName){
 }
 
 function rollAC(baseAC, curseDie = 5){
-    if(Array.isArray[baseAC]){
+    if(Array.isArray(baseAC)){
         return [arrayRoll(baseAC), roll(curseDie)]
     } else {
         return [baseAC, roll(curseDie)];

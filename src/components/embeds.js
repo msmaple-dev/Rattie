@@ -1,6 +1,7 @@
 const { EmbedBuilder, Embed} = require('discord.js');
 const { toProperCase, parseLinebreaks, isValidColor, isValidUrl} = require('../functions/string_utils');
 const {monster_color} = require("./constants");
+const { rollResultsToString } = require('../functions/roll_utils');
 
 function statusEmbed(name, effect, severity, color, identifier = '', forcedSeverity = '') {
 	let embed = new EmbedBuilder()
@@ -155,11 +156,18 @@ function lootEmbed(monsterId, lootString){
 	return new EmbedBuilder().setTitle(`Looting Monster: ${toProperCase(monsterId)}`).setDescription(lootString.replaceAll(/\*/gm, toProperCase(monsterId))).setColor(monster_color)
 }
 
-function monsterAttackedEmbed(monster, damage, currentDamage, attackRoll, baseAC, monsterCurseDie, monsterCurseDieSize, flatMod){
-	let monsterAC = baseAC + monsterCurseDie + flatMod;
+function monsterAttackedEmbed(monster, damage, currentDamage, attackRoll, baseAC, monsterCurseDie, monsterCurseDieSize, flatMod, monsterAC){
 	let embed = new EmbedBuilder().setTitle(attackRoll ? `Attacking ${monster.name} for ${damage} damage:` : `Applying ${damage} damage to ${monster.name}:`)
 	if(attackRoll){
-		embed.setDescription(`${attackRoll >= monsterAC ? `**${attackRoll}**` : attackRoll} vs ${monsterAC > attackRoll ? `**${monsterAC}**`: monsterAC} [${baseAC}+1d${monsterCurseDieSize}(${monsterCurseDie})${flatMod ? (flatMod > 0 ? `+${flatMod}` : flatMod) : ''}]: ${attackRoll >= monsterAC ? `**Hit!** ${damage} Dealt (${currentDamage} Total)` : `Missed by ${attackRoll - monsterAC}`}`)
+		let baseRollDesc = baseAC;
+		if(Array.isArray(monster.armorClass)){
+			baseRollDesc = ``
+			for (let i = 0; i < monster.armorClass.length; i++) {
+				baseRollDesc += `${monster.armorClass[i].join("d")}${baseAC.map((subArray, index) => rollResultsToString(subArray, index, monster.armorClass[i]))}`
+			}
+		}
+		let rollDescription = `[${baseRollDesc}+1d${monsterCurseDieSize}(${monsterCurseDie})${flatMod ? (flatMod > 0 ? `+${flatMod}` : flatMod) : ''}]`
+		embed.setDescription(`${attackRoll >= monsterAC ? `**${attackRoll}**` : attackRoll} vs ${monsterAC > attackRoll ? `**${monsterAC}**`: monsterAC} ${rollDescription}: ${attackRoll >= monsterAC ? `**Hit!** ${damage} Dealt (${currentDamage} Total)` : `Missed by ${attackRoll - monsterAC}`}`)
 	} else {
 		embed.setDescription(`${damage} Damage Dealt (${currentDamage} Total)`)
 	}

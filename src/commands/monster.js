@@ -189,8 +189,6 @@ module.exports = {
                 } else {
                     let embed = lootEmbed(currentInit.monster.id, drawDefaultLoot())
                     await interaction.reply({embeds: [embed]})
-
-                    console.log(damageTaken);
                     await db.query("REPLACE INTO participants (encounterId, userId, damageTaken) VALUES (?, ?, ?)", {
                         replacements: [encounterId, userID, damageTaken],
                         type: QueryTypes.INSERT
@@ -216,14 +214,16 @@ module.exports = {
             let monsterHit = false;
             if(monster){
                 let [flatMod, curseMod] = getACModifiers(currentInit.modifiers);
-                let [baseAC, monsterCurseDieResult] = rollAC(monster.armorClass, (monster.curseDie || 5)+curseMod);
-                if (subCommand === 'damage' || attackRoll >= parseInt(baseAC) + monsterCurseDieResult + parseInt(flatMod)) {
+                let [rolledAC, monsterCurseDieResult] = rollAC(monster.armorClass, (monster.curseDie || 5)+curseMod);
+                let totalDefense = parseInt(rolledAC) + monsterCurseDieResult + parseInt(flatMod)
+                if(Array.isArray(rolledAC)){totalDefense = rolledAC.map(acRolls => Math.max(...acRolls)).reduce((a, b) => a+b) + monsterCurseDieResult + parseInt(flatMod)}
+                if (subCommand === 'damage' || attackRoll >= totalDefense) {
                     monsterHit = dmg > 0;
                     currentInit.damageDealt += dmg;
                     currentInit.dpr[currentInit.round] = currentInit.dpr[currentInit.round] ? currentInit.dpr[currentInit.round] + dmg : dmg
                 }
 
-                await interaction.reply({embeds: [monsterAttackedEmbed(monster, dmg, currentInit.damageDealt, attackRoll, baseAC, monsterCurseDieResult, (monster.curseDie || 5)+curseMod, flatMod)]});
+                await interaction.reply({embeds: [monsterAttackedEmbed(monster, dmg, currentInit.damageDealt, attackRoll, rolledAC, monsterCurseDieResult, (monster.curseDie || 5)+curseMod, flatMod, totalDefense)]});
 
                 if (monsterHit && concCheck(currentInit.damageDealt, monster.damageThreshold)) {
                     currentInit.looting = true;
@@ -316,7 +316,7 @@ module.exports = {
             let modifiers = currentInit.modifiers;
             if(monster){
                 for(let i = 0; i < count; i++){
-                    let rollArray = getModifiedRollCode(modifiers, subCommand);
+                    let rollArray = getModifiedRollCode(modifiers, (subCommand === 'strike' ? 'attack' : 'save'));
                     let inputText = `${rollArray.slice(0, 3).join("+")}x${rollArray[3]}`
                     outputText += `${i > 0 ? '\n' : ''}${count > 1 ? `${subCommand.toProperCase()} #${i+1}: ` : ''}${rollFromString(inputText)}`;
                     let removedMods = procModifiers(modifiers, subCommand);
