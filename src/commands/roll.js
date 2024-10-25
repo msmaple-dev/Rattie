@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require('discord.js');
-const { parseRoll, rollString, rollFromString, explicitParse } = require("../functions/roll_utils")
+const { rollFromString } = require("../functions/roll_utils")
 
 module.exports = {
 	data: new SlashCommandBuilder()

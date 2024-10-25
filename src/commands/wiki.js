@@ -82,7 +82,7 @@ module.exports = {
 		),
 	async execute(interaction) {
 		const userID = interaction.user.id;
-		const sqlUserID = BigInt(interaction.user.id);
+		const sqlUserID = BigInt(userID);
 		const wikiName = interaction.options.getString('name')?.toLowerCase();
 		if (interaction.options.getSubcommand() === 'show' || interaction.options.getSubcommand() === 'length') {
 			let lengthCheck = interaction.options.getSubcommand() === 'length';

@@ -1,6 +1,5 @@
 const { SlashCommandBuilder } = require('discord.js');
 const init_keyv = require('../keyv_stores/init_keyv')
-const { clientId } = require('../../config.json');
 const {unpinChannelPins} = require("../functions/chat_utils");
 const db = require("../database");
 const {QueryTypes} = require("sequelize");

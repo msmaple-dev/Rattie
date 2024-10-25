@@ -7,11 +7,9 @@ function timeFromString(timeString){
 	const timeHours = timeString.match(/\d+(?=h)/g)?.map(time => parseInt(time))?.reduce((a, b) => a + b) || 0;
 	const timeMinutes = timeString.match(/\d+(?=m)/g)?.map(time => parseInt(time))?.reduce((a, b) => a + b) || 0;
 
-	const endTime = timeStart + (
+	return timeStart + (
 		((((((timeYears * 365) + (timeWeeks * 7) + timeDays) * 24) + timeHours) * 60) + timeMinutes) * 60000
-	);
-
-	return endTime
+	)
 }
 
 module.exports = timeFromString

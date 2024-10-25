@@ -1,7 +1,6 @@
 const { SlashCommandBuilder } = require('discord.js');
 const db = require('../database');
 const { QueryTypes } = require('sequelize');
-const { clientId } = require('../../config.json');
 const {unpinChannelPins} = require("../functions/chat_utils");
 
 module.exports = {
@@ -52,7 +51,7 @@ module.exports = {
 		),
 	async execute(interaction) {
 		const userID = interaction.user.id;
-		const sqlUserID = BigInt(interaction.user.id);
+		const sqlUserID = BigInt(userID);
 		const subCommand = interaction.options.getSubcommand();
 
 		if (subCommand === 'show') {

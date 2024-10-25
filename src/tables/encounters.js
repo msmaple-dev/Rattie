@@ -1,6 +1,5 @@
 const Sequelize = require('sequelize');
 const db = require('../database')
-const Participants = require("./participants");
 
 const Encounters = db.define('encounters', {
 	encounterId:  {

@@ -1,5 +1,5 @@
-const {weightedSelect, drawDeck, roll, unweightedSelect, rollString, arrayRoll } = require("./roll_utils");
-const {toProperCase, camelizeKeys} = require("./string_utils");
+const {weightedSelect, drawDeck, roll, unweightedSelect, arrayRoll } = require("./roll_utils");
+const {camelizeKeys} = require("./string_utils");
 const path = require("node:path");
 const fs = require("node:fs");
 const init_keyv = require("../keyv_stores/init_keyv");

@@ -1,7 +1,6 @@
 const init_keyv = require('../keyv_stores/init_keyv');
 const db = require("../database");
 const {QueryTypes} = require("sequelize");
-const {monster_color} = require("../components/constants");
 const { attackCardsToObject } = require('./monster_utils');
 
 const modifierTypes = {'curse': 'Curse Die Size', 'flat': 'Flat'}

@@ -1,4 +1,4 @@
-const { EmbedBuilder, Embed} = require('discord.js');
+const { EmbedBuilder } = require('discord.js');
 const { toProperCase, parseLinebreaks, isValidColor, isValidUrl} = require('../functions/string_utils');
 const {monster_color} = require("./constants");
 const { rollResultsToString } = require('../functions/roll_utils');

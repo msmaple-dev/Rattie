@@ -10,9 +10,8 @@ const {newInit, nextTurn, uniqueUsers, getModifierString, getACModifiers, procMo
     modifierCategories, modifierTypes, cullModifiers
 } = require("../functions/init_utils");
 const {unpinChannelPins} = require("../functions/chat_utils");
-const {unweightedSelect, rollFromString } = require("../functions/roll_utils");
+const { rollFromString } = require("../functions/roll_utils");
 const { monster_color } = require('../components/constants');
-const { toProperCase } = require('../functions/string_utils');
 
 const validMonsters = getValidMonsters();
 const monsterChoices = validMonsters.map(monster => {return {name:monster, value: monster}})
@@ -111,7 +110,7 @@ module.exports = {
         ),
     async execute(interaction) {
         const userID = interaction.user.id;
-        const sqlID = BigInt(userID);
+        // const sqlID = BigInt(userID);
         const channelId = interaction.channelId;
         const monsterName = interaction.options.getString('name');
         const subCommand = interaction.options.getSubcommand();

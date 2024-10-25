@@ -56,7 +56,7 @@ module.exports = {
 		),
 	async execute(interaction) {
 		const userID = interaction.user.id;
-		const sqlUserID = BigInt(interaction.user.id);
+		const sqlUserID = BigInt(userID);
 		const subCommand = interaction.options.getSubcommand();
 
 		if (subCommand === 'show') {

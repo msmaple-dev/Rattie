@@ -86,7 +86,7 @@ function explicitParse(rollString = "1d20+1d6+0"){
 	return [rolls, mod, note, multi];
 }
 
-function rollString(rolls = [[1, 20], [1, 6]], mod = 0, note = '', multi = 1, explicit = false) {
+function rollString(rolls = [[1, 20], [1, 6]], mod = 0, note = '', multi = 1) {
 	let outputArray = [];
 	for (let rollNum = 0; rollNum < multi; rollNum++) {
 		let results = arrayRoll(rolls);
