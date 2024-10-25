@@ -3,7 +3,7 @@
     "Name": "Localized Storm",
     "Description": "El Encantador itself. The Storm's pneuma wells in fronts and hotspots, creating localized points of unreality and ruin. This is one such hotspot.",
     "Scale": 4,
-    "Mechanics": "The Localized Storm does not place on the map. Instead, when its card is drawn, it will place a **Phenomena** which can be targeted to damage the Localized Storm.\n\nEach **Phenomena** has a Threshold, an amount of damage that can be dealt to it to destabilize it, weakening the Localized Storm’s card. When enough damage is dealt to meet the Destabilization Threshold, the effects of the Localized Storm’s are replaced by a secondary effect.",
+    "Mechanics": "The Localized Storm does not place on the map. Instead, when its card is drawn, it will place a **Phenomena** which can be targeted to damage the Localized Storm. **Phenomena** cannot be forcibly moved.\n\nEach **Phenomena** has a Threshold, an amount of damage that can be dealt to it to destabilize it, weakening the Localized Storm’s card. When enough damage is dealt to meet the Destabilization Threshold, the effects of the Localized Storm’s are replaced by a secondary effect.",
     "BasicAction": "???",
     "Size": "???",
     "ArmorClass": [[1, 20]],

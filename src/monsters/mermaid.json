@@ -9,7 +9,7 @@
     "ArmorClass": 11,
     "DamageThreshold": 355,
     "AttackCards": [
-      "Coast Scouring Wave | Instinct becomes: If adjacent to a character, move. Uses **Tsunami** with remaining actions, prioritizing as many targets as possible.\n***Tsunami:*** *Ranged. 6xInfinity Line beginning on a map edge. Destroys all cover and terrain in its area. 27 Bash.*",
+      "Coast Scouring Wave | Instinct becomes: If adjacent to a character, move. Uses **Tsunami** with remaining actions, prioritizing as many targets as possible.\n***Tsunami:*** *Ranged. 6xInfinity Line beginning on a map edge. Destroys **ALL** cover and terrain in its area. 27 Bash.*",
       "Illusory Hare | When this card is drawn, the Wavecaller Mermaid conjures a *Mist Illusion: Hare* adjacent to each character. **Sea Spray** deals 30 Shock this turn, and draws an additional Shock status on-hit.",
       "Illusory Hippo | When this card is drawn, the Wavecaller Mermaid gains a *Seafoam Copy* and conjures a *Mist Illusion: Hippo* adjacent to itself. The *Mist Illusion: Hippo* performs **Tidal Rampage**.\n***Tidal Rampage:*** *Ranged. 8 Normal Cone. 15 Bash.*",
       "Illusory Crabs | When this card is drawn the Wavecaller Mermaid gains a *Seafoam Copy* and conjures two *Mist Illusion: Crab*s adjacent to two different targets. *Mist Illusion: Crab*s have Lockdown and one Reaction, striking with **Condensation Claw**.\n***Condensation Claw:*** *Melee. 19 Shock.*",
