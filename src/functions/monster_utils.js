@@ -23,10 +23,26 @@ for (const file of monsterFiles) {
 }
 
 const defaultLoot = {
-    "1 Cert": 0.78,
+    "Baseline Cert": 0.78,
     "A Bauble!": 0.10,
     "A Trinket!!": 0.08,
     "An Artifact!!!": 0.04,
+}
+
+const baubles = {
+    "Two-Minds Earring": "You may take another Focus in Smarts",
+    "Two-Sights Bracelet": "You may take another Focus in Talent",
+    "Two-Bodies Bracelet": "You may take another Focus in Fitness",
+    "Two-Hearts Locket": "You may take another Focus in Intuition",
+    "Mole's Eye Ring": "You may walk through walls like they are molasses.",
+    "Feather Tassel": "You may fly at 25 mph in 1 minute bursts.",
+    "Spider Boots": "You can walk on walls and ceilings",
+    "Cloak of Faeriekind": "You may grow translucent while still in shadow.",
+    "Boots of Faeriekind": "Your steps make almost no sound.",
+    "Ruby of the Red": "You may create small flames at will in your hand.",
+    "Sapphire of the Blue": "You may create ice at will in your hand.",
+    "Emerald of the Green": "You can create plant-life at will in your hand.",
+    "Topaz of the Yellow": "You can create electric sparks at will in your hand.",
 }
 
 function getMonster(name) {
@@ -62,7 +78,11 @@ function getValidMonsters(){
 }
 
 function drawDefaultLoot() {
-    return `${weightedSelect(defaultLoot)}`
+    let lootRoll = `${weightedSelect(defaultLoot)}`;
+    if(lootRoll.includes('Bauble')){
+        lootRoll += `\n${unweightedSelect(Object.entries(baubles)).join(": ")}`
+    }
+    return lootRoll;
 }
 
 async function drawMonsterCard(channelId, channel, clearLast = true){
