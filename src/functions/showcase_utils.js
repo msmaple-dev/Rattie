@@ -13,7 +13,7 @@ async function checkShowcase(client){
 		let showcaseDate = new Date(showcaseDateVal);
 		let adjustedDate = new Date(showcaseDate).setDate(showcaseDate.getDate() + 1);
 		if(now >= adjustedDate){
-			await init_keyv.set("showcaseDate", now);
+			await init_keyv.set("showcaseDate", now.setHours(15, 0, 0));
 			let validWikis = await db.query('SELECT * FROM wikis WHERE showcaseUses <= (SELECT MIN(showcaseUses) FROM wikis WHERE length(concat(warlockName, quote, about, faction, appearance, abilities, scent)) > 450) AND length(concat(warlockName, quote, about, faction, appearance, abilities, scent)) > 450', {
 				type: QueryTypes.SELECT,
 			})
