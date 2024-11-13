@@ -317,10 +317,9 @@ module.exports = {
                     let rollArray = getModifiedRollCode(modifiers, (subCommand === 'strike' ? 'attack' : 'save'));
                     let inputText = `${rollArray[0]}`;
                     for (const value of rollArray.slice(1,3)) {
-                        inputText += `${value > 0 ? `+${value}` : `${value}`}`
+                        inputText += `${value >= 0 ? `+${value}` : `${value}`}`
                     }
                     inputText += `x${rollArray[3]}`
-                    console.log(inputText)
                     outputText += `${i > 0 ? '\n' : ''}${count > 1 ? `${subCommand.toProperCase()} #${i+1}: ` : ''}${rollFromString(inputText)}`;
                     let removedMods = procModifiers(modifiers, subCommand);
                     outputText += removedMods ? removedMods + '\n' : '';
