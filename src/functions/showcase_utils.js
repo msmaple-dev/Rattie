@@ -7,13 +7,14 @@ const { showcaseChannelId } = require('../../config.json');
 const { toProperCase } = require('./string_utils');
 
 async function checkShowcase(client){
-	const now = Date.now()
 	if(await init_keyv.has("showcaseDate")){
-		let showcaseDateVal = await init_keyv.get("showcaseDate");
-		let showcaseDate = new Date(showcaseDateVal);
-		let adjustedDate = new Date(showcaseDate).setDate(showcaseDate.getDate() + 1);
-		if(now >= adjustedDate){
-			await init_keyv.set("showcaseDate", now.setHours(15, 0, 0));
+		const now = Date.now();
+		let showcaseDate = await init_keyv.get("showcaseDate");
+		let tomorrowDate = new Date();
+		tomorrowDate.setDate(tomorrowDate.getDate()+1);
+		tomorrowDate.setHours(15);
+		if(now >= showcaseDate){
+			await init_keyv.set("showcaseDate", tomorrowDate);
 			let validWikis = await db.query('SELECT * FROM wikis WHERE showcaseUses <= (SELECT MIN(showcaseUses) FROM wikis WHERE length(concat(warlockName, quote, about, faction, appearance, abilities, scent)) > 450) AND length(concat(warlockName, quote, about, faction, appearance, abilities, scent)) > 450', {
 				type: QueryTypes.SELECT,
 			})
