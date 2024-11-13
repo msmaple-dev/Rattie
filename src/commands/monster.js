@@ -12,6 +12,7 @@ const {newInit, nextTurn, uniqueUsers, getModifierString, getACModifiers, procMo
 const {unpinChannelPins} = require("../functions/chat_utils");
 const { rollFromString } = require("../functions/roll_utils");
 const { monster_color } = require('../components/constants');
+const { toProperCase } = require('../functions/string_utils');
 
 const validMonsters = getValidMonsters();
 const monsterChoices = validMonsters.map(monster => {return {name:monster, value: monster}})
@@ -320,7 +321,7 @@ module.exports = {
                         inputText += `${value >= 0 ? `+${value}` : `${value}`}`
                     }
                     inputText += `x${rollArray[3]}`
-                    outputText += `${i > 0 ? '\n' : ''}${count > 1 ? `${subCommand.toProperCase()} #${i+1}: ` : ''}${rollFromString(inputText)}`;
+                    outputText += `${i > 0 ? '\n' : ''}${count > 1 ? `${toProperCase(subCommand)} #${i+1}: ` : ''}${rollFromString(inputText)}`;
                     let removedMods = procModifiers(modifiers, subCommand);
                     outputText += removedMods ? removedMods + '\n' : '';
                     modifiers = cullModifiers(modifiers);
