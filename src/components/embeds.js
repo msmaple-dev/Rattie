@@ -157,8 +157,9 @@ function lootEmbed(monsterId, lootString){
 }
 
 function monsterAttackedEmbed(monster, damage, currentDamage, attackRoll, baseAC, monsterCurseDie, monsterCurseDieSize, flatMod, monsterAC){
-	let embed = new EmbedBuilder().setTitle(attackRoll ? `Attacking ${monster.name} for ${damage} damage:` : `Applying ${damage} damage to ${monster.name}:`)
-	if(attackRoll){
+	let isAttackRoll = !(attackRoll === null || attackRoll === undefined)
+	let embed = new EmbedBuilder().setTitle(isAttackRoll ? `Attacking ${monster.name} for ${damage} damage:` : `Applying ${damage} damage to ${monster.name}:`)
+	if(isAttackRoll){
 		let baseRollDesc = baseAC;
 		if(Array.isArray(monster.armorClass)){
 			baseRollDesc = ``

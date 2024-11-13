@@ -206,7 +206,7 @@ module.exports = {
             }
         } else if (subCommand === 'attack' || subCommand === 'damage') {
             let currentInit = await init_keyv.get(channelId);
-            let attackRoll = interaction.options.getInteger('roll') || null;
+            let attackRoll = interaction.options.getInteger('roll');
             let dmg = interaction.options.getInteger('dmg');
             let monster = currentInit?.monster;
             let monsterHit = false;
