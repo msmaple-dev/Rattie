@@ -19,6 +19,24 @@ async function findWiki(wikiName, getEmbed = true){
 	}
 }
 
+const fieldChoices = [
+	{name: 'name', value: 'name'},
+	{name: 'warlockname', value: 'warlockname'},
+	{name: 'pronouns', value: 'pronouns'},
+	{name: 'quote', value: 'quote'},
+	{name: 'about', value: 'about'},
+	{name: 'age', value: 'age'},
+	{name: 'faction', value: 'faction'},
+	{name: 'renown', value: 'renown'},
+	{name: 'scent', value: 'scent'},
+	{name: 'appearance', value: 'appearance'},
+	{name: 'image', value: 'image'},
+	{name: 'source', value: 'source'},
+	{name: 'icon', value: 'icon'},
+	{name: 'abilities', value: 'abilities'},
+	{name: 'color', value: 'color'},
+];
+
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('wiki')
@@ -79,6 +97,13 @@ module.exports = {
 				.setName('length')
 				.setDescription('Get the length of all fields in a warlock wiki')
 				.addStringOption(option => option.setName('name').setDescription('Wiki Name').setRequired(true)),
+		)
+		.addSubcommand(subcommand =>
+			subcommand
+				.setName('drop')
+				.setDescription('Drop a field from a wiki')
+				.addStringOption(option => option.setName('name').setDescription('Wiki Name').setRequired(true))
+				.addStringOption(option => option.setName('field').setDescription('Field to Drop').addChoices(...fieldChoices).setRequired(true)),
 		),
 	async execute(interaction) {
 		const userID = interaction.user.id;
@@ -274,6 +299,25 @@ module.exports = {
 					type: QueryTypes.DELETE,
 				});
 				await interaction.reply(`Renamed wiki ${wikiName} to ${newWikiName}`);
+			}
+			else {
+				await interaction.reply(`No wikis you own are named ${wikiName}!`);
+			}
+		} else if (interaction.options.getSubcommand() === 'drop') {
+			let existingOwnedWikis = await db.query('SELECT * FROM wikis WHERE ownerId = ? AND name = ?', {
+				replacements: [sqlUserID, wikiName],
+				type: QueryTypes.SELECT,
+			});
+
+			let field = interaction.options.getString('field');
+
+			if (field && existingOwnedWikis?.length > 0) {
+				let query = `UPDATE WIKIS SET ? = null WHERE ownerId = ? AND name = ?`;
+				await db.query(query, {
+					replacements: [field, sqlUserID, wikiName],
+					type: QueryTypes.DELETE,
+				});
+				await interaction.reply(`Dropped field ${field} from ${wikiName}`);
 			}
 			else {
 				await interaction.reply(`No wikis you own are named ${wikiName}!`);
