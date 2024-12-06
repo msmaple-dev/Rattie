@@ -86,9 +86,9 @@ module.exports = {
 			const content = interaction.options.getString('text');
 			const isPrivate = interaction.options.getBoolean('private') || false;
 
-			let query = `SELECT * from tags WHERE tags.name = ?${isPrivate ? ` AND tags.ownerId = ? AND tags.isPrivate = ?` : ""}`
+			let query = `SELECT * from tags WHERE tags.name = ?${isPrivate ? ` AND tags.ownerId = ? AND tags.isPrivate = ?` : "AND tags.isPrivate = ?"}`
 			let matchingTags = await db.query(query, {
-				replacements: isPrivate ? [tagName, sqlUserID, isPrivate] : [tagName],
+				replacements: isPrivate ? [tagName, sqlUserID, isPrivate] : [tagName, isPrivate],
 				type: QueryTypes.SELECT,
 			});
 
