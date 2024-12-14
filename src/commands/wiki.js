@@ -108,7 +108,7 @@ module.exports = {
 	async execute(interaction) {
 		const userID = interaction.user.id;
 		const sqlUserID = BigInt(userID);
-		const wikiName = interaction.options.getString('name')?.toLowerCase();
+		const wikiName = interaction.options.getString('name')?.replace(/[^a-zA-Z0-9]/g, "")?.toLowerCase();
 		if (interaction.options.getSubcommand() === 'show' || interaction.options.getSubcommand() === 'length') {
 			let lengthCheck = interaction.options.getSubcommand() === 'length';
 			let foundWiki = await findWiki(wikiName, !lengthCheck);
@@ -143,7 +143,7 @@ module.exports = {
 			let currentPage = 0;
 			let selectLimit = 25;
 			let pageWikis = await db.query(selectQuery, {
-				replacements: [selectLimit, currentPage*25],
+				replacements: [selectLimit, currentPage*selectLimit],
 				type: QueryTypes.SELECT,
 			});
 			const wikiCountQuery = await db.query('SELECT COUNT(id) FROM wikis', {
@@ -159,7 +159,7 @@ module.exports = {
 				.setCustomId('next')
 				.setEmoji({name: '➡'})
 				.setStyle(ButtonStyle.Primary)
-				.setDisabled((currentPage+1)*25 > (wikiCount));
+				.setDisabled((currentPage+1)*selectLimit > (wikiCount));
 			let selectOptions = pageWikis.map((wiki) => new StringSelectMenuOptionBuilder()
 				.setLabel(`${wiki.warlockName ? `${wiki.name} - ${wiki.warlockName}` : wiki.name}`)
 				.setValue(wiki.name)
@@ -170,7 +170,7 @@ module.exports = {
 				.setOptions(selectOptions);
 			let selectRow = new ActionRowBuilder().addComponents(select)
 			let buttonRow = new ActionRowBuilder().addComponents(prev, next);
-			let wikiList = wikiListEmbed(pageWikis, currentPage, wikiCount)
+			let wikiList = wikiListEmbed(pageWikis, currentPage, wikiCount, selectLimit)
 
 			const response = await interaction.reply({embeds: [wikiList], components: [selectRow, buttonRow], ephemeral: true});
 
@@ -189,12 +189,12 @@ module.exports = {
 			buttonCollector.on('collect', async i => {
 				currentPage += (i.customId === 'next' ? 1 : -1);
 				pageWikis = await db.query(selectQuery, {
-					replacements: [selectLimit, currentPage*25],
+					replacements: [selectLimit, currentPage*selectLimit],
 					type: QueryTypes.SELECT,
 				})
-				wikiList = wikiListEmbed(pageWikis, currentPage, wikiCount)
+				wikiList = wikiListEmbed(pageWikis, currentPage, wikiCount, selectLimit)
 				prev.setDisabled(currentPage <= 0)
-				next.setDisabled((currentPage+1)*25 > (wikiCount))
+				next.setDisabled((currentPage+1)*selectLimit > (wikiCount))
 				selectRow = new ActionRowBuilder().addComponents(select)
 				buttonRow = new ActionRowBuilder().addComponents(prev, next)
 				selectOptions = pageWikis.map((wiki) => new StringSelectMenuOptionBuilder()
@@ -287,7 +287,7 @@ module.exports = {
 			}
 		}
 		else if (interaction.options.getSubcommand() === 'rename') {
-			let newWikiName = interaction.options.getString('newname')?.toLowerCase() || null;
+			let newWikiName = interaction.options.getString('newname')?.replace(/[^a-zA-Z0-9]/g, "")?.toLowerCase() || null;
 			let existingOwnedWikis = await db.query('SELECT * FROM wikis WHERE ownerId = ? AND name = ?', {
 				replacements: [sqlUserID, wikiName],
 				type: QueryTypes.SELECT,
