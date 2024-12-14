@@ -1,20 +1,21 @@
 const db = require('../database');
 const { QueryTypes } = require('sequelize');
-const init_keyv = require('../keyv_stores/init_keyv');
+const scheduler_keyv = require('../keyv_stores/scheduler_keyv');
 const { unweightedSelect } = require('./roll_utils');
 const { wikiEmbed } = require('../components/embeds');
 const { showcaseChannelId } = require('../../config.json');
 const { toProperCase } = require('./string_utils');
 
 async function checkShowcase(client){
-	if(await init_keyv.has("showcaseDate")){
+	if(await scheduler_keyv.has("showcaseDate")){
 		const now = Date.now();
-		let showcaseDate = await init_keyv.get("showcaseDate");
+		let showcaseDateVal = await scheduler_keyv.get("showcaseDate");
+		let showcaseDate = new Date(showcaseDateVal);
 		let tomorrowDate = new Date();
 		tomorrowDate.setDate(tomorrowDate.getDate()+1);
-		tomorrowDate.setHours(15);
+		tomorrowDate.setHours(15, 0, 0);
 		if(now >= showcaseDate){
-			await init_keyv.set("showcaseDate", tomorrowDate);
+			await scheduler_keyv.set("showcaseDate", tomorrowDate);
 			let validWikis = await db.query('SELECT * FROM wikis WHERE showcaseUses <= (SELECT MIN(showcaseUses) FROM wikis WHERE length(concat(warlockName, quote, about, faction, appearance, abilities, scent)) > 450) AND length(concat(warlockName, quote, about, faction, appearance, abilities, scent)) > 450', {
 				type: QueryTypes.SELECT,
 			})
@@ -32,7 +33,7 @@ async function checkShowcase(client){
 			}
 		}
 	} else {
-		await init_keyv.set("showcaseDate", 0)
+		await scheduler_keyv.set("showcaseDate", 0)
 	}
 }
 

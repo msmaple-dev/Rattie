@@ -128,9 +128,9 @@ function wikiEmbed(wiki) {
 	return embed;
 }
 
-function wikiListEmbed(wikis, currentPage, wikiCount){
-	let embed = new EmbedBuilder().setTitle(`List of Wikis (${currentPage*25+1}-${Math.min((currentPage+1)*25, wikiCount)}/${wikiCount})`)
-	let wikiList = wikis.map((wiki, index) => `${(index+1)+((currentPage)*25)}. ${wiki.warlockName ? `${wiki.name} - ${wiki.warlockName}` : wiki.name}`).join('\n')
+function wikiListEmbed(wikis, currentPage, wikiCount, selectLimit){
+	let embed = new EmbedBuilder().setTitle(`List of Wikis (${currentPage*selectLimit+1}-${Math.min((currentPage+1)*selectLimit, wikiCount)}/${wikiCount})`)
+	let wikiList = wikis.map((wiki, index) => `${(index+1)+((currentPage)*selectLimit)}. ${wiki.warlockName ? `${wiki.name} - ${wiki.warlockName}` : wiki.name}`).join('\n')
 	embed.setDescription(wikiList);
 	embed.setColor('#5e4415')
 	return embed;
