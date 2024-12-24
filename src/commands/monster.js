@@ -333,7 +333,7 @@ module.exports = {
 			let modifiers = currentInit.modifiers;
 			if (monster) {
 				for (let i = 0; i < count; i++) {
-					const rollArray = getModifiedRollCode(modifiers, (subCommand === 'strike' ? 'attack' : 'save'));
+					const rollArray = getModifiedRollCode(modifiers, (subCommand === 'strike' ? 'attack' : 'saves'));
 					let inputText = `${rollArray[0]}`;
 					for (const value of rollArray.slice(1, 3)) {
 						inputText += `${value >= 0 ? `+${value}` : `${value}`}`;
