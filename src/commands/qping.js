@@ -16,19 +16,24 @@ module.exports = {
 		if (messageId && channelId) {
 			try {
 				const channel = await client.channels.cache.get(channelId);
-				const message = channel && await channel.messages.fetch(messageId);
+				let message = channel && await channel.messages.fetch(messageId);
+				// Force update cache
+				message = await message.fetch(true);
 				if (message) {
-					const users = [];
+					const users = new Set();
 					for (const reaction of message.reactions.cache.values()) {
 						const reactingUsers = await reaction.users.fetch();
 						for (const user of reactingUsers.keys()) {
-							if (users.indexOf(user) === -1) {
-								users.push(user);
-							}
+							users.add(user);
 						}
 					}
-					const reply = `Quest Ping: ${users.map(user => `<@${user}>`).join(', ')}`;
-					await interaction.reply({ content: reply, allowedMentions: {} });
+					if (users) {
+						const reply = `Quest Ping: ${[...users].map(user => `<@${user}>`).join(', ')}`;
+						await interaction.reply({ content: reply });
+					}
+					else {
+						await interaction.reply(`No Reactions Found at Message ${link}`);
+					}
 				}
 			}
 			catch (e) {
