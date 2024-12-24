@@ -1,4 +1,4 @@
-const camelCase = require("lodash.camelcase");
+const camelCase = require('lodash.camelcase');
 
 function toProperCase(string) {
 	return string.replace(/\w\S*/g, function(txt) {
@@ -17,12 +17,12 @@ function parseLinebreaks(text) {
 
 function isValidUrl(text) {
 	// Credit to Stack Exchange user Matthew O'Riordan for this pattern (https://stackoverflow.com/a/8234912)
-	let isLinkPattern = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)/;
+	const isLinkPattern = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=+$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=+$,\w]+@)[A-Za-z0-9.-]+)((?:\/[+~%/.\w-_]*)?\??(?:[-+=&;%@.\w_]*)#?(?:[\w]*))?)/;
 	return text && isLinkPattern.test(text) && text.match(isLinkPattern)?.length;
 }
 
 function isValidColor(color) {
-	let validShortcuts = ['Default', 'Aqua', 'DarkAqua', 'Green', 'DarkGreen', 'Blue', 'DarkBlue', 'Purple', 'DarkPurple', 'LuminousVividPink', 'DarkVividPink', 'Gold', 'DarkGold', 'Orange', 'DarkOrange', 'Red', 'DarkRed', 'Grey', 'DarkGrey', 'DarkerGrey', 'LightGrey', 'Navy', 'DarkNavy', 'Yellow'];
+	const validShortcuts = ['Default', 'Aqua', 'DarkAqua', 'Green', 'DarkGreen', 'Blue', 'DarkBlue', 'Purple', 'DarkPurple', 'LuminousVividPink', 'DarkVividPink', 'Gold', 'DarkGold', 'Orange', 'DarkOrange', 'Red', 'DarkRed', 'Grey', 'DarkGrey', 'DarkerGrey', 'LightGrey', 'Navy', 'DarkNavy', 'Yellow'];
 	return (color && (validShortcuts.indexOf(color) > -1 || /^#[0-9A-F]{6}$/i.test(color)));
 }
 
@@ -30,7 +30,8 @@ function isValidColor(color) {
 function camelizeKeys(obj) {
 	if (Array.isArray(obj)) {
 		return obj.map(v => camelizeKeys(v));
-	} else if (obj != null && obj.constructor === Object) {
+	}
+	else if (obj != null && obj.constructor === Object) {
 		return Object.keys(obj).reduce(
 			(result, key) => ({
 				...result,
@@ -42,4 +43,4 @@ function camelizeKeys(obj) {
 	return obj;
 }
 
-module.exports = { toProperCase, parseLinebreaks, isValidUrl, isValidColor, camelizeKeys }
+module.exports = { toProperCase, parseLinebreaks, isValidUrl, isValidColor, camelizeKeys };

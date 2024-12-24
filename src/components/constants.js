@@ -1,9 +1,9 @@
-let severities = [{ name: 'Lesser', value: 'lesser' },
+const severities = [{ name: 'Lesser', value: 'lesser' },
 	{ name: 'Moderate', value: 'moderate' },
 	{ name: 'Severe', value: 'severe' },
 	{ name: 'Grimoire', value: 'grimoire' }];
 
-let tarot_data = [
+const tarot_data = [
 	{
 		cardName: 'Fool',
 		originalTarot: '0 - Fool',
@@ -564,7 +564,7 @@ let tarot_data = [
 	},
 ];
 
-let base_deck_data = [
+const base_deck_data = [
 	{
 		ownerId: 0,
 		cardName: 'Slice & Dice',
@@ -847,7 +847,7 @@ let base_deck_data = [
 	},
 ];
 
-let colors_data = [
+const colors_data = [
 	{ ownerId: 0, deckType: 'slash', color: '#980000' },
 	{ ownerId: 0, deckType: 'pierce', color: '#55cf20' },
 	{ ownerId: 0, deckType: 'bash', color: '#4a86e8' },
@@ -857,6 +857,6 @@ let colors_data = [
 	{ ownerId: 0, deckType: 'hollow', color: '#000000' },
 ];
 
-let monster_color = "#1f4913";
+const monster_color = '#1f4913';
 
-module.exports = { severities, base_deck_data, colors_data, tarot_data, monster_color }
+module.exports = { severities, base_deck_data, colors_data, tarot_data, monster_color };

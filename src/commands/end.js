@@ -1,6 +1,6 @@
 const { SlashCommandBuilder } = require('discord.js');
-const init_keyv = require('../keyv_stores/init_keyv')
-const {nextTurn} = require("../functions/init_utils");
+const init_keyv = require('../keyv_stores/init_keyv');
+const { nextTurn } = require('../functions/init_utils');
 
 module.exports = {
 	cooldown: 3,
@@ -15,23 +15,27 @@ module.exports = {
 		const endTrue = interaction.options.getBoolean('true') || false;
 		const count = interaction.options.getInteger('turns') || null;
 		const roundEnd = interaction.options.getBoolean('endround') || false;
-		let outputText = ""
+		let outputText = '';
 
-		let currentInit = await init_keyv.get(channelId) ?? 0;
+		const currentInit = await init_keyv.get(channelId) ?? 0;
 
-		if(currentInit){
-			if(currentInit?.round >= 0 && currentInit.currentTurn >= 0){
-				if((roundEnd || count > 1 || currentInit.currentTurn === currentInit.users.length) && currentInit.monster && currentInit.monster?.id){
-					outputText = "You are in a monster hunt! Please do /monster pass to end the round"
-				} else if(roundEnd || count || endTrue || currentInit.users[currentInit.currentTurn - 1].userID === interaction.user.id){
-					outputText = await nextTurn(channelId, (roundEnd ? -1 : (count || 1)))
-				} else {
-					outputText = "It's not your turn!"
+		if (currentInit) {
+			if (currentInit?.round >= 0 && currentInit.currentTurn >= 0) {
+				if ((roundEnd || count > 1 || currentInit.currentTurn === currentInit.users.length) && currentInit.monster && currentInit.monster?.id) {
+					outputText = 'You are in a monster hunt! Please do /monster pass to end the round';
 				}
-			} else {
-				outputText = "Combat Has Not Started!"
+				else if (roundEnd || count || endTrue || currentInit.users[currentInit.currentTurn - 1].userID === interaction.user.id) {
+					outputText = await nextTurn(channelId, (roundEnd ? -1 : (count || 1)));
+				}
+				else {
+					outputText = 'It\'s not your turn!';
+				}
 			}
-		} else outputText = "No Inits Entered!"
-		interaction.reply(outputText)
+			else {
+				outputText = 'Combat Has Not Started!';
+			}
+		}
+		else {outputText = 'No Inits Entered!';}
+		interaction.reply(outputText);
 	},
 };

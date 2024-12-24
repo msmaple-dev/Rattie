@@ -3,7 +3,7 @@ const init_keyv = require('../keyv_stores/init_keyv');
 const { statusEmbed } = require('../components/embeds');
 const { QueryTypes } = require('sequelize');
 const db = require('../database');
-const { selectFromWeightedString, drawDeck} = require('../functions/roll_utils');
+const { selectFromWeightedString, drawDeck } = require('../functions/roll_utils');
 const { severities } = require('../components/constants');
 
 module.exports = {
@@ -17,10 +17,9 @@ module.exports = {
 			.setName('severity')
 			.setDescription('Severity')
 			.setRequired(false)
-			.addChoices(...severities)
+			.addChoices(...severities),
 		)
-		.addBooleanOption(option => option.setName('base').setDescription('Draw from base decks, not init decks').setRequired(false))
-	,
+		.addBooleanOption(option => option.setName('base').setDescription('Draw from base decks, not init decks').setRequired(false)),
 	async execute(interaction) {
 		const deckString = interaction.options.getString('decks')?.toLowerCase();
 		const deckType = deckString && deckString.match(/(\d+ \w+)+/gm)?.length > 0 && selectFromWeightedString(deckString)?.toLowerCase() || deckString;
@@ -31,14 +30,14 @@ module.exports = {
 		const sqlUserID = BigInt(interaction.user.id);
 		const identifier = interaction.options.getString('identifier') || null;
 		const channel = interaction.channelId;
-		let channelInit = await init_keyv.get(channel);
-		let channelUserIndex = channelInit && channelInit?.users ? channelInit.users.findIndex(user => user.userID === userID && user.identifier === identifier) : -1;
-		let channelUser = channelUserIndex >= 0 ? channelInit.users[channelUserIndex] : null;
-		let cardColors = await db.query('SELECT deckType, color FROM colors WHERE colors.`ownerId` IN (0, ?)', {
+		const channelInit = await init_keyv.get(channel);
+		const channelUserIndex = channelInit && channelInit?.users ? channelInit.users.findIndex(user => user.userID === userID && user.identifier === identifier) : -1;
+		const channelUser = channelUserIndex >= 0 ? channelInit.users[channelUserIndex] : null;
+		const cardColors = await db.query('SELECT deckType, color FROM colors WHERE colors.`ownerId` IN (0, ?)', {
 			replacements: [sqlUserID],
 			type: QueryTypes.SELECT,
 		});
-		let colorDictionary = Object.assign({}, ...cardColors.map((x) => ({ [x.deckType]: x.color })));
+		const colorDictionary = Object.assign({}, ...cardColors.map((x) => ({ [x.deckType]: x.color })));
 
 		let statusCards = [];
 
@@ -62,14 +61,14 @@ module.exports = {
 				const drawableCards = severityCards || baseCards;
 
 				for (let i = 0; i < drawCount; i++) {
-					let drawnCard = drawableCards[Math.floor(Math.random() * drawableCards.length)];
+					const drawnCard = drawableCards[Math.floor(Math.random() * drawableCards.length)];
 					statusCards.push(drawnCard);
 				}
 			}
 		}
 		else {
-			let userCards = channelUser.decks;
-			let deck = userCards[deckType];
+			const userCards = channelUser.decks;
+			const deck = userCards[deckType];
 
 			if (!deck || deck.length <= 0) {
 				console.log('Init Draw Error');
@@ -80,14 +79,14 @@ module.exports = {
 				return;
 			}
 
-			statusCards = drawDeck(deck, drawCount, severity)
+			statusCards = drawDeck(deck, drawCount, severity);
 			userCards[deckType] = deck;
 
 			await init_keyv.set(channel, channelInit);
 		}
-		let replyArray = [];
-		for (let selectedCard of statusCards) {
-			let embed = statusEmbed(selectedCard.cardName, selectedCard.cardText, selectedCard.severity, (colorDictionary[selectedCard.deckType] || '#FFFFFF'), identifier, severity);
+		const replyArray = [];
+		for (const selectedCard of statusCards) {
+			const embed = statusEmbed(selectedCard.cardName, selectedCard.cardText, selectedCard.severity, (colorDictionary[selectedCard.deckType] || '#FFFFFF'), identifier, severity);
 			replyArray.push(embed);
 		}
 		await interaction.reply({ embeds: replyArray });

@@ -14,7 +14,7 @@ module.exports = {
 		const reminderContent = interaction.options.getString('content');
 		const timeString = interaction.options.getString('time').toLowerCase();
 
-		let endTime = timeFromString(timeString)
+		const endTime = timeFromString(timeString);
 		const logTime = `${endTime}`.slice(0, 10);
 		await interaction.reply(`Set reminder "${reminderContent}" for <t:${logTime}:D> @ <t:${logTime}:t> (<t:${logTime}:R>)`);
 		const replyMessage = await interaction.fetchReply();

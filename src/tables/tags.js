@@ -1,5 +1,5 @@
 const Sequelize = require('sequelize');
-const db = require('../database')
+const db = require('../database');
 
 module.exports = db.define('tags', {
 	name: {
@@ -12,7 +12,7 @@ module.exports = db.define('tags', {
 	},
 	content: {
 		type: Sequelize.TEXT,
-		allowNull: false
+		allowNull: false,
 	},
 	isPrivate: {
 		type: Sequelize.BOOLEAN,
@@ -24,4 +24,4 @@ module.exports = db.define('tags', {
 		defaultValue: 0,
 		allowNull: false,
 	},
-}, {timestamps: false});
+}, { timestamps: false });

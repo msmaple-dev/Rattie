@@ -1,5 +1,5 @@
 const Sequelize = require('sequelize');
-const db = require('../database')
+const db = require('../database');
 
 module.exports = db.define('wikis', {
 	ownerId:  {
@@ -7,7 +7,7 @@ module.exports = db.define('wikis', {
 	},
 	name: {
 		type: Sequelize.TEXT,
-		allowNull: false
+		allowNull: false,
 	},
 	warlockName: {
 		type: Sequelize.TEXT,
@@ -57,5 +57,5 @@ module.exports = db.define('wikis', {
 	showcaseUses: {
 		type: Sequelize.INTEGER,
 		defaultValue: 0,
-	}
-}, {timestamps: false});
+	},
+}, { timestamps: false });

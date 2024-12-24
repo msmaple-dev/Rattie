@@ -1,5 +1,5 @@
 const Sequelize = require('sequelize');
-const db = require('../database')
+const db = require('../database');
 
 const Participants = db.define('participants', {
 	encounterId: {
@@ -8,8 +8,8 @@ const Participants = db.define('participants', {
 		primaryKey: true,
 		references: {
 			model: 'encounters',
-			key: 'encounterId'
-		}
+			key: 'encounterId',
+		},
 	},
 	userId: {
 		type: Sequelize.TEXT,
@@ -19,7 +19,7 @@ const Participants = db.define('participants', {
 	damageTaken: {
 		type: Sequelize.INTEGER,
 		allowNull: true,
-	}
-}, {timestamps: false});
+	},
+}, { timestamps: false });
 
-module.exports = Participants
+module.exports = Participants;

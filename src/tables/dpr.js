@@ -1,5 +1,5 @@
 const Sequelize = require('sequelize');
-const db = require('../database')
+const db = require('../database');
 
 const DPR = db.define('dpr', {
 	encounterId: {
@@ -8,8 +8,8 @@ const DPR = db.define('dpr', {
 		primaryKey: true,
 		references: {
 			model: 'encounters',
-			key: 'encounterId'
-		}
+			key: 'encounterId',
+		},
 	},
 	round: {
 		type: Sequelize.INTEGER,
@@ -19,7 +19,7 @@ const DPR = db.define('dpr', {
 	damage: {
 		type: Sequelize.INTEGER,
 		allowNull: false,
-	}
-}, {timestamps: false});
+	},
+}, { timestamps: false });
 
-module.exports = DPR
+module.exports = DPR;

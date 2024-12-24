@@ -6,7 +6,7 @@ const checkReminders = require('./functions/rem_utils');
 const { checkShowcase } = require('./functions/scheduler_utils');
 
 // Setup Client
-const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.GuildMembers,] });
+const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.GuildMembers] });
 
 client.commands = new Collection();
 
@@ -27,9 +27,10 @@ for (const file of commandFiles) {
 	const command = require(filePath);
 	// Set a new item in the Collection with the key as the command name and the value as the exported module
 	if ('data' in command && 'execute' in command) {
-		console.log(`Registered Command: ${command.data.name}`)
+		console.log(`Registered Command: ${command.data.name}`);
 		client.commands.set(command.data.name, command);
-	} else {
+	}
+	else {
 		console.log(`[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`);
 	}
 }
@@ -42,8 +43,8 @@ client.cooldowns = new Collection();
 // We use 'c' for the event parameter to keep it separate from the already defined 'client'
 client.once(Events.ClientReady, c => {
 	console.log(`Ready! Logged in as ${c.user.tag}`);
-	setInterval(async () => {await checkReminders(c)}, 30000)
-	setInterval(async () => {await checkShowcase(c)}, 120000)
+	setInterval(async () => {await checkReminders(c);}, 30000);
+	setInterval(async () => {await checkShowcase(c);}, 120000);
 });
 
 client.on(Events.InteractionCreate, async interaction => {
@@ -79,16 +80,19 @@ client.on(Events.InteractionCreate, async interaction => {
 	setTimeout(() => timestamps.delete(0), cooldownAmount);
 
 	try {
-		if(command?.needsClient){
+		if (command?.needsClient) {
 			await command.execute(interaction, client);
-		} else {
+		}
+		else {
 			await command.execute(interaction);
 		}
-	} catch (error) {
+	}
+	catch (error) {
 		console.error(error);
 		if (interaction.replied || interaction.deferred) {
 			await interaction.followUp({ content: 'There was an error while executing this command!', ephemeral: true });
-		} else {
+		}
+		else {
 			await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
 		}
 	}

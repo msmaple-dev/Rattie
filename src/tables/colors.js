@@ -1,5 +1,5 @@
 const Sequelize = require('sequelize');
-const db = require('../database')
+const db = require('../database');
 
 module.exports = db.define('colors', {
 	ownerId: {
@@ -13,4 +13,4 @@ module.exports = db.define('colors', {
 		type: Sequelize.TEXT,
 		allowNull: false,
 	},
-}, {timestamps: false});
+}, { timestamps: false });

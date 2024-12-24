@@ -6,24 +6,23 @@ module.exports = {
 		.setName('reshuffle')
 		.setDescription('Reshuffles one of your decks in initiative, refreshing it back to full')
 		.addStringOption(option => option.setName('deck').setDescription('Deck to reshuffle').setRequired(true))
-		.addStringOption(option => option.setName('identifier').setDescription('Identifier for sub-user in initiative to reshuffle').setRequired(false))
-	,
+		.addStringOption(option => option.setName('identifier').setDescription('Identifier for sub-user in initiative to reshuffle').setRequired(false)),
 	async execute(interaction) {
 		const deckType = interaction.options.getString('deck')?.toLowerCase();
 		const identifier = interaction.options.getString('identifier') || null;
 		const channel = interaction.channelId;
 		const userID = interaction.user.id;
-		let channelInit = await init_keyv.get(channel);
-		let channelUserIndex = channelInit && channelInit?.users ? channelInit.users.findIndex(user => user.userID === userID && user.identifier === identifier) : -1;
-		let channelUser = channelUserIndex >= 0 ? channelInit.users[channelUserIndex] : null;
+		const channelInit = await init_keyv.get(channel);
+		const channelUserIndex = channelInit && channelInit?.users ? channelInit.users.findIndex(user => user.userID === userID && user.identifier === identifier) : -1;
+		const channelUser = channelUserIndex >= 0 ? channelInit.users[channelUserIndex] : null;
 
 		if (!channelUser) {
-			await interaction.reply('Invalid user for this channel\'s initiative!')
+			await interaction.reply('Invalid user for this channel\'s initiative!');
 			return;
 		}
 		else {
-			let userCards = channelUser.decks;
-			let deck = userCards[deckType];
+			const userCards = channelUser.decks;
+			const deck = userCards[deckType];
 
 			if (!deck || deck.length <= 0) {
 				interaction.reply({
@@ -33,7 +32,7 @@ module.exports = {
 				return;
 			}
 
-			for (let card of deck) {
+			for (const card of deck) {
 				card.used = false;
 			}
 

@@ -11,23 +11,23 @@ module.exports = {
 		const channelId = interaction.channelId;
 		const userID = interaction.user.id;
 		const identifier = interaction.options.getString('identifier') ?? null;
-		let currentInit = await init_keyv.get(channelId);
+		const currentInit = await init_keyv.get(channelId);
 
 		let outputText = '';
 
 		if (currentInit && currentInit.users.find(user => user.userID == userID && user.identifier == identifier)) {
 
-			let currentUser = currentInit.users.find(user => user.userID == userID && user.identifier == identifier);
-			outputText = `__Deck (# of Cards Left): Available Cards__\n`;
+			const currentUser = currentInit.users.find(user => user.userID == userID && user.identifier == identifier);
+			outputText = '__Deck (# of Cards Left): Available Cards__\n';
 
 			for (const [deck, totalCards] of Object.entries(currentUser.decks)) {
-				let usableCards = totalCards.filter(card => !card.used);
+				const usableCards = totalCards.filter(card => !card.used);
 				outputText += `**${toProperCase(deck)} (${usableCards.length}/${totalCards.length})${usableCards?.length > 0 ? ': ' : ''}**`;
-				console.log(usableCards, totalCards)
+				console.log(usableCards, totalCards);
 				if (usableCards?.length > 0) {
 					outputText += usableCards.map(card => card.cardName = toProperCase(card.cardName)).sort((a, b) => (b.severity > a.severity) || (a.cardName > b.cardName)).join(', ');
 				}
-				outputText += "\n"
+				outputText += '\n';
 			}
 		}
 		else {

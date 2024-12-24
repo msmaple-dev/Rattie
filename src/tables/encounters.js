@@ -1,5 +1,5 @@
 const Sequelize = require('sequelize');
-const db = require('../database')
+const db = require('../database');
 
 const Encounters = db.define('encounters', {
 	encounterId:  {
@@ -10,7 +10,7 @@ const Encounters = db.define('encounters', {
 	},
 	channelId: {
 		type: Sequelize.TEXT,
-		allowNull: false
+		allowNull: false,
 	},
 	rounds:  {
 		type: Sequelize.INTEGER,
@@ -32,6 +32,6 @@ const Encounters = db.define('encounters', {
 	modifiersApplied: {
 		type: Sequelize.INTEGER,
 	},
-}, {timestamps: false});
+}, { timestamps: false });
 
-module.exports = Encounters
+module.exports = Encounters;

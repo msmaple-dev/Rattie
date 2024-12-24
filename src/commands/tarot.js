@@ -19,35 +19,38 @@ module.exports = {
 			.setRequired(false)),
 	async execute(interaction) {
 
-		let forcedTier = interaction.options.getString('tier') && interaction.options.getString('tier') === 'major';
-		let specificCard = interaction.options.getString('card') && toProperCase(interaction.options.getString('card')) || null;
+		const forcedTier = interaction.options.getString('tier') && interaction.options.getString('tier') === 'major';
+		const specificCard = interaction.options.getString('card') && toProperCase(interaction.options.getString('card')) || null;
 
-		let tarotCards = []
+		let tarotCards = [];
 
-		if(specificCard){
-			tarotCards = await db.query(`SELECT * FROM tarots WHERE cardName = ?`, {
+		if (specificCard) {
+			tarotCards = await db.query('SELECT * FROM tarots WHERE cardName = ?', {
 				replacements: [specificCard, specificCard],
 				type: QueryTypes.SELECT,
 			});
-		} else {
-			tarotCards = await db.query(`SELECT * FROM tarots`, {
+		}
+		else {
+			tarotCards = await db.query('SELECT * FROM tarots', {
 				type: QueryTypes.SELECT,
 			});
 		}
 
-		if(forcedTier){
+		if (forcedTier) {
 			tarotCards = tarotCards.filter(a => a.majorTarot);
-		} else if (forcedTier === false){
-			tarotCards = tarotCards.filter(a => !a.majorTarot)
+		}
+		else if (forcedTier === false) {
+			tarotCards = tarotCards.filter(a => !a.majorTarot);
 		}
 
 		if (tarotCards?.length > 0) {
 			const drawnCard = tarotCards[Math.floor(Math.random() * tarotCards.length)];
-			const {cardName, originalTarot, majorTarot, upright, reverse, description, explanation} = drawnCard;
-			const cardEmbed = tarotEmbed(cardName, originalTarot, majorTarot, upright, reverse, description, explanation, forcedTier, specificCard)
+			const { cardName, originalTarot, majorTarot, upright, reverse, description, explanation } = drawnCard;
+			const cardEmbed = tarotEmbed(cardName, originalTarot, majorTarot, upright, reverse, description, explanation, forcedTier, specificCard);
 			await interaction.reply({ embeds: [cardEmbed] });
-		} else {
-			await interaction.reply("Invalid card name!")
+		}
+		else {
+			await interaction.reply('Invalid card name!');
 		}
 	},
 };

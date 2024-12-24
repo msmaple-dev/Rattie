@@ -1,7 +1,7 @@
 const { SlashCommandBuilder } = require('discord.js');
 const db = require('../database');
 const { QueryTypes } = require('sequelize');
-const {unpinChannelPins} = require("../functions/chat_utils");
+const { unpinChannelPins } = require('../functions/chat_utils');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -27,7 +27,7 @@ module.exports = {
 			subcommand
 				.setName('init')
 				.setDescription('Adds a private init tag that displays whenever you enter init.')
-				.addStringOption(option => option.setName('text').setDescription('Tag Content').setRequired(true))
+				.addStringOption(option => option.setName('text').setDescription('Tag Content').setRequired(true)),
 		)
 		.addSubcommand(subcommand =>
 			subcommand
@@ -60,24 +60,24 @@ module.exports = {
 			const pinTag = interaction.options.getBoolean('pin') || false;
 
 			if (tagName) {
-				let query = `SELECT * from tags WHERE tags.name = ?${isPrivate ? ` AND tags.ownerId = ? AND tags.isPrivate = ?` : "AND tags.isPrivate = ?"}`
-				let matchingTags = await db.query(query, {
+				const query = `SELECT * from tags WHERE tags.name = ?${isPrivate ? ' AND tags.ownerId = ? AND tags.isPrivate = ?' : 'AND tags.isPrivate = ?'}`;
+				const matchingTags = await db.query(query, {
 					replacements: isPrivate ? [tagName, sqlUserID, isPrivate] : [tagName, isPrivate],
 					type: QueryTypes.SELECT,
 				});
 
-				if(matchingTags?.length > 0) {
-					let tagContent = matchingTags[0].content.replaceAll(/\\n/gm, '\n');
+				if (matchingTags?.length > 0) {
+					const tagContent = matchingTags[0].content.replaceAll(/\\n/gm, '\n');
 					await interaction.reply(tagContent);
-					if(pinTag){
+					if (pinTag) {
 						const message = await interaction.fetchReply();
-						if(message){
-							await message.pin('Tag Pin Command')
+						if (message) {
+							await message.pin('Tag Pin Command');
 						}
 					}
 				}
 				else {
-					await interaction.reply(`${isPrivate ? 'Private ' : ""}Tag ${tagName} does not exist!`);
+					await interaction.reply(`${isPrivate ? 'Private ' : ''}Tag ${tagName} does not exist!`);
 				}
 			}
 		}
@@ -86,69 +86,72 @@ module.exports = {
 			const content = interaction.options.getString('text');
 			const isPrivate = interaction.options.getBoolean('private') || false;
 
-			let query = `SELECT * from tags WHERE tags.name = ?${isPrivate ? ` AND tags.ownerId = ? AND tags.isPrivate = ?` : "AND tags.isPrivate = ?"}`
-			let matchingTags = await db.query(query, {
+			const query = `SELECT * from tags WHERE tags.name = ?${isPrivate ? ' AND tags.ownerId = ? AND tags.isPrivate = ?' : 'AND tags.isPrivate = ?'}`;
+			const matchingTags = await db.query(query, {
 				replacements: isPrivate ? [tagName, sqlUserID, isPrivate] : [tagName, isPrivate],
 				type: QueryTypes.SELECT,
 			});
 
-			if(subCommand === 'add'){
-				if(matchingTags?.length > 0 || matchingTags.filter(tag => tag.isPrivate === isPrivate && tag.ownerId === sqlUserID)?.length) {
-					await interaction.reply(`${isPrivate ? 'Private ' : ""}Tag ${tagName} already exists`);
+			if (subCommand === 'add') {
+				if (matchingTags?.length > 0 || matchingTags.filter(tag => tag.isPrivate === isPrivate && tag.ownerId === sqlUserID)?.length) {
+					await interaction.reply(`${isPrivate ? 'Private ' : ''}Tag ${tagName} already exists`);
 					return;
-				} else {
-					await db.query('INSERT INTO tags(name, ownerId, content, isPrivate) VALUES (?, ?, ?, ?)', {
-						replacements: [tagName, sqlUserID, content, isPrivate]
-					})
-				}
-			} else if(subCommand === 'modify'){
-				if(matchingTags?.length > 0) {
-					await db.query(`DELETE FROM tags WHERE tags.name = ? AND tags.ownerId = ? AND tags.isPrivate = ?`, {
-						replacements: [tagName, sqlUserID, isPrivate],
-						type: QueryTypes.DELETE,
-					})
-					await db.query('INSERT INTO tags(name, ownerId, content, isPrivate) VALUES (?, ?, ?, ?)', {
-						replacements: [tagName, sqlUserID, content, isPrivate]
-					})
 				}
 				else {
-					await interaction.reply(`${isPrivate ? 'Private ' : ""}Tag ${tagName} does not exist!`);
+					await db.query('INSERT INTO tags(name, ownerId, content, isPrivate) VALUES (?, ?, ?, ?)', {
+						replacements: [tagName, sqlUserID, content, isPrivate],
+					});
+				}
+			}
+			else if (subCommand === 'modify') {
+				if (matchingTags?.length > 0) {
+					await db.query('DELETE FROM tags WHERE tags.name = ? AND tags.ownerId = ? AND tags.isPrivate = ?', {
+						replacements: [tagName, sqlUserID, isPrivate],
+						type: QueryTypes.DELETE,
+					});
+					await db.query('INSERT INTO tags(name, ownerId, content, isPrivate) VALUES (?, ?, ?, ?)', {
+						replacements: [tagName, sqlUserID, content, isPrivate],
+					});
+				}
+				else {
+					await interaction.reply(`${isPrivate ? 'Private ' : ''}Tag ${tagName} does not exist!`);
 					return;
 				}
 			}
 
-			interaction.reply(`${subCommand === 'modify' ? 'Modified' : 'Added'} Tag ${tagName}!`)
+			interaction.reply(`${subCommand === 'modify' ? 'Modified' : 'Added'} Tag ${tagName}!`);
 		}
 		else if (subCommand === 'init') {
 			const content = interaction.options.getString('text');
 			await db.query('REPLACE INTO tags(name, ownerId, content, isPrivate) VALUES (?, ?, ?, ?)', {
-				replacements: ['init', sqlUserID, content, true]
-			})
-			interaction.reply(`Updated your init tag!`)
+				replacements: ['init', sqlUserID, content, true],
+			});
+			interaction.reply('Updated your init tag!');
 		}
 		else if (subCommand === 'delete') {
 			const tagName = interaction.options.getString('name')?.toLowerCase();
 			const isPrivate = interaction.options.getBoolean('private') || false;
 
-			let query = `SELECT * from tags WHERE tags.name = ? AND tags.ownerId = ? AND tags.isPrivate = ?`
-			let matchingTags = await db.query(query, {
+			const query = 'SELECT * from tags WHERE tags.name = ? AND tags.ownerId = ? AND tags.isPrivate = ?';
+			const matchingTags = await db.query(query, {
 				replacements: [tagName, sqlUserID, isPrivate],
 				type: QueryTypes.SELECT,
 			});
 
-			if(matchingTags?.length > 0){
-				await db.query(`DELETE FROM tags WHERE tags.name = ? AND tags.ownerId = ? AND tags.isPrivate = ?`, {
+			if (matchingTags?.length > 0) {
+				await db.query('DELETE FROM tags WHERE tags.name = ? AND tags.ownerId = ? AND tags.isPrivate = ?', {
 					replacements: [tagName, sqlUserID, isPrivate],
 					type: QueryTypes.DELETE,
-				})
-				interaction.reply(`Deleted ${isPrivate ? 'private ' : ""}tag ${tagName}!`)
-			} else {
-				await interaction.reply(`There are no ${isPrivate ? 'Private ' : ""}Tags named ${tagName} that you own!`);
+				});
+				interaction.reply(`Deleted ${isPrivate ? 'private ' : ''}tag ${tagName}!`);
+			}
+			else {
+				await interaction.reply(`There are no ${isPrivate ? 'Private ' : ''}Tags named ${tagName} that you own!`);
 			}
 		}
 		else if (subCommand === 'clear') {
-			await unpinChannelPins(interaction.channel)
-			await interaction.reply('Cleared all Rattie Pins!')
+			await unpinChannelPins(interaction.channel);
+			await interaction.reply('Cleared all Rattie Pins!');
 		}
 	},
 };

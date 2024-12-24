@@ -2,7 +2,7 @@ const { SlashCommandBuilder } = require('discord.js');
 const init_keyv = require('../keyv_stores/init_keyv');
 const db = require('../database');
 const { QueryTypes } = require('sequelize');
-const {getUserDecks, newInit} = require("../functions/init_utils");
+const { getUserDecks, newInit } = require('../functions/init_utils');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -19,48 +19,49 @@ module.exports = {
 
 		let outputText = '';
 
-		let decks = await getUserDecks(sqlID)
+		const decks = await getUserDecks(sqlID);
 
-		let initTags = await db.query('SELECT * FROM tags WHERE tags.isPrivate = TRUE AND tags.name = ? AND tags.ownerId = ?', {
+		const initTags = await db.query('SELECT * FROM tags WHERE tags.isPrivate = TRUE AND tags.name = ? AND tags.ownerId = ?', {
 			replacements: ['init', sqlID],
 			type: QueryTypes.SELECT,
-		})
-		let userInitTag = initTags && initTags[0];
+		});
+		const userInitTag = initTags && initTags[0];
 		let postInitTag = false;
 
 		if (await init_keyv.has(channelId)) {
-			let currentInit = await init_keyv.get(channelId).catch(err => interaction.reply(err));
-			let currentUsers = currentInit.users;
-			let matchingIndex = currentUsers.findIndex(usr => usr.userID === userID && usr.identifier === userIdentifier)
-			let currentTurnUser = currentUsers[currentInit.currentTurn - 1]
-			if(matchingIndex >= 0){
-				let userInit = currentUsers[matchingIndex]
-				userInit.initVal = initVal
-				outputText = `Changed User ${userIdentifier ? `${userIdentifier} (<@${userID}>)` : `<@${userID}>`} Init to ${initVal}`
-			} else {
-				currentUsers.push({ userID: userID, identifier: userIdentifier, initVal: initVal, decks: decks})
-				outputText = `Added User ${userIdentifier ? `${userIdentifier} (<@${userID}>)` : `<@${userID}>`} at Init ${initVal}`
-				if(!userIdentifier){
+			const currentInit = await init_keyv.get(channelId).catch(err => interaction.reply(err));
+			const currentUsers = currentInit.users;
+			const matchingIndex = currentUsers.findIndex(usr => usr.userID === userID && usr.identifier === userIdentifier);
+			const currentTurnUser = currentUsers[currentInit.currentTurn - 1];
+			if (matchingIndex >= 0) {
+				const userInit = currentUsers[matchingIndex];
+				userInit.initVal = initVal;
+				outputText = `Changed User ${userIdentifier ? `${userIdentifier} (<@${userID}>)` : `<@${userID}>`} Init to ${initVal}`;
+			}
+			else {
+				currentUsers.push({ userID: userID, identifier: userIdentifier, initVal: initVal, decks: decks });
+				outputText = `Added User ${userIdentifier ? `${userIdentifier} (<@${userID}>)` : `<@${userID}>`} at Init ${initVal}`;
+				if (!userIdentifier) {
 					postInitTag = true;
 				}
 			}
-			currentUsers.sort((a, b) => (b.initVal - a.initVal))
-			currentInit.currentTurn = currentUsers.indexOf(currentTurnUser)+1
-			await init_keyv.set(channelId, currentInit)
+			currentUsers.sort((a, b) => (b.initVal - a.initVal));
+			currentInit.currentTurn = currentUsers.indexOf(currentTurnUser) + 1;
+			await init_keyv.set(channelId, currentInit);
 		}
 		else {
-			let startingInit = newInit([{ userID: userID, identifier: userIdentifier, initVal: initVal, decks: decks }])
-			await init_keyv.set(channelId, startingInit)
-			outputText = `Started new Init with User ${userIdentifier ? `${userIdentifier} (<@${userID}>)` : `<@${userID}>`} at Init ${initVal}`
-			if(!userIdentifier){
+			const startingInit = newInit([{ userID: userID, identifier: userIdentifier, initVal: initVal, decks: decks }]);
+			await init_keyv.set(channelId, startingInit);
+			outputText = `Started new Init with User ${userIdentifier ? `${userIdentifier} (<@${userID}>)` : `<@${userID}>`} at Init ${initVal}`;
+			if (!userIdentifier) {
 				postInitTag = true;
 			}
 		}
-		await interaction.reply(outputText)
-		if(postInitTag && userInitTag){
+		await interaction.reply(outputText);
+		if (postInitTag && userInitTag) {
 			await interaction.followUp(`\n${userInitTag.content.replaceAll(/\\n/gm, '\n')}`).then(msg => {
 				msg.pin('Init Pin');
-			})
+			});
 		}
 	},
 };

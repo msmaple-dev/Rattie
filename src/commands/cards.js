@@ -66,40 +66,41 @@ module.exports = {
 			let baseCards = null;
 
 			if (deckType || specificCard) {
-				let cardColors = await db.query('SELECT deckType, color FROM colors WHERE colors.`ownerId` IN (0, ?)', {
+				const cardColors = await db.query('SELECT deckType, color FROM colors WHERE colors.`ownerId` IN (0, ?)', {
 					replacements: [sqlUserID],
 					type: QueryTypes.SELECT,
 				});
-				let colorDictionary = Object.assign({}, ...cardColors.map((x) => ({ [x.deckType]: x.color })));
+				const colorDictionary = Object.assign({}, ...cardColors.map((x) => ({ [x.deckType]: x.color })));
 
-				let replyArray = [];
-				let query = 'SELECT * FROM cards WHERE ownerId IN (0, ?)'
-				let queryReplacements = [sqlUserID]
-				if(deckType){
-					query += ' AND LOWER(deckType) = ?'
-					queryReplacements.push(deckType)
+				const replyArray = [];
+				let query = 'SELECT * FROM cards WHERE ownerId IN (0, ?)';
+				const queryReplacements = [sqlUserID];
+				if (deckType) {
+					query += ' AND LOWER(deckType) = ?';
+					queryReplacements.push(deckType);
 				}
 				if (specificCard) {
-					query += ' AND LOWER(cardName) = ?'
-					queryReplacements.push(specificCard)
+					query += ' AND LOWER(cardName) = ?';
+					queryReplacements.push(specificCard);
 				}
 				baseCards = await db.query(query, {
 					replacements: queryReplacements,
 					type: QueryTypes.SELECT,
 				});
 
-				if(!baseCards || !(baseCards?.length)){
-					await interaction.reply('No valid cards found!')
-				} else {
-					for (let selectedCard of baseCards) {
-						let embed = statusEmbed(selectedCard.cardName, selectedCard.cardText, selectedCard.severity, (colorDictionary[selectedCard.deckType] || '#FFFFFF'));
+				if (!baseCards || !(baseCards?.length)) {
+					await interaction.reply('No valid cards found!');
+				}
+				else {
+					for (const selectedCard of baseCards) {
+						const embed = statusEmbed(selectedCard.cardName, selectedCard.cardText, selectedCard.severity, (colorDictionary[selectedCard.deckType] || '#FFFFFF'));
 						replyArray.push(embed);
 					}
 
 					await interaction.reply({ embeds: replyArray.slice(0, 5), ephemeral: isPrivate });
 					if (replyArray.length > 5) {
-						for(let i = 5; i < replyArray.length; i = i + 5){
-							await interaction.followUp({ embeds: replyArray.slice(i, i + 5), ephemeral: isPrivate});
+						for (let i = 5; i < replyArray.length; i = i + 5) {
+							await interaction.followUp({ embeds: replyArray.slice(i, i + 5), ephemeral: isPrivate });
 						}
 					}
 				}
@@ -110,98 +111,101 @@ module.exports = {
 					type: QueryTypes.SELECT,
 				});
 
-				let outputText = `__Deck, Card Count__\n`;
+				let outputText = '__Deck, Card Count__\n';
 				baseCards.sort((a, b) => a.deckType > b.deckType);
-				for (let deck of baseCards) {
+				for (const deck of baseCards) {
 					outputText += `${deck.deckType[0].toUpperCase() + deck.deckType.slice(1)}: ${deck.count}\n`;
 				}
 
-				await interaction.reply({content: outputText, ephemeral: isPrivate});
+				await interaction.reply({ content: outputText, ephemeral: isPrivate });
 			}
 
 		}
 		else if (subCommand === 'add' || subCommand === 'modify') {
-			let cardName = interaction.options.getString('name') || null;
-			let deckType = interaction.options.getString('decktype')?.toLowerCase() || null;
+			const cardName = interaction.options.getString('name') || null;
+			const deckType = interaction.options.getString('decktype')?.toLowerCase() || null;
 			let severity = interaction.options.getString('severity')?.toLowerCase() || null;
 			let cardText = interaction.options.getString('cardtext') || null;
 
-			let cardColors = await db.query('SELECT deckType, color FROM colors WHERE colors.`ownerId` IN (0, ?)', {
+			const cardColors = await db.query('SELECT deckType, color FROM colors WHERE colors.`ownerId` IN (0, ?)', {
 				replacements: [sqlUserID],
 				type: QueryTypes.SELECT,
 			});
-			let colorDictionary = Object.assign({}, ...cardColors.map((x) => ({ [x.deckType]: x.color })));
+			const colorDictionary = Object.assign({}, ...cardColors.map((x) => ({ [x.deckType]: x.color })));
 
-			const deckColor = interaction.options.getString('deckcolor') || colorDictionary[deckType] || `#FFFFFF`;
+			const deckColor = interaction.options.getString('deckcolor') || colorDictionary[deckType] || '#FFFFFF';
 
-			let existingCards = await db.query('SELECT * FROM cards WHERE ownerId = ? AND deckType = ? AND cardName = ?', {
+			const existingCards = await db.query('SELECT * FROM cards WHERE ownerId = ? AND deckType = ? AND cardName = ?', {
 				replacements: [sqlUserID, deckType, cardName],
 				type: QueryTypes.SELECT,
-			})
+			});
 
-			if(subCommand === 'modify'){
-				if(existingCards?.length){
-					let existingCard = existingCards[0]
-					severity = severity || existingCard.severity
-					cardText = cardText || existingCard.cardText
+			if (subCommand === 'modify') {
+				if (existingCards?.length) {
+					const existingCard = existingCards[0];
+					severity = severity || existingCard.severity;
+					cardText = cardText || existingCard.cardText;
 
 					await db.query('DELETE FROM cards WHERE ownerId = ? AND deckType = ? AND cardName = ?', {
 						replacements: [sqlUserID, deckType, cardName],
 						type: QueryTypes.DELETE,
-					})
-				} else {
-					await interaction.reply(`No cards in deck ${deckType} are named ${cardName}!`)
-					return
+					});
 				}
-			} else if(existingCards?.length){
-				await interaction.reply(`Card ${cardName} already exists in ${deckType}!`)
-				return
+				else {
+					await interaction.reply(`No cards in deck ${deckType} are named ${cardName}!`);
+					return;
+				}
+			}
+			else if (existingCards?.length) {
+				await interaction.reply(`Card ${cardName} already exists in ${deckType}!`);
+				return;
 			}
 
 			await db.query ('REPLACE INTO cards (ownerId, cardName, deckType, severity, cardText) VALUES (?, ?, ?, ?, ?)', {
 				replacements: [sqlUserID, cardName, deckType, severity, cardText],
-			})
+			});
 
-			if(interaction.options.getString('deckcolor')){
+			if (interaction.options.getString('deckcolor')) {
 				await db.query('DELETE FROM colors WHERE ownerId = ? AND deckType = ?', {
 					replacements: [sqlUserID, deckType],
 					type: QueryTypes.DELETE,
-				})
+				});
 
 				await db.query('REPLACE INTO colors(ownerId, deckType, color) VALUES (?, ?, ?)', {
-					replacements: [sqlUserID, deckType, deckColor]
-				})
+					replacements: [sqlUserID, deckType, deckColor],
+				});
 			}
 
-			await interaction.reply(`${subCommand === 'modify' ? 'Modified' : 'Added'} card ${cardName} ${subCommand === 'modify' ? 'Of' : 'To'} Deck ${deckType}`)
+			await interaction.reply(`${subCommand === 'modify' ? 'Modified' : 'Added'} card ${cardName} ${subCommand === 'modify' ? 'Of' : 'To'} Deck ${deckType}`);
 		}
 		else if (subCommand === 'delete') {
 			const cardName = interaction.options.getString('name') || null;
 			const deckType = interaction.options.getString('decktype')?.toLowerCase() || null;
 
-			let existingCards = await db.query('SELECT * FROM cards WHERE ownerId = ? AND deckType = ? AND cardName = ?', {
+			const existingCards = await db.query('SELECT * FROM cards WHERE ownerId = ? AND deckType = ? AND cardName = ?', {
 				replacements: [sqlUserID, deckType, cardName],
 				type: QueryTypes.SELECT,
-			})
-			if(!existingCards) {
-				await interaction.reply(`No cards in deck ${deckType} are named ${cardName}!`)
-			} else {
+			});
+			if (!existingCards) {
+				await interaction.reply(`No cards in deck ${deckType} are named ${cardName}!`);
+			}
+			else {
 				await db.query('DELETE FROM cards WHERE ownerId = ? AND deckType = ? AND cardName = ?', {
 					replacements: [sqlUserID, deckType, cardName],
 					type: QueryTypes.DELETE,
 				});
-				let remainingCards = await db.query('SELECT * FROM cards WHERE ownerId = ? AND deckType = ?', {
+				const remainingCards = await db.query('SELECT * FROM cards WHERE ownerId = ? AND deckType = ?', {
 					replacements: [sqlUserID, deckType, cardName],
-					type: QueryTypes.SELECT
+					type: QueryTypes.SELECT,
 				});
 
-				if(remainingCards && !remainingCards?.length){
+				if (remainingCards && !remainingCards?.length) {
 					await db.query('DELETE FROM colors WHERE ownerId = ? AND deckType = ?', {
 						replacements: [sqlUserID, deckType, cardName],
 						type: QueryTypes.DELETE,
 					});
 				}
-				await interaction.reply(`Deleted card ${cardName} of Deck ${deckType}`)
+				await interaction.reply(`Deleted card ${cardName} of Deck ${deckType}`);
 			}
 		}
 		else if (subCommand === 'clear') {
@@ -210,13 +214,13 @@ module.exports = {
 			await db.query('DELETE FROM cards WHERE ownerId = ? AND deckType = ?', {
 				replacements: [sqlUserID, deckType],
 				type: QueryTypes.DELETE,
-			})
+			});
 
 			await db.query('DELETE FROM colors WHERE ownerId = ? AND deckType = ?', {
-					replacements: [sqlUserID, deckType],
-					type: QueryTypes.DELETE,
-			})
-			await interaction.reply(`Deleted Deck ${deckType}`)
+				replacements: [sqlUserID, deckType],
+				type: QueryTypes.DELETE,
+			});
+			await interaction.reply(`Deleted Deck ${deckType}`);
 		}
 	},
 };

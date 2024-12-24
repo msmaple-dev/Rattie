@@ -14,17 +14,17 @@ module.exports = {
 		const rounds = interaction.options.getInteger('rounds');
 		const content = interaction.options.getString('content');
 
-		let outputText = "No Init in this Channel!"
+		let outputText = 'No Init in this Channel!';
 
-		let currentInit = await init_keyv.get(channelId)
+		const currentInit = await init_keyv.get(channelId);
 
-		if(currentInit?.currentTurn > 0){
-			let turnUser = currentInit.users[currentInit.currentTurn-1]
+		if (currentInit?.currentTurn > 0) {
+			const turnUser = currentInit.users[currentInit.currentTurn - 1];
 			// Trackers: userID, identifier, turnUserID, turnUserIdentifier, rounds, content
-			let tracker = {userID: userID, turnUserID: turnUser.userID, turnUserIdentifier: turnUser.identifier, rounds: rounds, content: content}
-			currentInit.trackers.push(tracker)
-			outputText = `Set Reminder "${content}" for ${rounds} Round(s) from now.`
-			await init_keyv.set(channelId, currentInit)
+			const tracker = { userID: userID, turnUserID: turnUser.userID, turnUserIdentifier: turnUser.identifier, rounds: rounds, content: content };
+			currentInit.trackers.push(tracker);
+			outputText = `Set Reminder "${content}" for ${rounds} Round(s) from now.`;
+			await init_keyv.set(channelId, currentInit);
 		}
 
 		await interaction.reply(outputText);

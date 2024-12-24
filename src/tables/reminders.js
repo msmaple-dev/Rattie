@@ -1,5 +1,5 @@
 const Sequelize = require('sequelize');
-const db = require('../database')
+const db = require('../database');
 
 module.exports = db.define('reminders', {
 	ownerId:  {
@@ -16,6 +16,6 @@ module.exports = db.define('reminders', {
 	},
 	endTime: {
 		type: Sequelize.INTEGER,
-		allowNull: false
+		allowNull: false,
 	},
-}, {timestamps: false});
+}, { timestamps: false });

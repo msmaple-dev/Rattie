@@ -6,7 +6,7 @@ module.exports = {
 		.setName('pet')
 		.setDescription('Pet the rat'),
 	async execute(interaction) {
-		let choices = {'Yay :D': 50, '*Bites You*': 1}
+		const choices = { 'Yay :D': 50, '*Bites You*': 1 };
 		await interaction.reply(weightedSelect(choices));
 	},
 };

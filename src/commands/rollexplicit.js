@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require('discord.js');
-const { rollString, explicitParse } = require("../functions/roll_utils")
+const { rollString, explicitParse } = require('../functions/roll_utils');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -8,7 +8,7 @@ module.exports = {
 		.addStringOption(option => option.setName('roll').setDescription('Roll code').setRequired(false)),
 	async execute(interaction) {
 		const inputText = interaction.options.getString('roll') ?? '1d20+1d6+0';
-		let outputText = rollString(...explicitParse(inputText), true);
+		const outputText = rollString(...explicitParse(inputText), true);
 		await interaction.reply(outputText);
 	},
 };

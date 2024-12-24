@@ -3,38 +3,40 @@ const db = require('../database');
 const { QueryTypes } = require('sequelize');
 const { wikiEmbed, wikiListEmbed } = require('../components/embeds');
 
-async function findWiki(wikiName, getEmbed = true){
-	let wikis = await db.query('SELECT * FROM wikis WHERE name = ?', {
+async function findWiki(wikiName, getEmbed = true) {
+	const wikis = await db.query('SELECT * FROM wikis WHERE name = ?', {
 		replacements: [wikiName],
 		type: QueryTypes.SELECT,
 	});
 	if (wikis && wikis?.length > 0) {
-		if(getEmbed){
-			return wikiEmbed({name: wikiName, ...wikis[0]})
-		} else {
-			return wikis[0]
+		if (getEmbed) {
+			return wikiEmbed({ name: wikiName, ...wikis[0] });
 		}
-	} else {
+		else {
+			return wikis[0];
+		}
+	}
+	else {
 		return false;
 	}
 }
 
 const fieldChoices = [
-	{name: 'name', value: 'name'},
-	{name: 'warlockname', value: 'warlockname'},
-	{name: 'pronouns', value: 'pronouns'},
-	{name: 'quote', value: 'quote'},
-	{name: 'about', value: 'about'},
-	{name: 'age', value: 'age'},
-	{name: 'faction', value: 'faction'},
-	{name: 'renown', value: 'renown'},
-	{name: 'scent', value: 'scent'},
-	{name: 'appearance', value: 'appearance'},
-	{name: 'image', value: 'image'},
-	{name: 'source', value: 'source'},
-	{name: 'icon', value: 'icon'},
-	{name: 'abilities', value: 'abilities'},
-	{name: 'color', value: 'color'},
+	{ name: 'name', value: 'name' },
+	{ name: 'warlockname', value: 'warlockname' },
+	{ name: 'pronouns', value: 'pronouns' },
+	{ name: 'quote', value: 'quote' },
+	{ name: 'about', value: 'about' },
+	{ name: 'age', value: 'age' },
+	{ name: 'faction', value: 'faction' },
+	{ name: 'renown', value: 'renown' },
+	{ name: 'scent', value: 'scent' },
+	{ name: 'appearance', value: 'appearance' },
+	{ name: 'image', value: 'image' },
+	{ name: 'source', value: 'source' },
+	{ name: 'icon', value: 'icon' },
+	{ name: 'abilities', value: 'abilities' },
+	{ name: 'color', value: 'color' },
 ];
 
 module.exports = {
@@ -108,29 +110,30 @@ module.exports = {
 	async execute(interaction) {
 		const userID = interaction.user.id;
 		const sqlUserID = BigInt(userID);
-		const wikiName = interaction.options.getString('name')?.replace(/[^a-zA-Z0-9]/g, "")?.toLowerCase();
+		const wikiName = interaction.options.getString('name')?.replace(/[^a-zA-Z0-9]/g, '')?.toLowerCase();
 		if (interaction.options.getSubcommand() === 'show' || interaction.options.getSubcommand() === 'length') {
-			let lengthCheck = interaction.options.getSubcommand() === 'length';
-			let foundWiki = await findWiki(wikiName, !lengthCheck);
+			const lengthCheck = interaction.options.getSubcommand() === 'length';
+			const foundWiki = await findWiki(wikiName, !lengthCheck);
 			if (foundWiki) {
-				if(lengthCheck){
-					let wikiProperties = Object.entries(foundWiki);
-					let propertyLengths = []
-					let invalidFields = ["id", "ownerId", "showcaseUses"]
-					for (let [property, value] of wikiProperties){
-						if(value && !invalidFields.includes(property)){
-							propertyLengths.push([property, value?.length])
+				if (lengthCheck) {
+					const wikiProperties = Object.entries(foundWiki);
+					const propertyLengths = [];
+					const invalidFields = ['id', 'ownerId', 'showcaseUses'];
+					for (const [property, value] of wikiProperties) {
+						if (value && !invalidFields.includes(property)) {
+							propertyLengths.push([property, value?.length]);
 						}
 					}
-					propertyLengths.sort((a, b) => (b[1] - a[1]))
-					let outputString = `__**Length of Fields in Wiki "${wikiName}"**__\n`
-					let checkedFields = ["warlockName", "quote", "about", "faction", "appearance", "abilities", "scent"];
-					let totalSum = propertyLengths.reduce((accumulator, currentVal) => (accumulator + currentVal[1]), 0)
-					let checkedPropertyLength = propertyLengths.filter((property => checkedFields.includes(property[0]))).reduce((accumulator, currentVal) => (accumulator + currentVal[1]), 0)
-					outputString += propertyLengths.map((property) => (`${checkedFields.includes(property[0]) ? `**${property[0]}**` : property[0]}: ${property[1]}`)).join("\n")
-					outputString += `\n**Total Length:** ${totalSum}\nLength of Checked Fields for Daily Showcase: ${checkedPropertyLength} (${checkedPropertyLength > 450 ? "V" : "Inv"}alid Choice for Wiki of the Day)`
+					propertyLengths.sort((a, b) => (b[1] - a[1]));
+					let outputString = `__**Length of Fields in Wiki "${wikiName}"**__\n`;
+					const checkedFields = ['warlockName', 'quote', 'about', 'faction', 'appearance', 'abilities', 'scent'];
+					const totalSum = propertyLengths.reduce((accumulator, currentVal) => (accumulator + currentVal[1]), 0);
+					const checkedPropertyLength = propertyLengths.filter((property => checkedFields.includes(property[0]))).reduce((accumulator, currentVal) => (accumulator + currentVal[1]), 0);
+					outputString += propertyLengths.map((property) => (`${checkedFields.includes(property[0]) ? `**${property[0]}**` : property[0]}: ${property[1]}`)).join('\n');
+					outputString += `\n**Total Length:** ${totalSum}\nLength of Checked Fields for Daily Showcase: ${checkedPropertyLength} (${checkedPropertyLength > 450 ? 'V' : 'Inv'}alid Choice for Wiki of the Day)`;
 					await interaction.reply(outputString);
-				} else {
+				}
+				else {
 					await interaction.reply({ embeds: [foundWiki] });
 				}
 			}
@@ -139,40 +142,40 @@ module.exports = {
 			}
 		}
 		else if (interaction.options.getSubcommand() === 'list') {
-			let selectQuery = 'SELECT name, warlockName FROM wikis ORDER BY name LIMIT ? OFFSET ?'
+			const selectQuery = 'SELECT name, warlockName FROM wikis ORDER BY name LIMIT ? OFFSET ?';
 			let currentPage = 0;
-			let selectLimit = 25;
+			const selectLimit = 25;
 			let pageWikis = await db.query(selectQuery, {
-				replacements: [selectLimit, currentPage*selectLimit],
+				replacements: [selectLimit, currentPage * selectLimit],
 				type: QueryTypes.SELECT,
 			});
 			const wikiCountQuery = await db.query('SELECT COUNT(id) FROM wikis', {
-				type: QueryTypes.SELECT
-			})
-			const wikiCount = wikiCountQuery[0]['COUNT(id)']
-			let prev = new ButtonBuilder()
+				type: QueryTypes.SELECT,
+			});
+			const wikiCount = wikiCountQuery[0]['COUNT(id)'];
+			const prev = new ButtonBuilder()
 				.setCustomId('prev')
-				.setEmoji({name: '⬅'})
+				.setEmoji({ name: '⬅' })
 				.setStyle(ButtonStyle.Primary)
 				.setDisabled(currentPage <= 0);
-			let next = new ButtonBuilder()
+			const next = new ButtonBuilder()
 				.setCustomId('next')
-				.setEmoji({name: '➡'})
+				.setEmoji({ name: '➡' })
 				.setStyle(ButtonStyle.Primary)
-				.setDisabled((currentPage+1)*selectLimit > (wikiCount));
+				.setDisabled((currentPage + 1) * selectLimit > (wikiCount));
 			let selectOptions = pageWikis.map((wiki) => new StringSelectMenuOptionBuilder()
 				.setLabel(`${wiki.warlockName ? `${wiki.name} - ${wiki.warlockName}` : wiki.name}`)
-				.setValue(wiki.name)
-			)
-			let select = new StringSelectMenuBuilder()
+				.setValue(wiki.name),
+			);
+			const select = new StringSelectMenuBuilder()
 				.setCustomId('select')
 				.setPlaceholder('Select a wiki listed')
 				.setOptions(selectOptions);
-			let selectRow = new ActionRowBuilder().addComponents(select)
+			let selectRow = new ActionRowBuilder().addComponents(select);
 			let buttonRow = new ActionRowBuilder().addComponents(prev, next);
-			let wikiList = wikiListEmbed(pageWikis, currentPage, wikiCount, selectLimit)
+			let wikiList = wikiListEmbed(pageWikis, currentPage, wikiCount, selectLimit);
 
-			const response = await interaction.reply({embeds: [wikiList], components: [selectRow, buttonRow], ephemeral: true});
+			const response = await interaction.reply({ embeds: [wikiList], components: [selectRow, buttonRow], ephemeral: true });
 
 			const selectCollector = response.createMessageComponentCollector({ componentType: ComponentType.StringSelect, time: 120_000 });
 			selectCollector.on('collect', async i => {
@@ -183,55 +186,55 @@ module.exports = {
 				else {
 					await i.reply(`No wikis named ${foundWiki}`);
 				}
-			})
+			});
 
 			const buttonCollector = response.createMessageComponentCollector({ componentType: ComponentType.Button, time: 120_000 });
 			buttonCollector.on('collect', async i => {
 				currentPage += (i.customId === 'next' ? 1 : -1);
 				pageWikis = await db.query(selectQuery, {
-					replacements: [selectLimit, currentPage*selectLimit],
+					replacements: [selectLimit, currentPage * selectLimit],
 					type: QueryTypes.SELECT,
-				})
-				wikiList = wikiListEmbed(pageWikis, currentPage, wikiCount, selectLimit)
-				prev.setDisabled(currentPage <= 0)
-				next.setDisabled((currentPage+1)*selectLimit > (wikiCount))
-				selectRow = new ActionRowBuilder().addComponents(select)
-				buttonRow = new ActionRowBuilder().addComponents(prev, next)
+				});
+				wikiList = wikiListEmbed(pageWikis, currentPage, wikiCount, selectLimit);
+				prev.setDisabled(currentPage <= 0);
+				next.setDisabled((currentPage + 1) * selectLimit > (wikiCount));
+				selectRow = new ActionRowBuilder().addComponents(select);
+				buttonRow = new ActionRowBuilder().addComponents(prev, next);
 				selectOptions = pageWikis.map((wiki) => new StringSelectMenuOptionBuilder()
 					.setLabel(`${wiki.warlockName ? `${wiki.name} - ${wiki.warlockName}` : wiki.name}`)
-					.setValue(wiki.name)
-				)
-				select.setOptions(selectOptions)
-				await i.update({embeds: [wikiList], components: [selectRow, buttonRow], ephemeral: true})
-			})
+					.setValue(wiki.name),
+				);
+				select.setOptions(selectOptions);
+				await i.update({ embeds: [wikiList], components: [selectRow, buttonRow], ephemeral: true });
+			});
 		}
 		else if (interaction.options.getSubcommand() === 'modify') {
-			let warlockName = interaction.options.getString('warlockname') || null;
-			let quote = interaction.options.getString('quote') || null;
-			let age = interaction.options.getString('age') || null;
-			let about = interaction.options.getString('about') || null;
-			let scale = interaction.options.getString('scale') !== null ? interaction.options.getString('scale') : null;
-			let faction = interaction.options.getString('faction') || null;
-			let image = interaction.options.getString('image') || null;
-			let source = interaction.options.getString('source') || null;
-			let icon = interaction.options.getString('icon') || null;
-			let appearance = interaction.options.getString('appearance') || null;
-			let abilities = interaction.options.getString('abilities') || null;
-			let color = interaction.options.getString('color') || null;
-			let pronouns = interaction.options.getString('pronouns') || null;
-			let scent = interaction.options.getString('scent') || null;
-			let renown = interaction.options.getString('renown') !== null ? interaction.options.getString('renown') : null;
-			let updatableValues = [warlockName, quote, about, age, scale, faction, appearance, image, source, icon, abilities, color, pronouns, scent, renown];
-			let updatableFields = ['warlockName', 'quote', 'about', 'age', 'scale', 'faction', 'appearance', 'image', 'source', 'icon', 'abilities', 'color', 'pronouns', 'scent', 'renown'];
-			let setFields = updatableValues.map((value, index) => value && `${updatableFields[index]} = ?`).filter(a => a !== null).join(', ');
+			const warlockName = interaction.options.getString('warlockname') || null;
+			const quote = interaction.options.getString('quote') || null;
+			const age = interaction.options.getString('age') || null;
+			const about = interaction.options.getString('about') || null;
+			const scale = interaction.options.getString('scale') !== null ? interaction.options.getString('scale') : null;
+			const faction = interaction.options.getString('faction') || null;
+			const image = interaction.options.getString('image') || null;
+			const source = interaction.options.getString('source') || null;
+			const icon = interaction.options.getString('icon') || null;
+			const appearance = interaction.options.getString('appearance') || null;
+			const abilities = interaction.options.getString('abilities') || null;
+			const color = interaction.options.getString('color') || null;
+			const pronouns = interaction.options.getString('pronouns') || null;
+			const scent = interaction.options.getString('scent') || null;
+			const renown = interaction.options.getString('renown') !== null ? interaction.options.getString('renown') : null;
+			const updatableValues = [warlockName, quote, about, age, scale, faction, appearance, image, source, icon, abilities, color, pronouns, scent, renown];
+			const updatableFields = ['warlockName', 'quote', 'about', 'age', 'scale', 'faction', 'appearance', 'image', 'source', 'icon', 'abilities', 'color', 'pronouns', 'scent', 'renown'];
+			const setFields = updatableValues.map((value, index) => value && `${updatableFields[index]} = ?`).filter(a => a !== null).join(', ');
 
 			if (updatableValues.filter(a => a)?.length <= 0) {
-				await interaction.reply(`No valid fields given!`);
+				await interaction.reply('No valid fields given!');
 				return;
 			}
 
 			if (interaction.options.getSubcommand() === 'modify') {
-				let existingOwnedWikis = await db.query('SELECT * FROM wikis WHERE ownerId = ? AND name = ?', {
+				const existingOwnedWikis = await db.query('SELECT * FROM wikis WHERE ownerId = ? AND name = ?', {
 					replacements: [sqlUserID, wikiName],
 					type: QueryTypes.SELECT,
 				});
@@ -251,7 +254,7 @@ module.exports = {
 			}
 		}
 		else if (interaction.options.getSubcommand() === 'add') {
-			let existingWikis = await db.query('SELECT * FROM wikis WHERE name = ?', {
+			const existingWikis = await db.query('SELECT * FROM wikis WHERE name = ?', {
 				replacements: [wikiName],
 				type: QueryTypes.SELECT,
 			});
@@ -270,7 +273,7 @@ module.exports = {
 			}
 		}
 		else if (interaction.options.getSubcommand() === 'delete') {
-			let existingOwnedWikis = await db.query('SELECT * FROM wikis WHERE ownerId = ? AND name = ?', {
+			const existingOwnedWikis = await db.query('SELECT * FROM wikis WHERE ownerId = ? AND name = ?', {
 				replacements: [sqlUserID, wikiName],
 				type: QueryTypes.SELECT,
 			});
@@ -287,8 +290,8 @@ module.exports = {
 			}
 		}
 		else if (interaction.options.getSubcommand() === 'rename') {
-			let newWikiName = interaction.options.getString('newname')?.replace(/[^a-zA-Z0-9]/g, "")?.toLowerCase() || null;
-			let existingOwnedWikis = await db.query('SELECT * FROM wikis WHERE ownerId = ? AND name = ?', {
+			const newWikiName = interaction.options.getString('newname')?.replace(/[^a-zA-Z0-9]/g, '')?.toLowerCase() || null;
+			const existingOwnedWikis = await db.query('SELECT * FROM wikis WHERE ownerId = ? AND name = ?', {
 				replacements: [sqlUserID, wikiName],
 				type: QueryTypes.SELECT,
 			});
@@ -303,16 +306,17 @@ module.exports = {
 			else {
 				await interaction.reply(`No wikis you own are named ${wikiName}!`);
 			}
-		} else if (interaction.options.getSubcommand() === 'drop') {
-			let existingOwnedWikis = await db.query('SELECT * FROM wikis WHERE ownerId = ? AND name = ?', {
+		}
+		else if (interaction.options.getSubcommand() === 'drop') {
+			const existingOwnedWikis = await db.query('SELECT * FROM wikis WHERE ownerId = ? AND name = ?', {
 				replacements: [sqlUserID, wikiName],
 				type: QueryTypes.SELECT,
 			});
 
-			let field = interaction.options.getString('field');
+			const field = interaction.options.getString('field');
 
 			if (field && existingOwnedWikis?.length > 0) {
-				let query = `UPDATE WIKIS SET ? = null WHERE ownerId = ? AND name = ?`;
+				const query = 'UPDATE WIKIS SET ? = null WHERE ownerId = ? AND name = ?';
 				await db.query(query, {
 					replacements: [field, sqlUserID, wikiName],
 					type: QueryTypes.DELETE,

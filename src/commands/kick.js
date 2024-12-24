@@ -1,6 +1,6 @@
 const { SlashCommandBuilder } = require('discord.js');
-const init_keyv = require('../keyv_stores/init_keyv')
-const {nextTurn} = require('../functions/init_utils');
+const init_keyv = require('../keyv_stores/init_keyv');
+const { nextTurn } = require('../functions/init_utils');
 
 module.exports = {
 	cooldown: 5,
@@ -10,29 +10,30 @@ module.exports = {
 	async execute(interaction) {
 		const channelId = interaction.channelId;
 
-		let outputText = "No Init in this Channel!"
+		let outputText = 'No Init in this Channel!';
 		let skipTurn = false;
 
-		let currentInit = await init_keyv.get(channelId)
+		const currentInit = await init_keyv.get(channelId);
 
-		if(currentInit.currentTurn > 0){
-			let turnUser = currentInit.users[currentInit.currentTurn-1]
-			currentInit.users = structuredClone(currentInit.users.filter(usr => !(usr.userID === turnUser.userID && usr.identifier === turnUser.identifier)))
-			currentInit.currentTurn -= 1
+		if (currentInit.currentTurn > 0) {
+			const turnUser = currentInit.users[currentInit.currentTurn - 1];
+			currentInit.users = structuredClone(currentInit.users.filter(usr => !(usr.userID === turnUser.userID && usr.identifier === turnUser.identifier)));
+			currentInit.currentTurn -= 1;
 			skipTurn = true;
-			outputText = `Kicked User <@${turnUser.userID}>.`
-			currentInit.users.sort((a, b) => b.initVal - a.initVal)
-			if(currentInit.users.length <= 0){
+			outputText = `Kicked User <@${turnUser.userID}>.`;
+			currentInit.users.sort((a, b) => b.initVal - a.initVal);
+			if (currentInit.users.length <= 0) {
 				await init_keyv.delete(channelId);
-				outputText += `GG!`
+				outputText += 'GG!';
 				skipTurn = false;
-			} else {
-				await init_keyv.set(channelId, currentInit)
+			}
+			else {
+				await init_keyv.set(channelId, currentInit);
 			}
 		}
 
-		if(skipTurn){
-			outputText += `\n` + await nextTurn(channelId)
+		if (skipTurn) {
+			outputText += '\n' + await nextTurn(channelId);
 		}
 		await interaction.reply(outputText);
 	},

@@ -1,10 +1,10 @@
 const Sequelize = require('sequelize');
-const db = require('../database')
+const db = require('../database');
 
 module.exports = db.define('tarots', {
 	cardName: {
 		type: Sequelize.TEXT,
-		allowNull: false
+		allowNull: false,
 	},
 	originalTarot:  {
 		type: Sequelize.TEXT,
@@ -24,4 +24,4 @@ module.exports = db.define('tarots', {
 	explanation:  {
 		type: Sequelize.TEXT,
 	},
-}, {timestamps: false});
+}, { timestamps: false });

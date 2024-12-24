@@ -15,19 +15,21 @@ module.exports = {
 			.setRequired(true)),
 	async execute(interaction) {
 		const roleName = interaction.options.getString('role');
-		const role = interaction.guild?.roles?.cache?.find(role => role.name?.toLowerCase() === roleName);
+		const role = interaction.guild?.roles?.cache?.find(checkedRole => checkedRole.name?.toLowerCase() === roleName);
 		const member = interaction?.member || null;
 
-		if(member && role){
-			if(member.roles.cache.has(role.id)){
-				member.roles.remove(role)
-				await interaction.reply(`Removed Role ${role?.name || '[Invalid Role Name]'}`)
-			} else {
-				member.roles.add(role)
-				await interaction.reply(`Added Role ${role?.name || '[Invalid Role Name]'}`)
+		if (member && role) {
+			if (member.roles.cache.has(role.id)) {
+				member.roles.remove(role);
+				await interaction.reply(`Removed Role ${role?.name || '[Invalid Role Name]'}`);
 			}
-		} else {
-			await interaction.reply(`Invalid Role`)
+			else {
+				member.roles.add(role);
+				await interaction.reply(`Added Role ${role?.name || '[Invalid Role Name]'}`);
+			}
+		}
+		else {
+			await interaction.reply('Invalid Role');
 		}
 	},
 };

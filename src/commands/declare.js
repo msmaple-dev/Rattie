@@ -9,18 +9,19 @@ module.exports = {
 	async execute(interaction) {
 		const declaration = interaction.options.getString('declaration');
 		const channelId = interaction.channel.id;
-		let client = interaction.client;
-		const messageChannel = await client.channels.fetch(channelId)
+		const client = interaction.client;
+		const messageChannel = await client.channels.fetch(channelId);
 		const userID = interaction.user.id;
 
-		await interaction.reply({content: `Declared "${declaration}"`, allowedMentions: {}, ephemeral: true})
-		let declarationMessage = await messageChannel.send({content: `Declaration Made by <@${userID}>!`, allowedMentions: {}})
+		await interaction.reply({ content: `Declared "${declaration}"`, allowedMentions: {}, ephemeral: true });
+		const declarationMessage = await messageChannel.send({ content: `Declaration Made by <@${userID}>!`, allowedMentions: {} });
 
-		let declareChannel = await client.channels.fetch(declareChannelId)
-		if(declareChannel){
-			await declareChannel.send({content: `<@${userID}> in ${declarationMessage.url}: ${declaration}`, allowedMentions: {}})
-		} else {
-			console.log("Invalid channel!")
+		const declareChannel = await client.channels.fetch(declareChannelId);
+		if (declareChannel) {
+			await declareChannel.send({ content: `<@${userID}> in ${declarationMessage.url}: ${declaration}`, allowedMentions: {} });
+		}
+		else {
+			console.log('Invalid channel!');
 		}
 
 	},
