@@ -15,7 +15,7 @@ module.exports = {
 			.addChoices({ name: 'Minor', value: 'minor' }, { name: 'Major', value: 'major' }))
 		.addStringOption(option => option
 			.setName('card')
-			.setDescription('(Optional) Specific tarot card, by title (Eg: Judgement, Valor, Love)')
+			.setDescription('(Optional) Specific tarot card, by title or minor tarot (Eg: Judgement, Ace of Cups)')
 			.setRequired(false)),
 	async execute(interaction) {
 
@@ -25,7 +25,7 @@ module.exports = {
 		let tarotCards = [];
 
 		if (specificCard) {
-			tarotCards = await db.query('SELECT * FROM tarots WHERE cardName = ?', {
+			tarotCards = await db.query('SELECT * FROM tarots WHERE upper(cardName) = upper(?) OR upper(originalTarot) = upper(?)', {
 				replacements: [specificCard, specificCard],
 				type: QueryTypes.SELECT,
 			});
