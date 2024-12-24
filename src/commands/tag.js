@@ -2,6 +2,7 @@ const { SlashCommandBuilder } = require('discord.js');
 const db = require('../database');
 const { QueryTypes } = require('sequelize');
 const { unpinChannelPins } = require('../functions/chat_utils');
+const { tagInfoEmbed } = require('../components/embeds');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -14,6 +15,13 @@ module.exports = {
 				.addStringOption(option => option.setName('name').setDescription('Tag Name').setRequired(true))
 				.addBooleanOption(option => option.setName('private').setDescription('Search for Private or Public Tags?').setRequired(false))
 				.addBooleanOption(option => option.setName('pin').setDescription('Pin the Tag temporarily?').setRequired(false)),
+		)
+		.addSubcommand(subcommand =>
+			subcommand
+				.setName('info')
+				.setDescription('Show tag info')
+				.addStringOption(option => option.setName('name').setDescription('Tag Name').setRequired(true))
+				.addBooleanOption(option => option.setName('private').setDescription('Search for Private or Public Tags?').setRequired(false)),
 		)
 		.addSubcommand(subcommand =>
 			subcommand
@@ -54,7 +62,7 @@ module.exports = {
 		const sqlUserID = BigInt(userID);
 		const subCommand = interaction.options.getSubcommand();
 
-		if (subCommand === 'show') {
+		if (subCommand === 'show' || subCommand === 'info') {
 			const tagName = interaction.options.getString('name')?.toLowerCase();
 			const isPrivate = interaction.options.getBoolean('private') || false;
 			const pinTag = interaction.options.getBoolean('pin') || false;
@@ -67,8 +75,20 @@ module.exports = {
 				});
 
 				if (matchingTags?.length > 0) {
-					const tagContent = matchingTags[0].content.replaceAll(/\\n/gm, '\n');
-					await interaction.reply(tagContent);
+					const matchingTag = matchingTags[0];
+					matchingTag.ownerId = BigInt(matchingTag.ownerId);
+					const tagContent = matchingTag.content.replaceAll(/\\n/gm, '\n');
+					if (subCommand === 'show') {
+						const insertQuery = 'UPDATE tags SET usage_count = usage_count + 1 WHERE name = ? AND isPrivate = ? AND ownerId = ?';
+						await db.query(insertQuery, {
+							replacements: [matchingTag.name, matchingTag.isPrivate, matchingTag.ownerId],
+							type: QueryTypes.UPDATE,
+						});
+						await interaction.reply(tagContent);
+					}
+					else {
+						await interaction.reply({ embeds: [tagInfoEmbed(matchingTag)], allowedMentions: {} });
+					}
 					if (pinTag) {
 						const message = await interaction.fetchReply();
 						if (message) {

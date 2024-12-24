@@ -181,4 +181,15 @@ function monsterDefeatedEmbed(users) {
 	return new EmbedBuilder().setTitle('Monster Down!').setDescription(`The following users must do \`\`/monster loot\`\` before init will close:${users.map(usr => `<@${usr}>`).join(', ')}`).setColor(monster_color);
 }
 
-module.exports = { statusEmbed, tarotEmbed, wikiEmbed, wikiListEmbed, monsterEmbed, lootEmbed, monsterAttackedEmbed, monsterDefeatedEmbed };
+function tagInfoEmbed(tag) {
+	const embed = new EmbedBuilder().setTitle(`Tag: ${tag.name}`);
+	embed.setColor(monster_color);
+	const fields = [
+		{ name: 'Owner', value: `<@${tag.ownerId}>`, inline: true },
+		{ name: 'Uses', value: `${tag.usage_count}`, inline: true },
+	];
+	embed.addFields(...fields);
+	return embed;
+}
+
+module.exports = { statusEmbed, tarotEmbed, wikiEmbed, wikiListEmbed, monsterEmbed, lootEmbed, monsterAttackedEmbed, monsterDefeatedEmbed, tagInfoEmbed };
