@@ -21,6 +21,7 @@ module.exports = {
 		)
 		.addBooleanOption(option => option.setName('base').setDescription('Draw from base decks, not init decks').setRequired(false)),
 	async execute(interaction) {
+		await interaction.deferReply();
 		const deckString = interaction.options.getString('decks')?.toLowerCase();
 		const deckType = deckString && deckString.match(/(\d+ \w+)+/gm)?.length > 0 && selectFromWeightedString(deckString)?.toLowerCase() || deckString;
 		const drawCount = interaction.options.getInteger('cards') ? Math.min(5, interaction.options.getInteger('cards')) : 1;
@@ -42,7 +43,7 @@ module.exports = {
 		let statusCards = [];
 
 		if (!deckType) {
-			await interaction.reply({ content: 'No Valid Deck Type(s) Entered!', ephemeral: true });
+			await interaction.editReply({ content: 'No Valid Deck Type(s) Entered!', ephemeral: true });
 			return;
 		}
 
@@ -53,7 +54,7 @@ module.exports = {
 			});
 			if (!baseCards || baseCards.length <= 0) {
 				console.log('Base Draw Error');
-				await interaction.reply({ content: `Invalid Deck Type "${deckType}"!`, ephemeral: true });
+				await interaction.editReply({ content: `Invalid Deck Type "${deckType}"!`, ephemeral: true });
 				return;
 			}
 			else {
@@ -72,7 +73,7 @@ module.exports = {
 
 			if (!deck || deck.length <= 0) {
 				console.log('Init Draw Error');
-				interaction.reply({
+				interaction.editReply({
 					content: `Invalid Deck Type "${deckType}"! Valid Decks: ${Object.keys(userCards).map(word => word[0].toUpperCase() + word.slice(1).toLowerCase()).join(', ')}`,
 					ephemeral: true,
 				});
@@ -89,6 +90,6 @@ module.exports = {
 			const embed = statusEmbed(selectedCard.cardName, selectedCard.cardText, selectedCard.severity, (colorDictionary[selectedCard.deckType] || '#FFFFFF'), identifier, severity);
 			replyArray.push(embed);
 		}
-		await interaction.reply({ embeds: replyArray });
+		await interaction.editReply({ embeds: replyArray });
 	},
 };

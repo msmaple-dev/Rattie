@@ -8,6 +8,7 @@ module.exports = {
 		.setDescription('Pings all members who reacted to a message.')
 		.addStringOption(option => option.setName('message').setDescription('Message Link').setRequired(true)),
 	async execute(interaction, client) {
+		await interaction.deferReply();
 		const link = interaction.options.getString('message') || null;
 		const linkTest = /(?:https:\/\/)?discord.com\/channels\/\d+\/\d+\/\d+/;
 		const splitMessage = linkTest.test(link) && link.split('/').length && link.split('/');
@@ -29,20 +30,20 @@ module.exports = {
 					}
 					if (users) {
 						const reply = `Quest Ping: ${[...users].map(user => `<@${user}>`).join(', ')}`;
-						await interaction.reply({ content: reply });
+						await interaction.editReply({ content: reply });
 					}
 					else {
-						await interaction.reply(`No Reactions Found at Message ${link}`);
+						await interaction.editReply(`No Reactions Found at Message ${link}`);
 					}
 				}
 			}
 			catch (e) {
-				await interaction.reply(`Something Went Wrong! Error: ${e}`);
+				await interaction.editReply(`Something Went Wrong! Error: ${e}`);
 				console.log(e);
 			}
 		}
 		else {
-			await interaction.reply('Invalid Message Link!');
+			await interaction.editReply('Invalid Message Link!');
 		}
 	},
 };

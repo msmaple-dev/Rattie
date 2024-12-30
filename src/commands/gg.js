@@ -11,6 +11,7 @@ module.exports = {
 		.setDescription('Ends the match')
 		.addStringOption(option => option.setName('reason').setDescription('Reason for GG').addChoices({ name: 'Loss', value: 'Lost' }, { name: 'Conceded/Quit', value: 'Conceded' }).setRequired(true)),
 	async execute(interaction) {
+		await interaction.deferReply();
 		const channelId = interaction.channelId;
 		const reason = interaction.options.getString('reason');
 		let outputText = 'GG!';
@@ -36,6 +37,6 @@ module.exports = {
 			await init_keyv.delete(channelId);
 		}
 
-		await interaction.reply({ content: outputText, allowedMentions: {} });
+		await interaction.editReply({ content: outputText, allowedMentions: {} });
 	},
 };

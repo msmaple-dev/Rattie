@@ -123,12 +123,13 @@ module.exports = {
 			interaction.reply(outputText);
 		}
 		else if (subCommand === 'show' || subCommand === 'fight') {
+			await interaction.deferReply();
 			const monster = getMonster(monsterName);
 			if (monster) {
 				const embed = monsterEmbed(monster);
 				if (interaction.options.getSubcommand() === 'fight') {
 					if (monster.isPreview) {
-						await interaction.reply('You cannot fight that monster yet!');
+						await interaction.editReply('You cannot fight that monster yet!');
 					}
 					else {
 						if (await init_keyv.has(channelId)) {
@@ -166,16 +167,16 @@ module.exports = {
 								type: QueryTypes.INSERT,
 							});
 						}
-						await interaction.reply(`Started new fight against ${monster.name}, managed by <@${userID}>!`);
+						await interaction.editReply(`Started new fight against ${monster.name}, managed by <@${userID}>!`);
 						await interaction.followUp({ embeds: [embed] }).then(msg => msg.pin('Monster Hunt Pin'));
 					}
 				}
 				else {
-					await interaction.reply({ embeds: [embed] });
+					await interaction.editReply({ embeds: [embed] });
 				}
 			}
 			else {
-				await interaction.reply(`Invalid Monster Name "${monster}"`);
+				await interaction.editReply(`Invalid Monster Name "${monster}"`);
 			}
 		}
 		else if (subCommand === 'loot') {
@@ -215,6 +216,7 @@ module.exports = {
 			}
 		}
 		else if (subCommand === 'attack' || subCommand === 'damage') {
+			await interaction.deferReply();
 			const currentInit = await init_keyv.get(channelId);
 			const attackRoll = interaction.options.getInteger('roll');
 			const dmg = interaction.options.getInteger('dmg');
@@ -231,7 +233,7 @@ module.exports = {
 					currentInit.dpr[currentInit.round] = currentInit.dpr[currentInit.round] ? currentInit.dpr[currentInit.round] + dmg : dmg;
 				}
 
-				await interaction.reply({ embeds: [monsterAttackedEmbed(monster, dmg, currentInit.damageDealt, attackRoll, rolledAC, monsterCurseDieResult, (monster.curseDie || 5) + curseMod, flatMod, totalDefense)] });
+				await interaction.editReply({ embeds: [monsterAttackedEmbed(monster, dmg, currentInit.damageDealt, attackRoll, rolledAC, monsterCurseDieResult, (monster.curseDie || 5) + curseMod, flatMod, totalDefense)] });
 
 				if (monsterHit && concCheck(currentInit.damageDealt, monster.damageThreshold)) {
 					currentInit.looting = true;
@@ -256,10 +258,11 @@ module.exports = {
 				await init_keyv.set(channelId, currentInit);
 			}
 			else {
-				await interaction.reply('No monster is being fought in this channel!');
+				await interaction.editReply('No monster is being fought in this channel!');
 			}
 		}
 		else if (subCommand === 'modifier') {
+			await interaction.deferReply();
 			const modifierAmount = interaction.options.getInteger('amount');
 			const modifierCategory = interaction.options.getString('category');
 			const modifierType = interaction.options.getString('type');
@@ -273,7 +276,7 @@ module.exports = {
 			currentInit.modifiersApplied += 1;
 
 			await init_keyv.set(channelId, currentInit);
-			await interaction.reply(`Added ${getModifierString(modifier)}`);
+			await interaction.editReply(`Added ${getModifierString(modifier)}`);
 
 			// modifier structure: {id, category, amount, type, duration, procs, note}[]
 			// Each trigger of modifier: decrement modifier procs if extant, clear 0s AFTER RESOLUTION
@@ -285,6 +288,7 @@ module.exports = {
 			// Add # of modifiers dealt to end of monster data recording
 		}
 		else if (subCommand === 'status') {
+			await interaction.deferReply();
 			const currentInit = await init_keyv.get(channelId);
 			const modifiers = currentInit.modifiers;
 			let outputText = 'Current Monster Modifiers:';
@@ -315,7 +319,7 @@ module.exports = {
 			else {
 				outputText = 'No Monster being Fought!';
 			}
-			await interaction.reply(outputText);
+			await interaction.editReply(outputText);
 		}
 		else if (subCommand === 'cure') {
 			const modifierID = interaction.options.getInteger('id');
@@ -326,6 +330,7 @@ module.exports = {
 			await interaction.reply(`Removed Modifier${filteredModifiers.length > 1 ? 's:\n' : ': '}${filteredModifiers.join('\n')}`);
 		}
 		else if (subCommand === 'save' || subCommand === 'strike') {
+			await interaction.deferReply();
 			const count = interaction.options.getInteger('count') || 1;
 			let outputText = '';
 			const currentInit = await init_keyv.get(channelId);
@@ -344,11 +349,11 @@ module.exports = {
 					outputText += removedMods ? removedMods + '\n' : '';
 					modifiers = cullModifiers(modifiers);
 				}
-				await interaction.reply(outputText);
+				await interaction.editReply(outputText);
 				await init_keyv.set(channelId, currentInit);
 			}
 			else {
-				await interaction.reply('No monster is being fought in this channel!');
+				await interaction.editReply('No monster is being fought in this channel!');
 			}
 		}
 		else if (subCommand === 'cards') {
@@ -362,10 +367,11 @@ module.exports = {
 			}
 		}
 		else if (subCommand === 'pass') {
+			await interaction.deferReply();
 			const currentInit = await init_keyv.get(channelId);
 			if (currentInit?.monster) {
 				const [cardDrawn, outputText] = await drawMonsterCard(channelId, interaction.channel);
-				await interaction.reply({ embeds: [statusEmbed(cardDrawn.name, cardDrawn.effect, cardDrawn.severity, cardDrawn.color)], fetchReply: true }).then(msg => msg.pin('Monster Hunt Card Draw'));
+				await interaction.editReply({ embeds: [statusEmbed(cardDrawn.name, cardDrawn.effect, cardDrawn.severity, cardDrawn.color)], fetchReply: true }).then(msg => msg.pin('Monster Hunt Card Draw'));
 				if (outputText) {
 					await interaction.followUp(outputText);
 				}
@@ -373,7 +379,7 @@ module.exports = {
 				await interaction.followUp({ content: initText });
 			}
 			else {
-				await interaction.reply('No monster is being fought in this channel!');
+				await interaction.editReply('No monster is being fought in this channel!');
 			}
 		}
 		else if (subCommand === 'redraw') {

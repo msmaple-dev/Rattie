@@ -60,6 +60,7 @@ module.exports = {
 		const subCommand = interaction.options.getSubcommand();
 
 		if (subCommand === 'show') {
+			await interaction.deferReply();
 			const deckType = interaction.options.getString('decktype')?.toLowerCase() || null;
 			const specificCard = interaction.options.getString('card')?.toLowerCase() || null;
 			const isPrivate = interaction.options.getBoolean('private') || false;
@@ -89,7 +90,7 @@ module.exports = {
 				});
 
 				if (!baseCards || !(baseCards?.length)) {
-					await interaction.reply('No valid cards found!');
+					await interaction.editReply('No valid cards found!');
 				}
 				else {
 					for (const selectedCard of baseCards) {
@@ -97,7 +98,7 @@ module.exports = {
 						replyArray.push(embed);
 					}
 
-					await interaction.reply({ embeds: replyArray.slice(0, 5), ephemeral: isPrivate });
+					await interaction.editReply({ embeds: replyArray.slice(0, 5), ephemeral: isPrivate });
 					if (replyArray.length > 5) {
 						for (let i = 5; i < replyArray.length; i = i + 5) {
 							await interaction.followUp({ embeds: replyArray.slice(i, i + 5), ephemeral: isPrivate });
@@ -117,11 +118,12 @@ module.exports = {
 					outputText += `${deck.deckType[0].toUpperCase() + deck.deckType.slice(1)}: ${deck.count}\n`;
 				}
 
-				await interaction.reply({ content: outputText, ephemeral: isPrivate });
+				await interaction.editReply({ content: outputText, ephemeral: isPrivate });
 			}
 
 		}
 		else if (subCommand === 'add' || subCommand === 'modify') {
+			await interaction.deferReply();
 			const cardName = interaction.options.getString('name') || null;
 			const deckType = interaction.options.getString('decktype')?.toLowerCase() || null;
 			let severity = interaction.options.getString('severity')?.toLowerCase() || null;
@@ -152,12 +154,12 @@ module.exports = {
 					});
 				}
 				else {
-					await interaction.reply(`No cards in deck ${deckType} are named ${cardName}!`);
+					await interaction.editReply(`No cards in deck ${deckType} are named ${cardName}!`);
 					return;
 				}
 			}
 			else if (existingCards?.length) {
-				await interaction.reply(`Card ${cardName} already exists in ${deckType}!`);
+				await interaction.editReply(`Card ${cardName} already exists in ${deckType}!`);
 				return;
 			}
 
@@ -176,9 +178,10 @@ module.exports = {
 				});
 			}
 
-			await interaction.reply(`${subCommand === 'modify' ? 'Modified' : 'Added'} card ${cardName} ${subCommand === 'modify' ? 'Of' : 'To'} Deck ${deckType}`);
+			await interaction.editReply(`${subCommand === 'modify' ? 'Modified' : 'Added'} card ${cardName} ${subCommand === 'modify' ? 'Of' : 'To'} Deck ${deckType}`);
 		}
 		else if (subCommand === 'delete') {
+			await interaction.deferReply();
 			const cardName = interaction.options.getString('name') || null;
 			const deckType = interaction.options.getString('decktype')?.toLowerCase() || null;
 
@@ -187,7 +190,7 @@ module.exports = {
 				type: QueryTypes.SELECT,
 			});
 			if (!existingCards) {
-				await interaction.reply(`No cards in deck ${deckType} are named ${cardName}!`);
+				await interaction.editReply(`No cards in deck ${deckType} are named ${cardName}!`);
 			}
 			else {
 				await db.query('DELETE FROM cards WHERE ownerId = ? AND deckType = ? AND cardName = ?', {
@@ -205,10 +208,11 @@ module.exports = {
 						type: QueryTypes.DELETE,
 					});
 				}
-				await interaction.reply(`Deleted card ${cardName} of Deck ${deckType}`);
+				await interaction.editReply(`Deleted card ${cardName} of Deck ${deckType}`);
 			}
 		}
 		else if (subCommand === 'clear') {
+			await interaction.deferReply();
 			const deckType = interaction.options.getString('decktype')?.toLowerCase();
 
 			await db.query('DELETE FROM cards WHERE ownerId = ? AND deckType = ?', {
@@ -220,7 +224,7 @@ module.exports = {
 				replacements: [sqlUserID, deckType],
 				type: QueryTypes.DELETE,
 			});
-			await interaction.reply(`Deleted Deck ${deckType}`);
+			await interaction.editReply(`Deleted Deck ${deckType}`);
 		}
 	},
 };

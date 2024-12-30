@@ -11,6 +11,7 @@ module.exports = {
 		.addIntegerOption(option => option.setName('turns').setDescription('Pass through the next X turns (also acts as end true)').setMinValue(0).setRequired(false))
 		.addBooleanOption(option => option.setName('endround').setDescription('Passes to start of next round (incompatible with turns)').setRequired(false)),
 	async execute(interaction) {
+		await interaction.deferReply();
 		const channelId = interaction.channelId;
 		const endTrue = interaction.options.getBoolean('true') || false;
 		const count = interaction.options.getInteger('turns') || null;
@@ -36,6 +37,6 @@ module.exports = {
 			}
 		}
 		else {outputText = 'No Inits Entered!';}
-		interaction.reply(outputText);
+		interaction.editReply(outputText);
 	},
 };

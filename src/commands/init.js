@@ -18,6 +18,7 @@ module.exports = {
 		const sqlID = BigInt(userID);
 
 		let outputText = '';
+		await interaction.deferReply();
 
 		const decks = await getUserDecks(sqlID);
 
@@ -57,7 +58,7 @@ module.exports = {
 				postInitTag = true;
 			}
 		}
-		await interaction.reply(outputText);
+		await interaction.editReply(outputText);
 		if (postInitTag && userInitTag) {
 			await interaction.followUp(`\n${userInitTag.content.replaceAll(/\\n/gm, '\n')}`).then(msg => {
 				msg.pin('Init Pin');
