@@ -13,7 +13,7 @@
       "Internal Armory | Instinct becomes: If adjacent to a target, move. Uses **Artillery Deluge** with remaining actions.\n***Artillery Deluge:*** *Ranged in a Starburst 3 centered within 6 squares. 19 Shock. Place a Pearl in the targeted square.*",
       "Retched Sword | Targets all characters within three squares of the Nacre-Scaled. Melee. 16 Slash, On-Hit: Draw an additional Slash status",
       "Parasitic Pearl | When this card is drawn, the *Pearl* nearest to the most characters becomes a *Pearlhusk*. It has a Defense roll of 14 and is destroyed when it is hit by 2-Scale of Strikes. It acts before the Nacre-Scaled, Striding 6 squares towards the nearest character and then exploding, forcing characters within a Centered Starburst 3 to a DC18 Save against 15 Hollow. It then becomes a *Pearl*.",
-      "Coil The World | When this card is drawn, the Nacre-Scaled doubles in size, then selects the side of its body with the most characters. The Nacre-Scaled Steps in the chosen direction until it reaches a piece of full cover, destroying all terrain and partial cover it moves over (without saving against it). All characters it overlaps as part of this movement take 20 Bash."
+      "Coil The World | When this card is drawn, the Nacre-Scaled doubles in size until the end of its turn, then selects the side of its body with the most characters. The Nacre-Scaled Steps in the chosen direction until it reaches a piece of full cover, destroying all terrain and partial cover it moves over (without saving against it). All characters it overlaps as part of this movement take 20 Bash."
     ],
     "IsPreview": false
   }
