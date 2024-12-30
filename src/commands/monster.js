@@ -117,9 +117,13 @@ module.exports = {
 		const subCommand = interaction.options.getSubcommand();
 
 		if (subCommand === 'list') {
+			const monstersData = validMonsters.map(monsterId => getMonster(monsterId));
+			const retiredMonsters = monstersData.filter(monster => monster?.isRetired).sort((a, b) => a.name.localeCompare(b.name)).sort((a, b) => a.scale - b.scale);
+			const fightableMonsters = monstersData.filter(monster => !(monster?.isRetired)).sort((a, b) => a.name.localeCompare(b.name)).sort((a, b) => a.scale - b.scale);
 			let outputText = '__**List of Fightable Monsters**__\n';
-			const sortedMonsters = validMonsters.map(monsterId => getMonster(monsterId)).sort((a, b) => a.name.localeCompare(b.name)).sort((a, b) => a.scale - b.scale);
-			sortedMonsters.forEach(monster => {outputText += `${(monster.isPreview || monster.isRetired) ? `*${monster.name}` : `**${monster.name}**`} [${monster.id}] - Scale ${monster.scale}${monster.isPreview ? ' [Preview]' : ''}${monster.isRetired ? ' [Retired]' : ''}${(monster.isPreview || monster.isRetired) ? '*' : ''}\n`;});
+			fightableMonsters.forEach(monster => {outputText += `${(monster.isPreview) ? `*${monster.name}` : `**${monster.name}**`} [${monster.id}] - Scale ${monster.scale}${monster.isPreview ? ' [Preview]' : ''}${(monster.isPreview) ? '*' : ''}\n`;});
+			outputText += '\n__**List of Retired Monsters**__\n';
+			retiredMonsters.forEach(monster => {outputText += `*${monster.name} [${monster.id}] - Scale ${monster.scale} ${typeof monster.isRetired === 'string' || monster.isRetired instanceof String ? `[${monster.isRetired}]` : '[Retired]'}*\n`;});
 			interaction.reply(outputText);
 		}
 		else if (subCommand === 'show' || subCommand === 'fight') {
