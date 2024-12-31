@@ -390,7 +390,7 @@ module.exports = {
 			const currentInit = await init_keyv.get(channelId);
 			if (currentInit?.monster) {
 				const [cardDrawn, outputText] = await drawMonsterCard(channelId, interaction.channel);
-				await interaction.reply({ embeds: [statusEmbed(cardDrawn.name, cardDrawn.effect, cardDrawn.severity, cardDrawn.color)], fetchReply: true }).then(msg => msg.pin('Monster Hunt Card Draw'));
+				await interaction.editReply({ embeds: [statusEmbed(cardDrawn.name, cardDrawn.effect, cardDrawn.severity, cardDrawn.color)], fetchReply: true }).then(msg => msg.pin('Monster Hunt Card Draw'));
 				if (outputText) {
 					await interaction.followUp(outputText);
 				}
