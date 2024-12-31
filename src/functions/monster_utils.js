@@ -11,7 +11,7 @@ const Participants = require('../tables/participants');
 const { statusEmbed } = require('../components/embeds');
 const { monster_color } = require('../components/constants');
 
-const monstersPath = path.join(__dirname.replace('\\functions', ''), 'monsters');
+const monstersPath = path.join(__dirname.replace(/[\\/]+functions/, ''), 'monsters');
 const monsterFiles = fs.readdirSync(monstersPath).filter(file => file.endsWith('.json'));
 const monsters = {};
 
