@@ -1,3 +1,19 @@
+// x Index is scale - 1 (Eg: accuracyTables[0] is for Scale 1 characters), y index is total mod from lowest to highest point
+
+// Base index = floor(len/2)
+const accuracyTables = [
+	[-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5],
+	[-5, -4, -3, -3, -2, -1, 0, 0, 0, 1, 2, 3, 3, 4, 5],
+	[-5, -4, -4, -3, -3, -2, -2, -1, -1, 0, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5],
+];
+
+// Base index = 5
+const cursedAccuracyTables = [
+	[-5, -4, -3, -2, -1, 0, 1, 2, 4, 6],
+	[-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 6],
+	[-5, -4, -3, -2, -1, 0, 1, 2, 2, 3, 4, 6],
+];
+
 /**
  * Returns the result of a roll of a single virtual die
  * @param {number} die - Die size to be rolled
@@ -27,39 +43,24 @@ function arrayRoll(rolls) {
 	return rolls.map(subRoll => multiRoll(subRoll[0], subRoll[1]));
 }
 
-function parseRoll(inputString = '1+6+0') {
-	// Get Note & Clean Up Rollstring
-	const noteSplit = inputString.indexOf(' ');
-	const splitCode = (noteSplit !== -1) ? [inputString.slice(0, noteSplit), inputString.slice(noteSplit)] : [inputString, ''];
-	let rollCode = splitCode[0];
-	const note = splitCode[1].trim();
-
-	// Clean up the roll code
-	// Get Multiplier
-	const multi = Math.min(100, Math.max(0, rollCode.match(/x\d+/gm) ? parseInt(rollCode.match(/x\d+/gm)[0].replace('x', '')) : 1));
-	rollCode = rollCode.replace(/x\d+/gm, '');
-
-	// Get Explicit Modifiers
-	let mod = rollCode.match(/[+-][+-]+\d+/g) ?
-		rollCode.match(/[+-][+-]+\d+/g).map(match => parseInt(match.replaceAll(/(?<=[+-])[+-]/g, ''))).flat().reduce((a, b) => a + b)
-		: 0;
-	rollCode = rollCode
-		.replaceAll(/[+-][+-]+\d+/g, '')
-		.replace(/[+-][+-]+\d+/g, result => 'm' + result.slice(0, 1) + result.replace(/[+-]/g, ''))
-		.replace(/^\d+(?!\d?d\d+)/, result => result + 'd20');
-
-	// Get primary and secondary rolls
-	const rolls = [];
-	rolls.push(rollCode.match(/^\d+d\d+/m) && rollCode.match(/^\d+d\d+/m)[0].split('d').map(value => parseInt(value))
-		|| rollCode.match(/^\d+(?!\d*d\d)/m) && [parseInt(rollCode.match(/^\d+(?!\d*d\d)/m)[0]), 20]
-		|| [1, 20]);
-	rollCode = rollCode.replaceAll(/^\d+d\d+/gm, '').replaceAll(/^\d+(?!\d*d\d)/gm, '');
-	rolls.push(rollCode.match(/[+-]\d+d\d+/) && rollCode.match(/[+-]\d+d\d+/)[0].split('d').map(value => parseInt(value))
-		|| [1, rollCode.match(/[+-]\d+(?!d)/) ? parseInt(rollCode.match(/[+-]\d+(?!d)/)) : 6]);
-	rollCode = rollCode.match(/[+-]\d+d\d+/gm) ? rollCode.replaceAll(/[+-]\d+d\d+/gm, '') : rollCode.replace(/[+-]\d+(?!d)/, '');
-	mod += rollCode.match(/[+-]\d+(?!d)/g) && rollCode.match(/[+-]\d+(?!d)/g).map(result => parseInt(result)).reduce((a, b) => a + b);
-
-	return [rolls, mod, note, multi];
+function parseRoll(inputString = '1+0+0') {
+	// Indexes
+	// Group 1: MainRoll firstDieCount (default 1, min 1)
+	// Group 2: MainRoll explicitDie (default d20, min 1)
+	// Group 3: CurseDieMod (default 0, min -5)
+	// Group 4: Accuracy (default 0)
+	// Group 5: MAP (default 0)
+	// Group 6: Multiplier (default 1)
+	// Group 7: Note (default '')
+	let matches = inputString.match(/^(\d+)?(d\d+)?(?:\+?(-?\d+)?)?(?:\+?(-?\d+)?)?(?:m(\d+))?(?:x(\d+))?( +.+)?/i);
+	matches = matches.map(match => match && match.replaceAll(/[cd]+/gm, ''));
+	const mainRoll = [(matches[1] ? (Math.max(matches[1], 1)) : 1), (matches[2] ? (Math.max(matches[2], 1)) : 20)];
+	const curseRoll = [1, (matches[3] || 0)];
+	const mod = matches[4] ? parseInt(matches[4]) : 0;
+	const map = matches[5] ? parseInt(matches[5]) : 0;
+	const multi = matches[6] ? parseInt(matches[6]) : 1;
+	const note = matches[7] || '';
+	return [mainRoll, curseRoll, mod, map, multi, note];
 }
 
 function explicitParse(inputString = '1d20+1d6+0') {
@@ -171,10 +172,24 @@ function rollResultsToString(subArray, index, rollParams) {
 		+ ')';
 }
 
-function rollFromString(inputText) {
-	const parsedValues = parseRoll(inputText);
-	const rolledDice = parsedValues[0].reduce((a, b) => parseInt(a) + parseInt(b[0])) * parsedValues[3];
-	return rolledDice > 100 ? `Please keep rolls to under 100 dice. (Attempted to roll ${rolledDice} dice)` : rollString(parsedValues[0], parsedValues[1], parsedValues[2], parsedValues[3]);
+function rollFromString(inputText, scale = 0) {
+	// eslint-disable-next-line prefer-const
+	let [mainRoll, curseRoll, mod, map, multi, note] = parseRoll(inputText);
+	if (scale && scale >= 1 && scale <= 3) {
+		// Adjust roll bonus for Accuracy && MAP
+		if (mod) {
+			const scaleAccuracy = accuracyTables[scale - 1];
+			const accuracyMidpoint = Math.ceil(scaleAccuracy.length / 2);
+			mod = scaleAccuracy[Math.max(0, Math.min(parseInt(mod) + accuracyMidpoint - 1, scaleAccuracy.length - 1))] + (-5 * map);
+		}
+		// Adjust roll bonus for Cursed Accuracy
+		const cursedScaleAccuracy = cursedAccuracyTables[scale - 1];
+		const cursedAccuracyMidpoint = 5;
+		curseRoll[1] = 6 + cursedScaleAccuracy[Math.max(0, Math.min(parseInt(curseRoll[1]) + cursedAccuracyMidpoint, cursedScaleAccuracy.length - 1))];
+	}
+	const rolls = [mainRoll, curseRoll];
+	const rolledDice = rolls.reduce((a, b) => parseInt(a) + parseInt(b[0])) * multi;
+	return rolledDice > 100 ? `Please keep rolls to under 100 dice. (Attempted to roll ${rolledDice} dice)` : rollString(rolls, mod, note, multi);
 }
 
-module.exports = { roll, multiRoll, arrayRoll, parseRoll, rollString, weightedSelect, selectFromWeightedString, unweightedSelect, drawDeck, rollFromString, explicitParse, rollResultsToString };
+module.exports = { roll, arrayRoll, rollString, weightedSelect, selectFromWeightedString, unweightedSelect, drawDeck, rollFromString, explicitParse, rollResultsToString };

@@ -339,19 +339,20 @@ module.exports = {
 			let outputText = '';
 			const currentInit = await init_keyv.get(channelId);
 			const monster = currentInit?.monster;
-			let modifiers = currentInit.modifiers;
+			const modifiers = currentInit.modifiers;
 			if (monster) {
+				const modifierType = (subCommand === 'strike' ? 'attack' : 'saves');
 				for (let i = 0; i < count; i++) {
-					const rollArray = getModifiedRollCode(modifiers, (subCommand === 'strike' ? 'attack' : 'saves'));
+					const rollArray = getModifiedRollCode(modifiers, modifierType);
 					let inputText = `${rollArray[0]}`;
 					for (const value of rollArray.slice(1, 3)) {
 						inputText += `${value >= 0 ? `+${value}` : `${value}`}`;
 					}
 					inputText += `x${rollArray[3]}`;
-					outputText += `${i > 0 ? '\n' : ''}${count > 1 ? `${toProperCase(subCommand)} #${i + 1}: ` : ''}${rollFromString(inputText)}`;
-					const removedMods = procModifiers(modifiers, subCommand);
-					outputText += removedMods ? removedMods + '\n' : '';
-					modifiers = cullModifiers(modifiers);
+					outputText += `${i > 0 ? '\n' : ''}${count > 1 ? `${toProperCase(subCommand)} #${i + 1}: ` : ''}${rollFromString(inputText, 3)}`;
+					const removedMods = procModifiers(modifiers, modifierType);
+					outputText += removedMods ? '\n' + removedMods : '';
+					currentInit.modifiers = cullModifiers(modifiers);
 				}
 				await interaction.editReply(outputText);
 				await init_keyv.set(channelId, currentInit);
