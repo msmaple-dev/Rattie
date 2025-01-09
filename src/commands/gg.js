@@ -18,7 +18,7 @@ module.exports = {
 
 		const currentInit = await init_keyv.get(channelId);
 
-		if (currentInit.monster && currentInit.monster?.id) {
+		if (currentInit?.monster && currentInit.monster?.id) {
 			if (currentInit?.looting === false) {
 				const encounterId = await getEncounterID(channelId);
 				await db.query('UPDATE encounters SET rounds = ?, endTime = ?, status = ? WHERE encounterId = ?', {
