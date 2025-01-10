@@ -14,5 +14,6 @@
     "Sudden Squall | The Elemental Steps 12 towards the furthest character, moving to the opposite side of them if possible. A Strike is made against everyone within a 6 Normal Cone in the direction of that character, dealing 45 Shock. Split this damage evenly by Scale with all targets of this Strike.",
     "Lightning Rod | Strike the nearest character for 8 Shock with +4 to my CD size. If this Strike is successful, it arcs to another character within 5 squares, repeating the Strike. This can arc any number of times, but not against the same character twice.",
     "Eye of the Hurricane | The Elemental's Instinct becomes: **Draw Close**, **KRAKOOM**, **KRAKOOM**\n**Draw Close** - All targets must make a DC18 Save or suffer Knocked Back 10 towards the Tempest Elemental. This Knockback does not stop when it would draw a Status, continuing through cover. Places The Storm again, overwriting terrain in the area. \n**KRAKOOM** - Melee. Targets everyone within The Storm. 20 Shock.\n\n"
-  ]
+  ],
+  "isRetired": true
 }
