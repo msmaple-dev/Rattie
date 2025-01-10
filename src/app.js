@@ -3,7 +3,7 @@ const path = require('node:path');
 const { Client, Collection, Events, GatewayIntentBits } = require('discord.js');
 const { token } = require('../config.json');
 const checkReminders = require('./functions/rem_utils');
-const { checkShowcase } = require('./functions/scheduler_utils');
+const { checkDailies } = require('./functions/scheduler_utils');
 
 // Setup Client
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.GuildMembers] });
@@ -44,7 +44,7 @@ client.cooldowns = new Collection();
 client.once(Events.ClientReady, c => {
 	console.log(`Ready! Logged in as ${c.user.tag}`);
 	setInterval(async () => {await checkReminders(c);}, 30000);
-	setInterval(async () => {await checkShowcase(c);}, 120000);
+	setInterval(async () => {await checkDailies(c);}, 120000);
 });
 
 client.on(Events.InteractionCreate, async interaction => {

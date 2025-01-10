@@ -3,7 +3,7 @@ const { QueryTypes } = require('sequelize');
 const scheduler_keyv = require('../keyv_stores/scheduler_keyv');
 const { unweightedSelect } = require('./roll_utils');
 const { wikiEmbed } = require('../components/embeds');
-const { showcaseChannelId } = require('../../config.json');
+const { showcaseChannelId, seasonChannelId } = require('../../config.json');
 const { toProperCase } = require('./string_utils');
 
 async function checkShowcase(client) {
@@ -14,6 +14,7 @@ async function checkShowcase(client) {
 		const tomorrowDate = new Date();
 		tomorrowDate.setDate(tomorrowDate.getDate() + 1);
 		tomorrowDate.setHours(15, 0, 0);
+		// 10am EST
 		if (now >= showcaseDate) {
 			await scheduler_keyv.set('showcaseDate', tomorrowDate);
 			const validWikis = await db.query('SELECT * FROM wikis WHERE showcaseUses <= (SELECT MIN(showcaseUses) FROM wikis WHERE length(concat(warlockName, quote, about, faction, appearance, abilities, scent)) > 450) AND length(concat(warlockName, quote, about, faction, appearance, abilities, scent)) > 450', {
@@ -40,4 +41,34 @@ async function checkShowcase(client) {
 	}
 }
 
-module.exports = { checkShowcase };
+async function checkReset(client) {
+	if (await scheduler_keyv.has('resetDate')) {
+		const now = Date.now();
+		const resetDateVal = await scheduler_keyv.get('resetDate');
+		const resetDate = new Date(resetDateVal);
+		const tomorrowDate = new Date();
+		tomorrowDate.setDate(tomorrowDate.getDate() + 1);
+		tomorrowDate.setHours(20, 0, 0);
+		// 3pm EST
+		if (now >= resetDate) {
+			await scheduler_keyv.set('resetDate', tomorrowDate);
+			const seasonChannel = await client.channels.fetch(seasonChannelId);
+			if (seasonChannel) {
+				await seasonChannel.send({ content: '**Weekly Reset!**' });
+			}
+			else {
+				console.log('Invalid channel!');
+			}
+		}
+	}
+	else {
+		await scheduler_keyv.set('resetDate', 0);
+	}
+}
+
+async function checkDailies(client) {
+	await checkReset(client);
+	await checkShowcase(client);
+}
+
+module.exports = { checkDailies };
