@@ -65,7 +65,8 @@ function getACModifiers(modifiers) {
 }
 
 function getModifierString(modifier) {
-	let endText;
+	let endText, typeText;
+
 	if (modifier.procs !== null && modifier.procs <= 0) {
 		endText = 'No more Procs';
 	}
@@ -75,7 +76,16 @@ function getModifierString(modifier) {
 	else {
 		endText = `Ends in ${modifier.duration !== null ? modifier.duration + ' Turns' : ''}${modifier.duration !== null && modifier.procs !== null ? ' or ' : ''}${modifier.procs !== null ? modifier.procs + ' Procs' : ''}.`;
 	}
-	return `Modifier **#${modifier.id}** (${modifier.note ? `${modifier.note} - ` : ''}${modifier.amount > 0 ? '+' : ''}${modifier.amount} ${modifierTypes[modifier.type]} ${modifierCategories[modifier.category]} [${endText}])`;
+
+	if (modifier.category === 'attack') {
+		const attackModifierTypes = { 'curse': 'Cursed Accuracy', 'flat': 'Accuracy' };
+		typeText = attackModifierTypes[modifier.type];
+	}
+	else {
+		typeText = modifierTypes[modifier.type];
+	}
+
+	return `Modifier **#${modifier.id}** (${modifier.note ? `${modifier.note} - ` : ''}${modifier.amount > 0 ? '+' : ''}${modifier.amount} ${typeText} ${modifierCategories[modifier.category]} [${endText}])`;
 }
 
 function procModifiers(modifiers, category) {
