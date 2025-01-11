@@ -41,21 +41,6 @@ async function getUserDecks(sqlID) {
 	return decks;
 }
 
-function getModifiedRollCode(modifiers, category) {
-	const categoryModifiers = modifiers.filter(modifier => modifier.category === category);
-	const rollCode = [1, 6, 0, 1];
-	if (category === 'attack') {
-		rollCode[1] = 0;
-	}
-	for (const modifier of categoryModifiers) {
-		if (modifier.type === 'flat') {rollCode[2] += modifier.amount;}
-		else if (modifier.type === 'curse') {rollCode [1] += modifier.amount;}
-	}
-	if (category !== 'attack') {
-		rollCode[1] = Math.max(rollCode[1], 1);
-	}
-	return rollCode;
-}
 
 function getACModifiers(modifiers) {
 	const categoryModifiers = modifiers.filter(modifier => modifier.category === 'defend');
@@ -176,4 +161,4 @@ function uniqueUsers(users) {
 	});
 }
 
-module.exports = { nextTurn, newInit, getUserDecks, uniqueUsers, procModifiers, getACModifiers, getModifierString, getModifiedRollCode, cullModifiers, modifierCategories, modifierTypes };
+module.exports = { nextTurn, newInit, getUserDecks, uniqueUsers, procModifiers, getACModifiers, getModifierString, cullModifiers, modifierCategories, modifierTypes };

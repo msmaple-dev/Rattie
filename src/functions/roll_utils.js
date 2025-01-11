@@ -55,7 +55,7 @@ function parseRoll(inputString = '1+0+0') {
 	let matches = inputString.match(/^(\d+)?(d\d+)?(?:\+?(-?\d+)?)?(?:\+?(-?\d+)?)?(?:m(\d+))?(?:x(\d+))?( +.+)?/i);
 	matches = matches.map(match => match && match.replaceAll(/[cd]+/gm, ''));
 	const mainRoll = [(matches[1] ? (Math.max(matches[1], 1)) : 1), (matches[2] ? (Math.max(matches[2], 1)) : 20)];
-	const curseRoll = [1, (matches[3] || 0)];
+	const curseRoll = [1, (parseInt(matches[3]) || 0)];
 	const mod = matches[4] ? parseInt(matches[4]) : 0;
 	const map = matches[5] ? parseInt(matches[5]) : 0;
 	const multi = matches[6] ? parseInt(matches[6]) : 1;
@@ -172,19 +172,25 @@ function rollResultsToString(subArray, index, rollParams) {
 		+ ')';
 }
 
-function rollFromString(inputText, scale = 0) {
+function rollFromString(inputText, scale = 0, modifiers = [], category = '') {
 	// eslint-disable-next-line prefer-const
 	let [mainRoll, curseRoll, mod, map, multi, note] = parseRoll(inputText);
 	if (scale && scale >= 1 && scale <= 3) {
 		// Adjust roll bonus for Accuracy && MAP
-		if (mod) {
-			const scaleAccuracy = accuracyTables[scale - 1];
-			const accuracyMidpoint = Math.ceil(scaleAccuracy.length / 2);
-			mod = scaleAccuracy[Math.max(0, Math.min(parseInt(mod) + accuracyMidpoint - 1, scaleAccuracy.length - 1))] + (-5 * map);
+		mod = mod || 0;
+
+		if (modifiers && category) {
+			const categoryModifiers = modifiers.filter(modifier => modifier.category === category);
+			for (const modifier of categoryModifiers) {
+				if (modifier.type === 'flat') { mod += modifier.amount;}
+				else if (modifier.type === 'curse') { curseRoll[1] += modifier.amount;}
+			}
 		}
-		else {
-			mod = map ? (-5 * map) : mod;
-		}
+
+		const scaleAccuracy = accuracyTables[scale - 1];
+		const accuracyMidpoint = Math.ceil(scaleAccuracy.length / 2);
+		mod = scaleAccuracy[Math.max(0, Math.min(parseInt(mod) + accuracyMidpoint - 1, scaleAccuracy.length - 1))] + (-5 * map);
+
 		// Adjust roll bonus for Cursed Accuracy
 		const cursedScaleAccuracy = cursedAccuracyTables[scale - 1];
 		const cursedAccuracyMidpoint = 5;
@@ -195,4 +201,4 @@ function rollFromString(inputText, scale = 0) {
 	return rolledDice > 100 ? `Please keep rolls to under 100 dice. (Attempted to roll ${rolledDice} dice)` : rollString(rolls, mod, note, multi);
 }
 
-module.exports = { roll, arrayRoll, rollString, weightedSelect, selectFromWeightedString, unweightedSelect, drawDeck, rollFromString, explicitParse, rollResultsToString };
+module.exports = { roll, arrayRoll, rollString, weightedSelect, selectFromWeightedString, unweightedSelect, drawDeck, rollFromString, explicitParse, rollResultsToString, parseRoll };

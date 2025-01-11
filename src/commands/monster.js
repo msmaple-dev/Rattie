@@ -6,13 +6,12 @@ const { getMonster, drawDefaultLoot, drawMonsterCard, getValidMonsters, logDPR, 
 } = require('../functions/monster_utils');
 const { monsterEmbed, lootEmbed, monsterAttackedEmbed, monsterDefeatedEmbed, statusEmbed } = require('../components/embeds');
 const init_keyv = require('../keyv_stores/init_keyv');
-const { newInit, nextTurn, uniqueUsers, getModifierString, getACModifiers, procModifiers, getModifiedRollCode,
+const { newInit, nextTurn, uniqueUsers, getModifierString, getACModifiers, procModifiers,
 	modifierCategories, modifierTypes, cullModifiers,
 } = require('../functions/init_utils');
 const { unpinChannelPins } = require('../functions/chat_utils');
-const { rollFromString } = require('../functions/roll_utils');
 const { monster_color } = require('../components/constants');
-const { toProperCase } = require('../functions/string_utils');
+const { rollFromString } = require('../functions/roll_utils');
 
 const validMonsters = getValidMonsters();
 const monsterChoices = validMonsters.map(monster => {return { name:monster, value: monster };});
@@ -102,7 +101,8 @@ module.exports = {
 		.addSubcommand(subcommand =>
 			subcommand
 				.setName('strike')
-				.setDescription('Have a monster make a strike, using its current modifiers'),
+				.setDescription('Have a monster make a strike, using its current modifiers')
+				.addStringOption(option => option.setName('roll').setDescription('Roll code').setRequired(false)),
 		)
 		.addSubcommand(subcommand =>
 			subcommand
@@ -336,6 +336,7 @@ module.exports = {
 		else if (subCommand === 'save' || subCommand === 'strike') {
 			await interaction.deferReply();
 			const count = interaction.options.getInteger('count') || 1;
+			const initialRollCode = interaction.options.getString('roll') || (subCommand === 'strike' ? '1+0+0' : '1+6+0');
 			let outputText = '';
 			const currentInit = await init_keyv.get(channelId);
 			const monster = currentInit?.monster;
@@ -343,13 +344,7 @@ module.exports = {
 			if (monster) {
 				const modifierType = (subCommand === 'strike' ? 'attack' : 'saves');
 				for (let i = 0; i < count; i++) {
-					const rollArray = getModifiedRollCode(modifiers, modifierType);
-					let inputText = `${rollArray[0]}`;
-					for (const value of rollArray.slice(1, 3)) {
-						inputText += `${value >= 0 ? `+${value}` : `${value}`}`;
-					}
-					inputText += `x${rollArray[3]}`;
-					outputText += `${i > 0 ? '\n' : ''}${count > 1 ? `${toProperCase(subCommand)} #${i + 1}: ` : ''}${rollFromString(inputText, 3)}`;
+					outputText += rollFromString(initialRollCode, (subCommand === 'strike' ? 3 : 0), modifiers, modifierType);
 					const removedMods = procModifiers(modifiers, modifierType);
 					outputText += removedMods ? '\n' + removedMods : '';
 					currentInit.modifiers = cullModifiers(modifiers);
