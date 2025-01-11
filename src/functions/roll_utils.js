@@ -48,18 +48,19 @@ function parseRoll(inputString = '1+0+0') {
 	// Group 1: MainRoll firstDieCount (default 1, min 1)
 	// Group 2: MainRoll explicitDie (default d20, min 1)
 	// Group 3: CurseDieMod (default 0, min -5)
-	// Group 4: Accuracy (default 0)
-	// Group 5: MAP (default 0)
-	// Group 6: Multiplier (default 1)
-	// Group 7: Note (default '')
-	let matches = inputString.match(/^(\d+)?(d\d+)?(?:\+?(-?\d+)?)?(?:\+?(-?\d+)?)?(?:m(\d+))?(?:x(\d+))?( +.+)?/i);
+	// Group 4: CurseDieSize (optional, default null)
+	// Group 5: Accuracy (default 0)
+	// Group 6: MAP (default 0)
+	// Group 7: Multiplier (default 1)
+	// Group 8: Note (default '')
+	let matches = inputString.match(/^(\d+)?(d\d+)?(?:\+?(-?\d+)?(d\d+)?)?(?:\+?(-?\d+)?)?(?:m(\d+))?(?:x(\d+))?( +.+)?/i);
 	matches = matches.map(match => match && match.replaceAll(/[cd]+/gm, ''));
 	const mainRoll = [(matches[1] ? (Math.max(matches[1], 1)) : 1), (matches[2] ? (Math.max(matches[2], 1)) : 20)];
-	const curseRoll = [1, (parseInt(matches[3]) || 0)];
-	const mod = matches[4] ? parseInt(matches[4]) : 0;
-	const map = matches[5] ? parseInt(matches[5]) : 0;
-	const multi = matches[6] ? parseInt(matches[6]) : 1;
-	const note = matches[7] || '';
+	const curseRoll = matches[4] ? [parseInt(matches[3]), Math.max(parseInt(matches[4]), 1)] : [1, (parseInt(matches[3]) || 0)];
+	const mod = matches[5] ? parseInt(matches[5]) : 0;
+	const map = matches[6] ? parseInt(matches[6]) : 0;
+	const multi = matches[7] ? parseInt(matches[7]) : 1;
+	const note = matches[8] || '';
 	return [mainRoll, curseRoll, mod, map, multi, note];
 }
 
@@ -201,4 +202,4 @@ function rollFromString(inputText, scale = 0, modifiers = [], category = '') {
 	return rolledDice > 100 ? `Please keep rolls to under 100 dice. (Attempted to roll ${rolledDice} dice)` : rollString(rolls, mod, note, multi);
 }
 
-module.exports = { roll, arrayRoll, rollString, weightedSelect, selectFromWeightedString, unweightedSelect, drawDeck, rollFromString, explicitParse, rollResultsToString, parseRoll };
+module.exports = { roll, arrayRoll, rollString, weightedSelect, selectFromWeightedString, unweightedSelect, drawDeck, rollFromString, explicitParse, rollResultsToString };

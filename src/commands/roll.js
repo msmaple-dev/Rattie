@@ -8,7 +8,7 @@ module.exports = {
 		.addStringOption(option => option.setName('roll').setDescription('Roll code').setRequired(false)),
 	async execute(interaction) {
 		const inputText = interaction.options.getString('roll') ?? '1+6+0';
-		const outputText = rollFromString(inputText);
+		const outputText = rollFromString(inputText, 0);
 		await interaction.reply(outputText);
 	},
 };
