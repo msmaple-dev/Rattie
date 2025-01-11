@@ -6,7 +6,7 @@ const { rollFromString } = require('../functions/roll_utils');
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('strike')
-		.setDescription('Rolls a strike roll w/ accuracy & shorthand enabled. (2+5+1m1 -> 2d20+1d5+[1 Acc.]-5)')
+		.setDescription('Rolls a strike roll w/ accuracy. (2+5+1m1 -> 2d20+[5 Curse Acc.]+[1 Acc.]-5)')
 		.addStringOption(option => option.setName('roll').setDescription('Roll code').setRequired(false)),
 	async execute(interaction) {
 		const userID = interaction.user.id;
