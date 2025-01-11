@@ -182,6 +182,9 @@ function rollFromString(inputText, scale = 0) {
 			const accuracyMidpoint = Math.ceil(scaleAccuracy.length / 2);
 			mod = scaleAccuracy[Math.max(0, Math.min(parseInt(mod) + accuracyMidpoint - 1, scaleAccuracy.length - 1))] + (-5 * map);
 		}
+		else {
+			mod = map ? (-5 * map) : mod;
+		}
 		// Adjust roll bonus for Cursed Accuracy
 		const cursedScaleAccuracy = cursedAccuracyTables[scale - 1];
 		const cursedAccuracyMidpoint = 5;
