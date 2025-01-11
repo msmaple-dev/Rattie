@@ -47,7 +47,7 @@ async function checkReset(client) {
 		const resetDateVal = await scheduler_keyv.get('resetDate');
 		const resetDate = new Date(resetDateVal);
 		const tomorrowDate = new Date();
-		tomorrowDate.setDate(tomorrowDate.getDate() + 1);
+		tomorrowDate.setDate(tomorrowDate.getDate() + 7);
 		tomorrowDate.setHours(20, 0, 0);
 		// 3pm EST
 		if (now >= resetDate) {
