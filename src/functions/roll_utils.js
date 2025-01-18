@@ -176,17 +176,16 @@ function rollResultsToString(subArray, index, rollParams) {
 function rollFromString(inputText, scale = 0, modifiers = [], category = '') {
 	// eslint-disable-next-line prefer-const
 	let [mainRoll, curseRoll, mod, map, multi, note] = parseRoll(inputText);
+	if (modifiers && category) {
+		const categoryModifiers = modifiers.filter(modifier => modifier.category === category);
+		for (const modifier of categoryModifiers) {
+			if (modifier.type === 'flat') { mod += modifier.amount;}
+			else if (modifier.type === 'curse') { curseRoll[1] += modifier.amount;}
+		}
+	}
 	if (scale && scale >= 1 && scale <= 3) {
 		// Adjust roll bonus for Accuracy && MAP
 		mod = mod || 0;
-
-		if (modifiers && category) {
-			const categoryModifiers = modifiers.filter(modifier => modifier.category === category);
-			for (const modifier of categoryModifiers) {
-				if (modifier.type === 'flat') { mod += modifier.amount;}
-				else if (modifier.type === 'curse') { curseRoll[1] += modifier.amount;}
-			}
-		}
 
 		const scaleAccuracy = accuracyTables[scale - 1];
 		const accuracyMidpoint = Math.ceil(scaleAccuracy.length / 2);
