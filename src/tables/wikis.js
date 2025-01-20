@@ -58,4 +58,8 @@ module.exports = db.define('wikis', {
 		type: Sequelize.INTEGER,
 		defaultValue: 0,
 	},
+	showcaseEnabled: {
+		type: Sequelize.BOOLEAN,
+		defaultValue: true,
+	},
 }, { timestamps: false });

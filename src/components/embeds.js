@@ -68,6 +68,8 @@ function wikiEmbed(wiki) {
 		pronouns,
 		scent,
 		renown,
+		showcaseUses,
+		showcaseEnabled,
 	} = wiki;
 	for (const [key, value] of Object.entries(wiki)) {
 		if (value?.toString().length >= 1024) {
@@ -85,7 +87,8 @@ function wikiEmbed(wiki) {
 	}
 	const embed = new EmbedBuilder().setTitle((warlockName || name) + (pronouns ? ` (${pronouns})` : ''));
 	const descriptionText = `${quote ? `*${parseLinebreaks(quote)}*\n` : ''}\n`;
-	const footerText = `${!isValidColor(color) ? `Invalid Color: ${color}` : ''}${image && !isValidUrl(image) ? `Invalid Image Link: ${image}` : ''}`;
+	const footerElements = [showcaseEnabled ? 'Showcase Enabled' : 'Showcase Disabled', `Showcase Uses: ${showcaseUses || 0}`, !isValidColor(color) ? `Invalid Color: ${color}` : '', image && !isValidUrl(image) ? `Invalid Image Link: ${image}` : ''];
+	const footerText = footerElements.filter(e => e?.length > 0).join(' | ');
 	const headerFields = [
 		(age !== null && { name: 'Age', value: age, inline: true }),
 		(scale !== null && { name: 'Scale', value: scale, inline: true }),

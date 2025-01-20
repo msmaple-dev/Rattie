@@ -106,6 +106,12 @@ module.exports = {
 				.setDescription('Drop a field from a wiki')
 				.addStringOption(option => option.setName('name').setDescription('Wiki Name').setRequired(true))
 				.addStringOption(option => option.setName('field').setDescription('Field to Drop').addChoices(...fieldChoices).setRequired(true)),
+		).addSubcommand(subcommand =>
+			subcommand
+				.setName('showcase')
+				.setDescription('Toggles if a given wiki you own is available for use in the showcase')
+				.addStringOption(option => option.setName('name').setDescription('Wiki Name').setRequired(true))
+				.addBooleanOption(option => option.setName('enabled').setDescription('Is the wiki available for the Showcase?').setRequired(true)),
 		),
 	async execute(interaction) {
 		const userID = interaction.user.id;
@@ -118,7 +124,7 @@ module.exports = {
 				if (lengthCheck) {
 					const wikiProperties = Object.entries(foundWiki);
 					const propertyLengths = [];
-					const invalidFields = ['id', 'ownerId', 'showcaseUses'];
+					const invalidFields = ['id', 'ownerId', 'showcaseUses', 'showcaseEnabled'];
 					for (const [property, value] of wikiProperties) {
 						if (value && !invalidFields.includes(property)) {
 							propertyLengths.push([property, value?.length]);
@@ -322,6 +328,26 @@ module.exports = {
 					type: QueryTypes.DELETE,
 				});
 				await interaction.reply(`Dropped field ${field} from ${wikiName}`);
+			}
+			else {
+				await interaction.reply(`No wikis you own are named ${wikiName}!`);
+			}
+		}
+		else if (interaction.options.getSubcommand() === 'showcase') {
+			const existingOwnedWikis = await db.query('SELECT * FROM wikis WHERE ownerId = ? AND name = ?', {
+				replacements: [sqlUserID, wikiName],
+				type: QueryTypes.SELECT,
+			});
+
+			const enabled = interaction.options.getBoolean('enabled');
+
+			if (existingOwnedWikis?.length > 0) {
+				const query = 'UPDATE WIKIS SET showcaseEnabled = ? WHERE ownerId = ? AND name = ?';
+				await db.query(query, {
+					replacements: [enabled, sqlUserID, wikiName],
+					type: QueryTypes.DELETE,
+				});
+				await interaction.reply(`${enabled ? 'Enabled' : 'Disabled'} Showcase Display for Wiki ${wikiName}`);
 			}
 			else {
 				await interaction.reply(`No wikis you own are named ${wikiName}!`);

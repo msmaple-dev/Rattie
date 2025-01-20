@@ -17,7 +17,7 @@ async function checkShowcase(client) {
 		// 10am EST
 		if (now >= showcaseDate) {
 			await scheduler_keyv.set('showcaseDate', tomorrowDate);
-			const validWikis = await db.query('SELECT * FROM wikis WHERE showcaseUses <= (SELECT MIN(showcaseUses) FROM wikis WHERE length(concat(warlockName, quote, about, faction, appearance, abilities, scent)) > 450) AND length(concat(warlockName, quote, about, faction, appearance, abilities, scent)) > 450', {
+			const validWikis = await db.query('SELECT * FROM wikis WHERE showcaseEnabled IS NOT false AND showcaseUses <= (SELECT MIN(showcaseUses) FROM wikis WHERE length(concat(warlockName, quote, about, faction, appearance, abilities, scent)) > 450) AND length(concat(warlockName, quote, about, faction, appearance, abilities, scent)) > 450', {
 				type: QueryTypes.SELECT,
 			});
 
