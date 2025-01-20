@@ -98,11 +98,11 @@ function wikiEmbed(wiki) {
 	const descFields = [
 		(scent !== null && { name: 'Warlock Scent', value: scent }),
 		(about !== null && { name: `About ${warlockName || name}`, value: `${parseLinebreaks(about)}` }),
-		(abilities !== null && { name: 'Abilities', value: parseLinebreaks(abilities) }),
 		((appearance || source) && {
 			name: 'Appearance',
 			value: (appearance ? parseLinebreaks(appearance) + '\n' : '') + (source ? (isValidUrl(source) ? `\n*[Image Source](${source})*` : `\n*Image Source: ${source}*`) : ''),
 		}),
+		(abilities !== null && { name: 'Abilities', value: parseLinebreaks(abilities) }),
 	].filter(a => a);
 
 	if (headerFields && headerFields?.length) {
