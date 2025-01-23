@@ -1,3 +1,5 @@
+const weighted = require('weighted');
+
 // x Index is scale - 1 (Eg: accuracyTables[0] is for Scale 1 characters), y index is total mod from lowest to highest point
 
 // Base index = floor(len/2)
@@ -110,31 +112,26 @@ function rollString(rolls = [[1, 20], [1, 6]], mod = 0, note = '', multi = 1) {
 }
 
 function toWeightedArray(string) {
-	const splitString = string.split(' ');
-	const numArray = splitString.filter(a => !isNaN(a)).map(a => Number(a));
-	const deckArray = splitString.filter(a => isNaN(a));
-	const lastIteratableIndex = Math.min(numArray.length, deckArray.length);
-	const total = numArray.slice(0, lastIteratableIndex).reduce((a, b) => a + b);
+	const matches = [...string.matchAll(/(\d+)* *([a-zA-Z]+)/gm)]
+		.map(m => {m[1] = (m[1] || 1); return m;});
+	const total = matches.reduce((a, b) => parseInt(a[1]) + parseInt(b[1]));
 	const result = {};
 
-	for (let i = 0; i < lastIteratableIndex; i++) {
-		result[deckArray[i]] = Number(((numArray[i]) / total).toFixed(2));
+	for (let i = 0; i < matches.length; i++) {
+		result[matches[i][2]] = Number(((matches[i][1]) / total).toFixed(3));
 	}
 	return result;
 }
 
 function selectFromWeightedString(string) {
 	const spec = toWeightedArray(string);
-	return weightedSelect(spec);
+	const res = weightedSelect(spec);
+	console.log(spec, res);
+	return res;
 }
 
 function weightedSelect(spec) {
-	let i, sum = 0;
-	const r = Math.random();
-	for (i in spec) {
-		sum += spec[i];
-		if (r <= sum) return i;
-	}
+	return weighted.select(spec);
 }
 
 function unweightedSelect(array) {
