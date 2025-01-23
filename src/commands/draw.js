@@ -23,7 +23,6 @@ module.exports = {
 	async execute(interaction) {
 		await interaction.deferReply();
 		const deckString = interaction.options.getString('decks')?.toLowerCase();
-		const deckType = deckString && deckString.match(/(\d+ \w+)+/gm)?.length > 0 && selectFromWeightedString(deckString)?.toLowerCase() || deckString;
 		const drawCount = interaction.options.getInteger('cards') ? Math.min(5, interaction.options.getInteger('cards')) : 1;
 		const severity = interaction.options.getString('severity')?.toLowerCase() || null;
 		const baseDraw = interaction.options.getBoolean('base') || false;
@@ -40,48 +39,48 @@ module.exports = {
 		});
 		const colorDictionary = Object.assign({}, ...cardColors.map((x) => ({ [x.deckType]: x.color })));
 
-		let statusCards = [];
+		const statusCards = [];
 
-		if (!deckType) {
+		if (!(deckString && deckString.match(/(\d+ \w+)+/gm)?.length > 0)) {
 			await interaction.editReply({ content: 'No Valid Deck Type(s) Entered!', ephemeral: true });
 			return;
 		}
 
 		if (baseDraw || !channelUser) {
-			const baseCards = await db.query('SELECT * FROM cards WHERE ownerId IN (0, ?) AND deckType = ?', {
-				replacements: [sqlUserID, deckType],
-				type: QueryTypes.SELECT,
-			});
-			if (!baseCards || baseCards.length <= 0) {
-				console.log('Base Draw Error');
-				await interaction.editReply({ content: `Invalid Deck Type "${deckType}"!`, ephemeral: true });
-				return;
-			}
-			else {
+			for (let i = 0; i < drawCount; i++) {
+				const deckType = selectFromWeightedString(deckString)?.toLowerCase();
+				const baseCards = await db.query('SELECT * FROM cards WHERE ownerId IN (0, ?) AND deckType = ?', {
+					replacements: [sqlUserID, deckType],
+					type: QueryTypes.SELECT,
+				});
+				if (!baseCards || baseCards.length <= 0) {
+					console.log('Base Draw Error');
+					await interaction.editReply({ content: `Invalid Deck Type "${deckType}"!`, ephemeral: true });
+					return;
+				}
 				const severityCards = severity ? baseCards.filter(card => (card.severity === severity)) : null;
 				const drawableCards = severityCards || baseCards;
-
-				for (let i = 0; i < drawCount; i++) {
-					const drawnCard = drawableCards[Math.floor(Math.random() * drawableCards.length)];
-					statusCards.push(drawnCard);
-				}
+				const drawnCard = drawableCards[Math.floor(Math.random() * drawableCards.length)];
+				statusCards.push(drawnCard);
 			}
 		}
 		else {
 			const userCards = channelUser.decks;
-			const deck = userCards[deckType];
 
-			if (!deck || deck.length <= 0) {
-				console.log('Init Draw Error');
-				interaction.editReply({
-					content: `Invalid Deck Type "${deckType}"! Valid Decks: ${Object.keys(userCards).map(word => word[0].toUpperCase() + word.slice(1).toLowerCase()).join(', ')}`,
-					ephemeral: true,
-				});
-				return;
+			for (let i = 0; i < drawCount; i++) {
+				const deckType = selectFromWeightedString(deckString)?.toLowerCase();
+				const deck = userCards[deckType];
+				if (!deck || deck.length <= 0) {
+					console.log('Init Draw Error');
+					interaction.editReply({
+						content: `Invalid Deck Type "${deckType}"! Valid Decks: ${Object.keys(userCards).map(word => word[0].toUpperCase() + word.slice(1).toLowerCase()).join(', ')}`,
+						ephemeral: true,
+					});
+					return;
+				}
+				statusCards.push(drawDeck(deck, 1, severity)[0]);
+				userCards[deckType] = deck;
 			}
-
-			statusCards = drawDeck(deck, drawCount, severity);
-			userCards[deckType] = deck;
 
 			await init_keyv.set(channel, channelInit);
 		}
