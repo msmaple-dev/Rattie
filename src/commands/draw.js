@@ -3,6 +3,7 @@ const init_keyv = require('../keyv_stores/init_keyv');
 const { statusEmbed } = require('../components/embeds');
 const { QueryTypes } = require('sequelize');
 const db = require('../database');
+const Cards = require('../tables/cards');
 const { selectFromWeightedString, drawDeck } = require('../functions/roll_utils');
 const { severities } = require('../components/constants');
 
@@ -47,18 +48,22 @@ module.exports = {
 		}
 
 		if (baseDraw || !channelUser) {
+			const deckNames = [...deckString.matchAll(/\d+ (\w+)/gm)].map(match => match[1]).filter(match => match);
+			const baseCards = await Cards.findAll({
+				where: {
+					// ownerId: [0, sqlUserID],
+					deckType: deckNames || [],
+				},
+			});
 			for (let i = 0; i < drawCount; i++) {
 				const deckType = selectFromWeightedString(deckString)?.toLowerCase();
-				const baseCards = await db.query('SELECT * FROM cards WHERE ownerId IN (0, ?) AND deckType = ?', {
-					replacements: [sqlUserID, deckType],
-					type: QueryTypes.SELECT,
-				});
 				if (!baseCards || baseCards.length <= 0) {
 					console.log('Base Draw Error');
 					await interaction.editReply({ content: `Invalid Deck Type "${deckType}"!`, ephemeral: true });
 					return;
 				}
-				const severityCards = severity ? baseCards.filter(card => (card.severity === severity)) : null;
+				const chosenDeck = baseCards.filter(card => (card.deckType === deckType));
+				const severityCards = severity ? chosenDeck.filter(card => (card.severity === severity)) : null;
 				const drawableCards = severityCards || baseCards;
 				const drawnCard = drawableCards[Math.floor(Math.random() * drawableCards.length)];
 				statusCards.push(drawnCard);
