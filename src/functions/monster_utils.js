@@ -43,6 +43,19 @@ const baubles = {
 	'Sapphire of the Blue': 'You may create ice at will in your hand.',
 	'Emerald of the Green': 'You can create plant-life at will in your hand.',
 	'Topaz of the Yellow': 'You can create electric sparks at will in your hand.',
+	'Strengthened Mind Ring': 'You may Reroll a Smarts roll once per thread or quest.',
+	'Strengthened Sight Pendant': 'You may Reroll a Talent roll once per thread or quest.',
+	'Strengthened Body Earring': 'You may Reroll a Fitness roll once per thread or quest.',
+	'Strengthened Heart Anklet': 'You may Reroll a Intuition roll once per thread or quest.',
+	'Bangle of Attention': 'People and weaker Warlocks tend to focus more on you, attention being drawn to you above others.',
+	'Amethyst of Purple': 'You can create mildly poisonous smoke at will in your hand. ',
+	'Fools Gold': 'You may turn leaves and rocks into gold coins. They return to normal after a minute.',
+	'Echo Bracelet': 'When you speak, you may have your voice come from within 10ft of your location instead.',
+	'Inverted Eye': 'Can peer through it to see through surfaces.',
+	'Diamond of Clarity': 'Gain a minor resistance to mind altering effects of substances and weaker Curses.',
+	'Vocal Amp': 'Allows you to change the volume, and the tone, of your voice without potentially straining your vocal chords.',
+	'Dragonskin Rock': 'Makes it look like your skin is much more rugged and tough, more like stone than flesh. Does not actually improve your toughness.',
+	'Quantum Veil': 'While in use, your appearance changes whenever you are unobserved.',
 };
 
 function getMonster(name) {
