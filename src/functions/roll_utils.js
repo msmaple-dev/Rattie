@@ -113,8 +113,8 @@ function rollString(rolls = [[1, 20], [1, 6]], mod = 0, note = '', multi = 1) {
 
 function toWeightedArray(string) {
 	const matches = [...string.matchAll(/(\d+)* *([a-zA-Z]+)/gm)]
-		.map(m => {m[1] = (m[1] || 1); return m;});
-	const total = matches.length > 1 ? matches.reduce((a, b) => parseInt(a[1]) + parseInt(b[1])) : matches[0][1];
+		.map(m => {m[1] = (parseInt(m[1]) || 1); return m;});
+	const total = matches.length > 1 ? matches.map(m => m[1]).reduce((a, b) => a + b) : matches[0][1];
 	const result = {};
 
 	for (let i = 0; i < matches.length; i++) {
