@@ -45,7 +45,7 @@ function arrayRoll(rolls) {
 	return rolls.map(subRoll => multiRoll(subRoll[0], subRoll[1]));
 }
 
-function parseRoll(inputString = '1+0+0') {
+function parseRoll(inputString = '1+0+0', scale) {
 	// Indexes
 	// Group 1: MainRoll firstDieCount (default 1, min 1)
 	// Group 2: MainRoll explicitDie (default d20, min 1)
@@ -58,7 +58,7 @@ function parseRoll(inputString = '1+0+0') {
 	let matches = inputString.match(/^(\d+)?(d\d+)?(?:\+?(-?\d+)?(d\d+)?)?(?:\+?(-?\d+)?)?(?:m(\d+))?(?:x(\d+))?( +.+)?/i);
 	matches = matches.map(match => match && match.replaceAll(/[cd]+/gm, ''));
 	const mainRoll = [(matches[1] ? (Math.max(matches[1], 1)) : 1), (matches[2] ? (Math.max(matches[2], 1)) : 20)];
-	const curseRoll = matches[4] ? [parseInt(matches[3]), Math.max(parseInt(matches[4]), 1)] : [1, (parseInt(matches[3]) || 0)];
+	const curseRoll = matches[4] ? [parseInt(matches[3]), Math.max(parseInt(matches[4]), 1)] : [1, (isNaN(parseInt(matches[3])) ? (scale ? 0 : 6) : parseInt(matches[3]))];
 	const mod = matches[5] ? parseInt(matches[5]) : 0;
 	const map = matches[6] ? parseInt(matches[6]) : 0;
 	const multi = matches[7] ? parseInt(matches[7]) : 1;
@@ -170,7 +170,7 @@ function rollResultsToString(subArray, index, rollParams) {
 
 function rollFromString(inputText, scale = 0, modifiers = [], category = '') {
 	// eslint-disable-next-line prefer-const
-	let [mainRoll, curseRoll, mod, map, multi, note] = parseRoll(inputText);
+	let [mainRoll, curseRoll, mod, map, multi, note] = parseRoll(inputText, scale);
 	if (modifiers && category) {
 		const categoryModifiers = modifiers.filter(modifier => modifier.category === category);
 		for (const modifier of categoryModifiers) {
