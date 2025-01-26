@@ -22,8 +22,8 @@ async function checkShowcase(client) {
 			});
 
 			const chosenWiki = unweightedSelect(validWikis);
-			await db.query('UPDATE wikis SET showcaseUses = (SELECT max(showcaseUses) FROM WIKIS) WHERE id = ?', {
-				replacements: [chosenWiki.id],
+			await db.query('UPDATE wikis SET showcaseUses = ? WHERE id = ?', {
+				replacements: [(parseInt(chosenWiki.showcaseUses) + 1), chosenWiki.id],
 				type: QueryTypes.UPDATE,
 			});
 			const chosenWikiEmbed = wikiEmbed(chosenWiki);
