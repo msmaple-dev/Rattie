@@ -51,7 +51,7 @@ module.exports = {
 			const deckNames = [...deckString.matchAll(/\d* *([a-zA-Z]+)/gm)].map(match => match[1]).filter(match => match);
 			const baseCards = await Cards.findAll({
 				where: {
-					// ownerId: [0, sqlUserID],
+					ownerId: [0, sqlUserID],
 					deckType: deckNames || [],
 				},
 			});
