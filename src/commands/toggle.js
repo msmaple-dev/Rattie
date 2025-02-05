@@ -1,5 +1,13 @@
 const { SlashCommandBuilder } = require('discord.js');
 
+const roles = [
+	{ name: 'Skirmish', value: 'skirmish' },
+	{ name: 'Roleplay', value: 'roleplay' },
+	{ name: 'Monster Hunter', value: 'monster hunter' },
+	{ name: 'Bot Updates', value: 'bot updates' },
+	{ name: 'Art', value: 'art' },
+];
+
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('toggle')
@@ -7,11 +15,7 @@ module.exports = {
 		.addStringOption(option => option
 			.setName('role')
 			.setDescription('Role to Toggle')
-			.addChoices(
-				{ name: 'Skirmish', value: 'skirmish' },
-				{ name: 'Roleplay', value: 'roleplay' },
-				{ name: 'Monster Hunter', value: 'monster hunter' },
-			)
+			.addChoices(...roles)
 			.setRequired(true)),
 	async execute(interaction) {
 		const roleName = interaction.options.getString('role');
