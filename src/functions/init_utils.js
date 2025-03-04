@@ -6,13 +6,15 @@ const { attackCardsToObject } = require('./monster_utils');
 const modifierTypes = { 'curse': 'Curse Die Size', 'flat': 'Flat' };
 const modifierCategories = { 'attack': 'Attack', 'defend': 'Defense', 'saves': 'Save' };
 
-function newInit(users = [], monster = {}) {
+function newInit(users = [], monster = {}, isRaid = false) {
 	return {
 		currentTurn: 0,
 		round: 0,
 		users: [...users],
 		trackers: [],
 		monster: monster || null,
+		monsterLibrary: {},
+		raid: isRaid,
 		looting: false,
 		damageDealt: 0,
 		dpr: [],

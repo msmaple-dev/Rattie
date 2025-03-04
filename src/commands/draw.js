@@ -20,12 +20,14 @@ module.exports = {
 			.setRequired(false)
 			.addChoices(...severities),
 		)
+		.addBooleanOption(option => option.setName('monster').setDescription('Draw from the monster deck').setRequired(false))
 		.addBooleanOption(option => option.setName('base').setDescription('Draw from base decks, not init decks').setRequired(false)),
 	async execute(interaction) {
 		await interaction.deferReply();
 		const deckString = interaction.options.getString('decks')?.toLowerCase();
 		const drawCount = interaction.options.getInteger('cards') ? Math.min(5, interaction.options.getInteger('cards')) : 1;
 		const severity = interaction.options.getString('severity')?.toLowerCase() || null;
+		const monsterDraw = interaction.options.getBoolean('monster') || false;
 		const baseDraw = interaction.options.getBoolean('base') || false;
 		const userID = interaction.user.id;
 		const sqlUserID = BigInt(interaction.user.id);
@@ -70,7 +72,7 @@ module.exports = {
 			}
 		}
 		else {
-			const userCards = channelUser.decks;
+			const userCards = monsterDraw ? channelInit.monsterLibrary : channelUser.decks;
 
 			for (let i = 0; i < drawCount; i++) {
 				const deckType = selectFromWeightedString(deckString)?.toLowerCase();

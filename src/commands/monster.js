@@ -7,10 +7,9 @@ const { getMonster, drawDefaultLoot, drawMonsterCard, getValidMonsters, logDPR, 
 const { monsterEmbed, lootEmbed, monsterAttackedEmbed, monsterDefeatedEmbed, statusEmbed } = require('../components/embeds');
 const init_keyv = require('../keyv_stores/init_keyv');
 const { newInit, nextTurn, uniqueUsers, getModifierString, getACModifiers, procModifiers,
-	modifierCategories, modifierTypes, cullModifiers,
+	modifierCategories, modifierTypes, cullModifiers, getUserDecks,
 } = require('../functions/init_utils');
 const { unpinChannelPins } = require('../functions/chat_utils');
-const { monster_color } = require('../components/constants');
 const { rollFromString } = require('../functions/roll_utils');
 
 const validMonsters = getValidMonsters();
@@ -136,33 +135,14 @@ module.exports = {
 						await interaction.editReply('You cannot fight that monster yet!');
 					}
 					else {
-						if (await init_keyv.has(channelId)) {
-							const currentInit = await init_keyv.get(channelId);
-							currentInit.users.push({
-								userID: userID,
-								identifier: `${monster.name}'s Draw`,
-								initVal: 100,
-								decks: {},
-							});
-							currentInit.users.push({ userID: userID, identifier: `${monster.name} Acts`, initVal: 1, decks: {} });
-							currentInit.monster = monster;
-							currentInit.looting = false;
-							currentInit.damageDealt = 0;
-							currentInit.dpr = [];
-							currentInit.monsterCards = monster && monster.attackCards ? monster.attackCards.map(card => {return { name: card.split(' | ')[0], effect: card.split(' | ')[1], severity: 'Monster', color: monster_color };}) : null;
-							currentInit.modifiers = [];
-							currentInit.modifiersApplied = 0;
-							await init_keyv.set(channelId, currentInit);
-						}
-						else {
-							const startingInit = newInit([{
-								userID: userID,
-								identifier: `${monster.name}'s Draw`,
-								initVal: 100,
-								decks: {},
-							}, { userID: userID, identifier: `${monster.name} Acts`, initVal: 1, decks: {} }], monster);
-							await init_keyv.set(channelId, startingInit);
-						}
+						const startingInit = newInit([{
+							userID: userID,
+							identifier: `${monster.name}'s Draw`,
+							initVal: 100,
+							decks: {},
+						}, { userID: userID, identifier: `${monster.name} Acts`, initVal: 1, decks: {} }], monster);
+						startingInit.monsterLibrary = await getUserDecks(0);
+						await init_keyv.set(channelId, startingInit);
 
 						// Checks if channel type is a thread, then logs if it is
 						if (interaction.channel?.type === 11) {
