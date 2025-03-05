@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize');
 const db = require('../database');
 
-module.exports = db.define('wikis', {
+const Wikis = db.define('wikis', {
 	ownerId:  {
 		type: Sequelize.TEXT,
 	},
@@ -63,3 +63,5 @@ module.exports = db.define('wikis', {
 		defaultValue: true,
 	},
 }, { timestamps: false });
+
+module.exports = Wikis;
