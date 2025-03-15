@@ -1,0 +1,123 @@
+const { camelizeKeys } = require('./string_utils');
+const path = require('node:path');
+const fs = require('node:fs');
+const { unweightedSelect, roll } = require('./roll_utils');
+
+const raidPath = path.join(__dirname.replace(/[\\/]+functions/, ''), 'raids');
+const raidTypePath = path.join(raidPath, 'raid_types');
+const raidMonsterPath = path.join(raidPath, 'raid_monsters');
+const raidTypeFiles = fs.readdirSync(raidTypePath).filter(file => file.endsWith('.json'));
+const raidMonsterFiles = fs.readdirSync(raidMonsterPath).filter(file => file.endsWith('.json'));
+const raids = {};
+const raidMonsters = {};
+
+const raidScaleProgressions = {
+	normal: [0.5, 1, 1.25, 1.25, 1.5, 1.5, 2],
+};
+
+for (const file of raidTypeFiles) {
+	const filePath = path.join(raidTypePath, file);
+	let raid = require(filePath);
+	raid = camelizeKeys(raid);
+	raids[raid.id] = raid;
+}
+
+for (const file of raidMonsterFiles) {
+	const filePath = path.join(raidMonsterPath, file);
+	let monster = require(filePath);
+	monster = camelizeKeys(monster);
+	raidMonsters[monster.id] = monster;
+}
+
+function getRaid(id) {
+	return raids[id.toLowerCase()];
+}
+
+function getRaidMonster(id) {
+	return raidMonsters[id.toLowerCase()];
+}
+
+function getValidRaids() {
+	return Object.keys(raids);
+}
+
+function getValidRaidMonsters() {
+	return Object.keys(raidMonsters);
+}
+
+function getMonstersForRaid(raid) {
+	const monstersForRaid = {};
+	for (const monster of raid.monsters) {
+		const monsterData = getRaidMonster(monster.replace('.js', ''));
+		monstersForRaid[monsterData.id] = monsterData;
+	}
+	return monstersForRaid;
+}
+
+
+function generateRoom(raid, roomNum, raidScale) {
+	const isMiniBoss = raid.miniBosses.includes(roomNum);
+	const isBoss = raid.bosses.includes(roomNum);
+
+	const raidScaleProp = raid?.raidScaling || raidScaleProgressions.normal;
+	let raidScaling;
+	if (typeof raidScaleProp === 'string') {
+		raidScaling = raidScaleProgressions[raidScaleProp] || raidScaleProgressions.normal;
+	}
+	else {
+		raidScaling = raidScaleProp;
+	}
+	const raidMonsterArray = Object.values(raid.monsters);
+	const roomScaleMult = raidScaling[Math.min(roomNum, raidScaling.length - 1)];
+	let roomScale = (isMiniBoss || isBoss) ? 3 : Math.round(roomScaleMult * raidScale * 2) / 2;
+
+	const monsters = {};
+
+	if (isMiniBoss) {
+		const miniBossMonsters = raidMonsterArray.filter(monster => monster?.type === 'miniboss');
+		const selectedMiniBoss = unweightedSelect(miniBossMonsters);
+		monsters[selectedMiniBoss.id] = 1;
+	}
+	else if (isBoss) {
+		const bossMonsters = raidMonsterArray.filter(monster => monster?.type === 'boss');
+		const selectedBoss = unweightedSelect(bossMonsters);
+		monsters[selectedBoss.id] = 1;
+	}
+
+	while (roomScale > 0) {
+		// Get list of monsters that are within scale balance.
+		const validMonsters = raidMonsterArray.filter(monster => monster?.scale <= roomScale && monster?.type === 'minion');
+		if (validMonsters?.length <= 0) {
+			break;
+		}
+		// Select a random valid monster
+		const selectedMonster = unweightedSelect(validMonsters);
+		// Get max count for that monster (scaleBudget / monsterScale)
+		const maxMonsterCount = Math.floor(roomScale / selectedMonster.scale);
+		// Determine a random number from 1 to that max
+		const monsterCount = roll(maxMonsterCount);
+		// Add that many to the monster list and reduce the budget
+		if (monsters[selectedMonster.id]) {
+			monsters[selectedMonster.id] += monsterCount;
+		}
+		else {
+			monsters[selectedMonster.id] = monsterCount;
+		}
+		roomScale -= monsterCount * selectedMonster.scale;
+
+		// Repeat until budget = 0 (or no valid monsters exist to fill the scale deficit)
+	}
+
+	return monsters;
+}
+
+function getRaidExperience(raid, roomNum, finished = false) {
+	const finishedXP = 1 * finished;
+	// Rooms must increase roomNum AT COMPLETION, specifically BEFORE QUIT-OUT/ENDING CHECKS.
+	const miniBossXP = raid?.miniBosses.map(miniBoss => (1 * miniBoss < roomNum)).reduce((xp, total) => total + xp, 0);
+	const bossXP = raid?.bosses.map(boss => (1 * boss < roomNum)).reduce((xp, total) => total + xp, 0);
+	const roomsXP = ((roomNum - 1) * 0.5);
+	return roomsXP + miniBossXP + bossXP + finishedXP;
+}
+
+module.exports = { getRaid, getRaidMonster, getValidRaids, getValidRaidMonsters, generateRoom, getRaidExperience, getMonstersForRaid };

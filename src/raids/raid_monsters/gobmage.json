@@ -1,0 +1,13 @@
+{
+  "ID": "gobmage",
+  "Name": "Goblin Mage",
+  "Type": "minion",
+  "Description": "These Goblins carry crudely made Trinkets imbued with elemental Curse– generally of the explosive variety.",
+  "Scale": 0.5,
+  "Mechanics": "N/A",
+  "BasicAction": "If adjacent to an enemy, the Goblin Mage steps away. If outside of range of targets, it strides until it is within Strike range. Both movements prioritize moving adjacent to a Goblin Warrior if possible. Then, if it could hit multiple targets, it uses Fireball. Otherwise, it uses Firebolt. If it did not need to move, the Goblin Mage uses Fireball or Firebolt twice.\n\n**Stride:** 6 Squares.\n**Step:** 1 Square.\n\n**Fireball:** Ranged: Targets a Starburst 2 centered within 6 sq., prioritizing as many targets as possible without hitting allies. 5 Burn\n**Firebolt:** Ranged, 6 sq: 3 Burn. On-Hit (2 Value): Inflict *Ablaze*.",
+  "Size": "1x1",
+  "ArmorClass": 11,
+  "DamageThreshold": 16,
+  "IsPreview": false
+}

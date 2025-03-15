@@ -132,7 +132,7 @@ module.exports = {
 			nonRetiredMonsters.forEach(monster => {outputText += `${(monster.isPreview) ? `*${monster.name}` : `**${monster.name}**`} [${monster.id}] - Scale ${monster.scale}${monster.isPreview ? ' [Preview]' : ''}${(monster.isPreview) ? '*' : ''}\n`;});
 			outputText += '\n__**List of Retired Monsters**__\n';
 			retiredMonsters.forEach(monster => {outputText += `*${monster.name} [${monster.id}] - Scale ${monster.scale} ${typeof monster.isRetired === 'string' || monster.isRetired instanceof String ? `[${monster.isRetired}]` : '[Retired]'}*\n`;});
-			interaction.reply(outputText);
+			await interaction.reply(outputText);
 		}
 		else if (subCommand === 'show' || subCommand === 'fight') {
 			await interaction.deferReply();

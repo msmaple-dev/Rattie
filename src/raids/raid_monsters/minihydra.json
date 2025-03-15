@@ -1,0 +1,14 @@
+{
+  "ID": "minihydra",
+  "Name": "Mini Hydra",
+  "Type": "boss",
+  "Description": "A lesser hydra that has been domesticated by a group of Goblins. Through a combination of its own pneuma, and the pneuma given to it by the Goblins, it excretes a strange slimy liquid that the Goblins love to play in.",
+  "Scale": 2,
+  "Mechanics": "A Mini Hydra leaves a trail of mucus whenever it moves. Warlocks treat it as 'Icy terrain', where as monsters are able to move twice as many squares while moving along this terrain.",
+  "BasicAction": "If adjacent to an enemy a Mini Hydra will Savage Bite twice. If not adjacent it will Stride or Step into adjacency, preferring to move towards the furthest Warlock, then use Savage Bite.\n\nStride: 8 Squares.\nStep: 4 Squares.\n\n**Savage Bite**: 7 Pierce, on hit make an Attack of opportunity for 7 slash with 'on hit make an Attack of Opportunity for 14 Rend'.\n\nIf a Mini Hydra takes more than 14 damage in a turn, instead it uses Flailing Heads.\n**Flailing Heads**: 4 Slash 5 Rend +5 accuracy.\n\nIf a Mini Hydra takes more than 28 damage in a turn, instead it uses Gnashing Fangs.\n**Gnashing Fangs**: 5 Rend  +4 Accuracy. Applies *Ravage* and *Split* on hit.",
+  "Size": "2x2",
+  "ArmorClass": 10,
+  "DamageThreshold": 40,
+  "IsPreview": false
+
+}
