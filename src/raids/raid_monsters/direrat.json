@@ -1,0 +1,15 @@
+{
+  "ID": "direrat",
+  "Name": "Dire Rat",
+  "Type": "minion",
+  "Description": "A swarm of rats so suffuse with Cursed Pneuma they have fused together to form a gigantic simulacrum of themselves, resistant to further Cursing.",
+  "Scale": 1.5,
+  "Mechanics": "A Dire Rat consumes 1 square of an adjacent Swarm of Rats when hit by a Strike, healing 3. A Dire Rat makes Strikes with a 1d8 Curse Die.",
+  "BasicAction": "If adjacent to an enemy a Dire Rat will Gnaw twice. If not adjacent it will Stride or Step into adjacency, preferring squares adjacent to a Swarm of Rats when possible, then Gnaw twice. \n\n**Stride:** 8 Squares.\n**Step:** 3 Squares.\n\n**Gnaw:** 5 Pierce 5 Hollow, on Secondary Success draw an additional Lesser Hollow Status.",
+  "Size": "2x1",
+  "ArmorClass": 8,
+  "CurseDie": 8,
+  "DamageThreshold": 28,
+  "IsPreview": false
+
+}

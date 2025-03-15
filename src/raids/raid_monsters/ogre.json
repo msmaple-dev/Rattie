@@ -1,0 +1,13 @@
+{
+  "ID": "ogre",
+  "Name": "Ogre",
+  "Type": "minion",
+  "Description": "Ogres begin life as Goblins who chose to follow the route of cannibalism. Instead of consuming enough pneuma to become a Hobgoblin, they gorge themselves on the pneuma of anything and everything around them, from fellow goblins to things much larger than them. These monsters stand around 8-11 feet tall, with massive bellies and jaws that fall nearly to the floor.",
+  "Scale": 1.5,
+  "Mechanics": "Ogre's attacks generate charges. They may expend these charges to empower their actions, and do so at the earliest opportunity. If an Ogre begins it's turn with 2 charges, it immediately consumes them and gains 8 hp.",
+  "BasicAction": "If there is a goblin within 4 squares that is under half health, the Ogre Strides to them and kills them, healing for their remaining health + 2. Then, if not adjacent to an enemy, the Ogre strides until it is adjacent to an enemy. Then it uses Devour. If it is not in range after striding, instead use Upchuck Remains, targeting the nearest player not within melee.\n\n**Stride:** 6 Squares.\n**Step:** 3 Squares.\n\n**Devour:** Melee. 5 Rend 4 Bash. On-Hit (2 Value): Generates 1 charge.\n**Upchuck Remains:** Ranged. 11 Bash. Before rolling, expends all charges. Increases damage by 4 per charge spent.",
+  "Size": "2X2",
+  "ArmorClass": 9,
+  "DamageThreshold": 35,
+  "IsPreview": false
+}

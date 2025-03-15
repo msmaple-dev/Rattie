@@ -43,4 +43,16 @@ function camelizeKeys(obj) {
 	return obj;
 }
 
-module.exports = { toProperCase, parseLinebreaks, isValidUrl, isValidColor, camelizeKeys };
+function italicizeText(string) {
+	return '**' + string + '**';
+}
+
+function boldText(string) {
+	return '**' + string + '**';
+}
+
+function underlineText(string) {
+	return '__' + string + '__';
+}
+
+module.exports = { italicizeText, boldText, underlineText, toProperCase, parseLinebreaks, isValidUrl, isValidColor, camelizeKeys };

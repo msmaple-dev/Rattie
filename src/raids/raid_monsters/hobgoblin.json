@@ -1,0 +1,14 @@
+{
+  "ID": "hobgoblin",
+  "Name": "Hobgoblin",
+  "Type": "miniboss",
+  "Description": "*Having gorged itself on pneuma, the next stage of the typical Goblin is the Hobgoblin. These creatures stand anywhere from six to eight feet tall and possess sapience. Armed with cunning, they take command over their lessers, organizing Goblins into a truly formidable force.*",
+  "Scale": 1,
+  "Mechanics": "The Hobgoblin always acts before Goblin Warriors, Goblin Mages, and Ogres.",
+  "BasicAction": "If not adjacent to an enemy, the Hobgoblin Strides or Steps adjacent to a target, prioritizing targets and squares that are within 6 sq. Of a Goblin Warrior or Goblin Mage if possible. Then, they Strike with Morningstar and use Command. \n\n**Stride:** 8 Squares.\n**Step:** 4 Squares.\n\n**Morningstar:** Melee: 4 Bash, 4 Rend\n**Command:** All Goblin Warriors and Goblin Mages within 6 sq. Strike an additional time with their attacks this turn, incremented by Multi-Attack Penalty.",
+  "Size": "1x1",
+  "ArmorClass": 11,
+  "CurseDie": 5,
+  "DamageThreshold": 22,
+  "IsPreview": false
+}

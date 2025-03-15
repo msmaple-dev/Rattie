@@ -1,0 +1,15 @@
+{
+  "ID": "ratswarm",
+  "Name": "Swarm of Rats",
+  "Type": "minion",
+  "Description": "A swarm of rats driven to mad gnashing by exposure to Curse.",
+  "Scale": 1,
+  "Mechanics": "A Swarm of Rats may occupy the same space as any other creature and count as Rugged terrain for Warlocks. Any warlock sharing a square with a Swarm of Rats at the start of their turn takes 2 untyped damage. A Swarm of Rats always remains in the same shape as it moves, and when it takes 3 damage the affected square closest to the source of damage is removed.",
+  "BasicAction": "The Swarm of Rats Steps until as many Warlocks as possible share a square with it, then uses Chittering Chompers.\n\n**Stride:** 0 Squares.\n**Step:** 6 Squares.\n\n**Chittering Chompers:** All Warlocks sharing a square with a Swarm of Rats make a DC 17 save. On failure, take 3 Pierce 3 Rend.",
+  "Size": "3x3",
+  "ArmorClass": 13,
+  "CurseDie": 2,
+  "DamageThreshold": 27,
+  "IsPreview": false
+
+}

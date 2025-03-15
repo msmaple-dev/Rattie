@@ -1,0 +1,13 @@
+{
+  "ID": "gobwar",
+  "Name": "Goblin Warrior",
+  "Type": "minion",
+  "Description": "Armed with crude weapons and armor, these Goblins make up the vanguard of any organized force.",
+  "Scale": 0.5,
+  "Mechanics": "When someone attempts to Strike a Goblin Mage adjacent to a Goblin Warrior, the Goblin Warrior intercepts the attack. Each Goblin Warrior only does this once per round.",
+  "BasicAction": "If not adjacent to an enemy, the Goblin Warrior Strides or Steps adjacent to a target, prioritizing the target with the lowest HP. Then they Strike with Club.\n\n**Stride:** 8 Squares.\n**Step:** 1 Square.\n\n**Club:** Melee: 5 Bash.",
+  "Size": "1x1",
+  "ArmorClass": 10,
+  "DamageThreshold": 20,
+  "IsPreview": false
+}

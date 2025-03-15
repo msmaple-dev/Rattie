@@ -1,7 +1,8 @@
 const { EmbedBuilder } = require('discord.js');
-const { toProperCase, parseLinebreaks, isValidColor, isValidUrl } = require('../functions/string_utils');
+const { toProperCase, parseLinebreaks, isValidColor, isValidUrl, underlineText, boldText } = require('../functions/string_utils');
 const { monster_color } = require('./constants');
 const { rollResultsToString } = require('../functions/roll_utils');
+const { getRaidMonster } = require('../functions/raid_utils');
 
 function statusEmbed(name, effect, severity, color, identifier = '', forcedSeverity = '') {
 	const embed = new EmbedBuilder()
@@ -155,6 +156,20 @@ function monsterEmbed(monster) {
 	return embed;
 }
 
+function raidEmbed(raid) {
+	const { id, name, description, mechanics, monsters, uniqueRoomModifiers, isPreview, isRetired } = raid;
+	const fetchedMonsters = monsters.map(monster => getRaidMonster(monster)).filter(a => a);
+	const monstersList = fetchedMonsters.sort((a, b) => a.name.localeCompare(b.name)).sort((a, b) => b.scale - a.scale);
+	const monsterField = monstersList.map(monster => `${monster?.type === 'boss' ? underlineText(boldText(monster.name)) : (monster?.type === 'miniboss' ? boldText(monster.name) : monster.name)} [${monster.id}] - Scale ${monster.scale} ${monster.type === 'boss' ? boldText('[Boss]') : ''}${monster.type === 'miniboss' ? boldText('[Mini-Boss]') : ''}`).join('\n');
+	const embed = new EmbedBuilder().setTitle(`${name} (${id})`).setDescription(`*${isPreview ? '??? [This raid is not yet available to fight.]' : description}${isRetired ? '\n\n[This raid cannot be fought without performing a Summoning Circle ritual]' : ''}*`).setColor(monster_color);
+	const fields = [
+		(mechanics !== null && { name: 'Mechanics', value: mechanics }),
+		(monsters?.length > 0 && { name: 'Monsters', value: monsterField }),
+	].filter(a => a);
+	embed.addFields(...fields);
+	return embed;
+}
+
 function lootEmbed(monsterId, lootString) {
 	return new EmbedBuilder().setTitle(`Looting Monster: ${toProperCase(monsterId)}`).setDescription(lootString.replaceAll(/\*/gm, toProperCase(monsterId))).setColor(monster_color);
 }
@@ -195,4 +210,4 @@ function tagInfoEmbed(tag) {
 	return embed;
 }
 
-module.exports = { statusEmbed, tarotEmbed, wikiEmbed, wikiListEmbed, monsterEmbed, lootEmbed, monsterAttackedEmbed, monsterDefeatedEmbed, tagInfoEmbed };
+module.exports = { statusEmbed, tarotEmbed, wikiEmbed, wikiListEmbed, monsterEmbed, raidEmbed, lootEmbed, monsterAttackedEmbed, monsterDefeatedEmbed, tagInfoEmbed };
