@@ -2,7 +2,7 @@ const { SlashCommandBuilder } = require('discord.js');
 const init_keyv = require('../keyv_stores/init_keyv');
 const db = require('../database');
 const { QueryTypes } = require('sequelize');
-const { getUserDecks, newInit } = require('../functions/init_utils');
+const { getUserDecks, newInit, getUserScale } = require('../functions/init_utils');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -29,8 +29,16 @@ module.exports = {
 		const userInitTag = initTags && initTags[0];
 		let postInitTag = false;
 
+		let userScale = await getUserScale(userID);
+
 		if (await init_keyv.has(channelId)) {
 			const currentInit = await init_keyv.get(channelId).catch(err => interaction.reply(err));
+			if (currentInit?.raid && !userScale) {
+				await interaction.editReply('You must have your scale set with /scale to join a Raid!');
+			}
+			else if (!userScale) {
+				userScale = 1;
+			}
 			const currentUsers = currentInit.users;
 			const matchingIndex = currentUsers.findIndex(usr => usr.userID === userID && usr.identifier === userIdentifier);
 			const currentTurnUser = currentUsers[currentInit.currentTurn - 1];
@@ -40,7 +48,7 @@ module.exports = {
 				outputText = `Changed User ${userIdentifier ? `${userIdentifier} (<@${userID}>)` : `<@${userID}>`} Init to ${initVal}`;
 			}
 			else {
-				currentUsers.push({ userID: userID, identifier: userIdentifier, initVal: initVal, decks: decks });
+				currentUsers.push({ userID: userID, identifier: userIdentifier, initVal: initVal, decks: decks, scale: userScale });
 				outputText = `Added User ${userIdentifier ? `${userIdentifier} (<@${userID}>)` : `<@${userID}>`} at Init ${initVal}`;
 				if (!userIdentifier) {
 					postInitTag = true;
@@ -51,7 +59,10 @@ module.exports = {
 			await init_keyv.set(channelId, currentInit);
 		}
 		else {
-			const startingInit = newInit([{ userID: userID, identifier: userIdentifier, initVal: initVal, decks: decks }]);
+			if (!userScale) {
+				userScale = 1;
+			}
+			const startingInit = newInit([{ userID: userID, identifier: userIdentifier, initVal: initVal, decks: decks, scale: userScale }]);
 			await init_keyv.set(channelId, startingInit);
 			outputText = `Started new Init with User ${userIdentifier ? `${userIdentifier} (<@${userID}>)` : `<@${userID}>`} at Init ${initVal}`;
 			if (!userIdentifier) {

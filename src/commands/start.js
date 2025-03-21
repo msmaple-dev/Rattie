@@ -16,15 +16,18 @@ module.exports = {
 		const currentInit = await init_keyv.get(channelId) ?? 0;
 
 		if (currentInit) {
-			if (currentInit?.round === 0) {
+			if (currentInit?.round === 0 && !currentInit?.raid) {
 				outputText = await nextTurn(channelId);
 				if (currentInit.monster && currentInit.monster?.id) {initialMonsterDraw = true;}
+			}
+			else if (currentInit?.raid) {
+				outputText = 'Use **/raid start** to start raids!';
 			}
 			else {
 				outputText = 'Combat Has Already Started!';
 			}
 		}
-		else {outputText = 'No Inits Entered!';}
+		else {outputText = 'No Non-Raid Inits Entered!';}
 		await interaction.reply(outputText);
 		if (initialMonsterDraw) {
 			const [cardDrawn, initialDrawText] = await drawMonsterCard(channelId, interaction.channel, false);

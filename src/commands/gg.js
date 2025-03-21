@@ -18,7 +18,12 @@ module.exports = {
 
 		const currentInit = await init_keyv.get(channelId);
 
-		if (currentInit?.monster && currentInit.monster?.id) {
+		if (currentInit?.raid && currentInit.raid?.id) {
+			{
+				outputText = 'Use ``/raid loss`` if you want to end a raid mid-room, or ``/raid end`` if you have completed your most recent room';
+			}
+		}
+		else if (currentInit?.monster && currentInit.monster?.id) {
 			if (currentInit?.looting === false) {
 				const encounterId = await getEncounterID(channelId);
 				await db.query('UPDATE encounters SET rounds = ?, endTime = ?, status = ? WHERE encounterId = ?', {

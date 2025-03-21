@@ -7,14 +7,20 @@ const modifierTypes = { 'curse': 'Curse Die Size', 'flat': 'Flat' };
 const modifierCategories = { 'attack': 'Attack', 'defend': 'Defense', 'saves': 'Save' };
 
 function newInit(users = [], monster = {}, isRaid = false) {
+	// TODO: Have raidLoot be initialized on Raid Start
 	return {
 		currentTurn: 0,
 		round: 0,
 		users: [...users],
 		trackers: [],
-		monster: monster || null,
+		monster: !isRaid ? monster || null : null,
 		monsterLibrary: {},
-		raid: isRaid,
+		raid: isRaid ? monster : null,
+		raidLoot: isRaid ? {} : null,
+		raidFloor: isRaid ? [] : null,
+		currentRoom: isRaid ? {} : null,
+		roomNumber: isRaid ? 0 : null,
+		raidScale: isRaid ? 0 : null,
 		looting: false,
 		damageDealt: 0,
 		dpr: [],
@@ -163,4 +169,16 @@ function uniqueUsers(users) {
 	});
 }
 
-module.exports = { nextTurn, newInit, getUserDecks, uniqueUsers, procModifiers, getACModifiers, getModifierString, cullModifiers, modifierCategories, modifierTypes };
+async function getUserScale(userId) {
+	const scale = await db.query('SELECT scale FROM scales WHERE userId = ? LIMIT 1', {
+		replacements: [BigInt(userId)],
+		type: QueryTypes.SELECT,
+	});
+	return scale[0]?.scale || 0;
+}
+
+function getTotalInitScale(init) {
+	return init.users?.reduce((total, user) => total + user.scale, 0) || 0;
+}
+
+module.exports = { nextTurn, newInit, getUserDecks, uniqueUsers, procModifiers, getACModifiers, getModifierString, cullModifiers, getUserScale, getTotalInitScale, modifierCategories, modifierTypes };
