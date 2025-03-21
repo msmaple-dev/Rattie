@@ -2,6 +2,10 @@ const { camelizeKeys } = require('./string_utils');
 const path = require('node:path');
 const fs = require('node:fs');
 const { unweightedSelect, roll } = require('./roll_utils');
+const { getTotalInitScale, nextTurn } = require('./init_utils');
+const init_keyv = require('../keyv_stores/init_keyv');
+const db = require('../database');
+const { QueryTypes } = require('sequelize');
 
 const raidPath = path.join(__dirname.replace(/[\\/]+functions/, ''), 'raids');
 const raidTypePath = path.join(raidPath, 'raid_types');
@@ -55,7 +59,33 @@ function getMonstersForRaid(raid) {
 }
 
 
-function generateRoom(raid, roomNum, raidScale) {
+function generateFloor(currentInit, rooms = 2) {
+	currentInit.currentRoom = {};
+	currentInit.currentTurn = 0;
+	currentInit.currentRound = 0;
+	const totalInitScale = getTotalInitScale(currentInit);
+	currentInit.roomNumber++;
+	const outputArray = [];
+	for (let i = 0; i < rooms; i++) {
+		const room = generateRoomMonsters(currentInit.raid, currentInit.roomNumber, totalInitScale);
+		currentInit.raidFloor.push(room);
+		outputArray.push(`Room ${i + 1} (Level ${currentInit.roomNumber}, Scale ${totalInitScale}): ${getMonsterString(room)}`);
+	}
+	return 'Choose One with ``/raid continue``:\n' + outputArray.join('\nOR\n') + '\n OR do ``/raid end`` to end the raid.';
+}
+
+function getMonsterString(room) {
+	return Object.entries(room).map(([monster, count]) => count + ' ' + monster).join(', ');
+}
+
+async function goToRoom(currentInit, roomId, channelId) {
+	currentInit.currentRoom = currentInit.raidFloor[roomId - 1];
+	currentInit.currentFloor = [];
+	await init_keyv.set(channelId, currentInit);
+	return await nextTurn(channelId);
+}
+
+function generateRoomMonsters(raid, roomNum, raidScale) {
 	const isMiniBoss = raid.miniBosses.includes(roomNum);
 	const isBoss = raid.bosses.includes(roomNum);
 
@@ -120,4 +150,12 @@ function getRaidExperience(raid, roomNum, finished = false) {
 	return roomsXP + miniBossXP + bossXP + finishedXP;
 }
 
-module.exports = { getRaid, getRaidMonster, getValidRaids, getValidRaidMonsters, generateRoom, getRaidExperience, getMonstersForRaid };
+async function getRaidID(channelId) {
+	const raidId = await db.query('SELECT raidId FROM raids WHERE channelId = ? AND startTime < ? ORDER BY startTime DESC LIMIT 1', {
+		replacements: [channelId, Date.now()],
+		type: QueryTypes.SELECT,
+	});
+	return raidId[0]?.raidId || false;
+}
+
+module.exports = { getRaid, getRaidMonster, getValidRaids, getValidRaidMonsters, getRaidExperience, getMonstersForRaid, goToRoom, generateFloor, getMonsterString, getRaidID };
