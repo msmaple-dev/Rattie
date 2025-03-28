@@ -7,12 +7,6 @@ const { showcaseChannelId, seasonChannelId, mainServer } = require('../../config
 const { toProperCase } = require('./string_utils');
 const Wikis = require('../tables/wikis');
 
-function isDST(d) {
-	const jan = new Date(d.getFullYear(), 0, 1).getTimezoneOffset();
-	const jul = new Date(d.getFullYear(), 6, 1).getTimezoneOffset();
-	return Math.max(jan, jul) !== d.getTimezoneOffset();
-}
-
 async function checkShowcase(client) {
 	if (await scheduler_keyv.has('showcaseDate')) {
 		const now = Date.now();
@@ -20,7 +14,7 @@ async function checkShowcase(client) {
 		const showcaseDate = new Date(showcaseDateVal);
 		const tomorrowDate = new Date();
 		tomorrowDate.setDate(tomorrowDate.getDate() + 1);
-		tomorrowDate.setHours(15 - isDST(now), 0, 0);
+		tomorrowDate.setHours(15, 0, 0);
 		// 10am EST
 		if (now >= showcaseDate) {
 			await scheduler_keyv.set('showcaseDate', tomorrowDate);
@@ -55,7 +49,7 @@ async function checkReset(client) {
 		const resetDate = new Date(resetDateVal);
 		const tomorrowDate = new Date();
 		tomorrowDate.setDate(tomorrowDate.getDate() + 7);
-		tomorrowDate.setHours(20 - isDST(now), 0, 0);
+		tomorrowDate.setHours(20, 0, 0);
 		// 3pm EST
 		if (now >= resetDate) {
 			await scheduler_keyv.set('resetDate', tomorrowDate);
@@ -80,7 +74,7 @@ async function clearInactiveWikis(client) {
 		const clearDate = new Date(clearInactive);
 		const tomorrowDate = new Date();
 		// tomorrowDate.setDate(tomorrowDate.getDate() + 1);
-		tomorrowDate.setHours(14 - isDST(now), 0, 0);
+		tomorrowDate.setHours(14, 0, 0);
 		// 9am EST
 		if (now >= clearDate) {
 			// await scheduler_keyv.set('clearInactiveDate', tomorrowDate);
