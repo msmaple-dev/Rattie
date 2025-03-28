@@ -7,6 +7,7 @@ const { showcaseChannelId, seasonChannelId, mainServer } = require('../../config
 const { toProperCase } = require('./string_utils');
 const Wikis = require('../tables/wikis');
 
+
 async function checkShowcase(client) {
 	if (await scheduler_keyv.has('showcaseDate')) {
 		const now = Date.now();
@@ -73,7 +74,7 @@ async function clearInactiveWikis(client) {
 		const clearInactive = await scheduler_keyv.get('clearInactiveDate');
 		const clearDate = new Date(clearInactive);
 		const tomorrowDate = new Date();
-		// tomorrowDate.setDate(tomorrowDate.getDate() + 1);
+		tomorrowDate.setDate(tomorrowDate.getDate() + 1);
 		tomorrowDate.setHours(14, 0, 0);
 		// 9am EST
 		if (now >= clearDate) {
@@ -93,6 +94,7 @@ async function clearInactiveWikis(client) {
 					},
 				);
 			}
+			await scheduler_keyv.set('clearInactiveDate', tomorrowDate);
 		}
 	}
 	else {
