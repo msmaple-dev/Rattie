@@ -35,14 +35,14 @@ function tarotEmbed(name, originalTarot, majorTarot, upright, reverse, descripti
 		embed.setDescription(`*${majorTarot}*`);
 	}
 	if (description) {
-		embed.addFields({ name: 'Appearance', description });
+		embed.addFields({ name: 'Appearance', value: description });
 	}
 	embed.addFields(
 		{ name: 'Upright Keywords', value: upright },
 		{ name: 'Reversed Keywords', value: reverse },
 	);
 	if (explanation) {
-		embed.addFields({ name: 'Explanation', explanation });
+		embed.addFields({ name: 'Explanation', value: explanation });
 	}
 	if (footerText?.length > 0) {
 		embed.setFooter({ text: footerText.join(', ') });
