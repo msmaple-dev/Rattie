@@ -1,0 +1,25 @@
+{
+  "ID": "superdrunk",
+  "Name": "The Superdrunk Beast",
+  "Description": "Once a Warlock, the alcohol swarming the average NYC street has corrupted them into a dense being of strangely colored flesh and muscle, pulsating with power and liquor. All thoughts are gone except for one- kill everything that moves.",
+  "Scale": 6,
+  "Mechanics": "???",
+  "BasicAction": "???",
+  "Size": "3x3",
+  "ArmorClass": [ 2, 5, 10, 15, 20, 25 ],
+  "DamageTaken": 0,
+  "DamageThreshold": [
+    315,
+    320,
+    320,
+    330,
+    500
+  ],
+  "AttackCards": [
+    "Heartbeat Shot(gun?) | Strides 12 Squares towards the healthiest enemy and Strikes twice at +2 to hit and +2 to crit range for 30 Pierce. For each hit, reduce the victim's Strides by 3 for a round.",
+    "Chilled Wine | Strike all enemies in Starbust 2 of me at +4 to my Curse Die size for 27 Slash. Then, Strike the most damaged enemy within Starburst 10 for 25 Freeze, dealing 8 Freeze on a Secondary Success.",
+    "The Night Never Ends | Stride 8 Squares to get into Melee with as many enemies as possible, then performs One More Bottle.\n**One More Bottle**: Stride up to 3 Squares towards the closest enemy, then Strike an enemy for 23 Rend. If this hits, I repeat this action again ignoring Multi-Attack Penalty.",
+    "Blood Is Wine, and Brother I'm a Sommelier | Stride 5 Squares up to twice to get into Melee with as many enemies as possible, then Strikes all enemies within Starburst 2 for 23 Pierce at +1 to hit for every 30 damage I've taken. Increase the damage by 8 for each Stride I didn't use. I heal for all damage dealt.",
+    "Crashout | Strike every enemy for 30 - X Burn, where X is the number of Squares between us doubling X if Line of Sight is broken. Destroy all terrain within Starbust 4 of me. I suffer 10 damage."
+  ]
+}

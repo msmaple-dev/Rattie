@@ -6,6 +6,7 @@ const roles = [
 	{ name: 'Monster Hunter', value: 'monster hunter' },
 	{ name: 'Bot Updates', value: 'bot updates' },
 	{ name: 'Art', value: 'art' },
+	{ name: 'Announcements', value: 'announcements' },
 ];
 
 module.exports = {

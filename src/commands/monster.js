@@ -42,7 +42,10 @@ module.exports = {
 			subcommand
 				.setName('loot')
 				.setDescription('Loot a specific monster')
-				.addIntegerOption(option => option.setName('damagetaken').setDescription('Damage taken in the fight').setRequired(true)),
+				.addIntegerOption(option => option.setName('damagetaken').setDescription('Damage taken in the fight').setRequired(true))
+				.addStringOption(option => option.setName('moonphase').setDescription('The Current Phase of the Moon')
+					.addChoices([{ name: 'New Moon', value: 'new' }, { name:'Waxing Crescent', value: 'waxc' }, { name: 'First Quarter', value: 'firstq' }, { name:'Waxing Gibbous', value: 'waxg' }, { name:'Full Moon', value: 'fullm' }, { name:'Waning Gibbous', value: 'waneg' }, { name:'Third Quarter', value: 'thirdq' }, { name:'Waning Crescent', value: 'wanec' }]).setRequired(true))
+				.addStringOption(option => option.setName('phonenum').setDescription('The Last 3 Digits of your Phone Number').setMinLength(3).setMaxLength(3).setRequired(true)),
 		)
 		.addSubcommand(subcommand =>
 			subcommand
