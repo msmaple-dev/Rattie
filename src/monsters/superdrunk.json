@@ -6,7 +6,7 @@
   "Mechanics": "???",
   "BasicAction": "???",
   "Size": "3x3",
-  "ArmorClass": [ 2, 5, 10, 15, 20, 25 ],
+  "ArmorClass": [ [1, 20] ],
   "DamageTaken": 0,
   "DamageThreshold": [
     315,
