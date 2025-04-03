@@ -23,10 +23,10 @@ for (const file of monsterFiles) {
 }
 
 const defaultLoot = {
-	'Baseline Cert': 0.78,
-	'A Bauble!': 0.10,
-	'A Trinket!!': 0.08,
-	'An Artifact!!!': 0.04,
+	'Baseline Cert': 0.56,
+	'A Bauble!': 0.20,
+	'A Trinket!!': 0.16,
+	'An Artifact!!!': 0.08,
 };
 
 const baubles = {
