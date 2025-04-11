@@ -14,5 +14,6 @@
     "Blinding Brilliance | All targets must make a DC 18 Save against 10 Shock and *Paralyzed*. Targets outside of Line of Sight gain +6 to this Save.",
     "Falling Star | The Instinct is changed to the following.\n\n If Flying, utilize Divebomb on as many targets as possible. Use remaining actions on Whirling Talons, except for the last Action, which is Uplift. If not flying, utilize Uplift first.\n\n**Divebomb**: Step up to 20 squares, then enter Grounded. All targets under you, or adjacent to your landing, defend against 10 Bash 7 Slash 7 Rend. Targets under you are then moved to adjacent to you.",
     "Neon Smite | This turn, the Neontalon may not be Grounded. The Instinct is changed to the following.\n\n.Utilize Starbomb with all actions, targeting as many characters as possible. Will attempt to use on multiple different clusters, starting with the most packed.\n\n**Starbomb**: Ranged. Step 2 Squares, then target a 5x5 area within 10 squares. All targets within defend against 10 Burn 10 Shock. Targetted area becomes *Flaming*."
-  ]
+  ],
+  "isRetired": true
 }

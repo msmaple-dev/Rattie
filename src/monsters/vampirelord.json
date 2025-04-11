@@ -1,0 +1,23 @@
+{
+    "ID": "vamplord",
+    "Name": "Vampire Lord",
+    "Description": "A vampire in the service only of the highest of their caliber who have ascended beyond, the Vampire lord has the power to consume and manipulate both life and shadow as their patrons allow. No mere dhampir or scavengers, these monsters are more akin to the warlocks they used to be than the beasts of gluttony that they are.",
+    "Scale": 6,
+    "Mechanics": "The Vampire Lord has two modes, one of which it only enters upon enraging. They are the Shadow Balor and Blood Scrivener.\n\nShadow Balor is the base mode with no additional rules\n\nThe Vampire Lord inflicts **Soul Bleed** with its actions. A character suffering from **Soul Bleed** may, as a free action, choose an ally within 3 squares to take **Soul Bleed** on their behalf. This inflicts **Soul Bleed** on them with a new duration.\n\n**Soul Bleed:** At the end of your turn, take 2 damage. Recovery. This stacks like Open Wound and counts as a Severe Status.",
+    "Enrage": "The Vampire Lord enters Blood Scrivener. While Enraged, all attacks against the Monster have an additional +1 Accuracy per Scale of the attacker. While Enraged, at the start of each player's turn, that player makes a DC21 Save. On a failure, they take 4 damage. For every 5 by which they fail (15-11, 10-5, 4 or below) they take 2 additional damage. The Vampire Lord heals for all damage taken this way",
+    "Stun": "No difference from normal effects of Stunned.",
+    "BasicAction": "If not adjacent to a target, Stride or Step towards the nearest target, prioritizing targets without Soul Bleed. Perform Shadow Lash. Perform Blood Promise with remaining actions. Reverse this during Blood Scrivener.\n\n**Stride:** 10 Squares.\n**Step:** 4 Squares.\n\n**Shadow Lash:** Melee 12 Slash 12 Hollow. Any number of allies adjacent to the target may choose to share the damage equally on a failed defense.\n**Blood Promise:** Melee. Centered Starburst 3. 8 Slash. On Hit: suffer Soul Bleed.",
+    "Size": "1x1",
+    "ArmorClass": 12,
+    "DamageThreshold": 340,
+    "EnrageThreshold": 100,
+    "StunThreshold": 50,
+    "AttackCards": [
+      "Bat Swarm | When this card is drawn, The Vampire Lord transform into a swarm of bats, creating a Centered Starburst 4 of terrain. Anyone starting their turn in the terrain makes a DC17 save, suffering Soul Bleed on a failure.\n\nInstinct becomes: Strike all targets within or adjacent to the terrain with Chiropterror Asmodontinae. Then, tranform back into a 1x1 positioned anywhere within the terrain near the closest target, preferring those with Soul Bleed, and remove the terrain (these do not cost actions). If not adjacent to a target, Stride or Step towards the closest target. Perform Blood Promise with remaining actions.\n\n**Chiropterror Asmodontinae:** Melee. 10 Slash. On Hit: suffer Soul Bleed twice.",
+      "Shadow's Descent | The target who used the most non-Strike actions this turn makes a DC17 Save. On a failure, the target is dragged into the Shadow Realm for 2 rounds. They can no longer pass Soul Bleed to another target or receive it from other characters. Their actions do not inflict Stun. Their Strikes do not draw statuses.", 
+      "Blood Singularity | Designate a Starburst 3 centered on the target with the most instances of Soul Bleed. Target all characters in the Starburst with Blood Promise at +3 Accuracy, dealing +3 Slash. All targets hit are then pulled as close to the original target as possible by the most direct path.",
+      "Brought to Heel | The Vampire Lord's instinct becomes:\nStep adjacent to the target with the most instances of Soul Bleed. If no character has Soul Bleed, randomly determine the target and perform Blood Promise targeting only them as an Attack of Opportunity, then Step adjacent to them. Perform Blood Gift. Perform Shadow Lash with remaining actions.\n\n**Blood Gift:** Melee. 18 Slash. On Hit: consume all instances of Soul Bleed, inflict 4 Typeless per instance consumed.",
+      "Charming Gaze | The two closest targets without Soul Bleed make a DC15 save. On a failure, they make an Attack of Opportunity at 8 value against the nearest ally, prioritizing allies with Soul Bleed, at +2 Accuracy. If they cannot immediately strike a target, they instead take two instances of Soul Bleed onto themself from their allies, chosen randomly. If there aren’t enough Soul Bleed stacks to take, each target who cannot take on two instances of Soul Bleed suffers Soul Scar twice, choosing reduced strikes value both times."
+    ],
+    "IsPreview": false
+  }

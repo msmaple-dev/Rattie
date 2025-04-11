@@ -1,0 +1,23 @@
+{
+    "ID": "wolfpack",
+    "Name": "Dire Wolf Pack",
+    "Description": "A pack of dire wolves, drawn by the scent of blood and violent pneuma in the city of New York. They hunt as one, patrolling the outskirts and alleyways in search of lone and injured prey, tracking Warlocks and other Monsters by the scent of their pneuma. Their extermination is of the second highest priority, outdone only by the vampires and revenants that have begun to plague the night.",
+    "Scale": 5,
+    "Mechanics": "The Dire Wolf Pack are three individual entities on the map, designated Alpha, Beta, Omega. When the Dire Wolf Pack performs their instinct, each individual entity performs all listed actions as long as it isn't Stunned. Strikes that target more than one entity deal half their damage again for each additional entity targeted on a hit. Other effects only apply to the Monster as a whole once, and affect each entity- except for Stun, each entity has its own Stun bar and is Stunned independently of all other entities.",
+    "Enrage": "While Enraged, no entity can be stunned. Each action performed by an entity this turn has its damage increased by 2.",
+    "Stun": "The entity does not perform any actions this turn. Each entity can be stunned independently of each other entity, the additional value on Strikes only applies to Strikes that include that entity as a target.",
+    "BasicAction": "Stride or Step until each non-Stunned entity is adjacent to a target, prioritizing the closest character. Perform **Vicious Bite** twice. Perform **Rip and Tear** with remaining actions.\n\n**Stride:** 6 Squares.\n**Step:** 4 Squares.\n\n**Vicious Bite:** Melee, Agile. 7 Rend.\n**Rip and Tear:** An adjacent character makes a DC15 Save once, plus one additional time for each time this entity successfully struck this turn. On a failure, they take 1 Rend. If this would inflict a Status they are already suffering, instead inflict 3 Typeless.",
+    "Size": "3 1x2",
+    "ArmorClass": 11,
+    "DamageThreshold": 380,
+    "EnrageThreshold": 100,
+    "StunThreshold": 16,
+    "AttackCards": [
+      "Alpha Strike | Alpha's **Vicious Bite** has +5 Accuracy, deals +2 Rend, and has Secondary Success: Deal 2 damage.",
+      "Beta Skulk | Beta freely Steps before each action, and always performs Rip and Tear as its third action. Rip and Tear targets each person it successfully struck this turn in addition to the usual target.", 
+      "Omega Harry | Omega's **Vicious Bite** has \"On-Hit: You must choose to take damage from the most severe Rend status you are suffering from on your next turn.\"" ,
+      "Alpha and Omega | Alpha performs its Instinct after Omega. Omega's Instinct becomes: **Harrying Pounce**, **Vicious Bite**, **Vicious Bite**. Alpha's Instinct becomes: Stride or Step until adjacent to Omega's target, **Coup De Grace** with remaining actions\n\n**Harrying Pounce:** Step up to 6 squares towards the nearest target, then perform the following Strike on them: Melee. +10 Accuracy. On-Hit: Inflict Trip, and -2 to defend this turn.\n**Coup De Grace:** Melee. 7 Rend. On-Hit: Remove each Rend status you are currently suffering from, taking 1/2/3 damage for each depending on its Severity.",
+      "Alpha and Beta | When this card is drawn, remove Beta from the map; After Alpha acts, return Beta to the map mirrored in relation to Alpha's last target. Alpha's Instinct becomes: Stride or Step until adjacent to the closest character, Vicious Bite with remaining actions. Beta's Instinct becomes: Rip and Tear thrice, Alpha's successful strikes count as my own this turn."
+    ],
+    "IsPreview": false
+  }

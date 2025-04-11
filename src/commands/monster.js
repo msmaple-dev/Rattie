@@ -4,7 +4,9 @@ const { QueryTypes } = require('sequelize');
 const { getMonster, drawDefaultLoot, drawMonsterCard, getValidMonsters, logDPR, getEncounterID, rollAC, getMonsterCards,
 	concCheck,
 } = require('../functions/monster_utils');
-const { monsterEmbed, lootEmbed, monsterAttackedEmbed, monsterDefeatedEmbed, statusEmbed } = require('../components/embeds');
+const { monsterEmbed, lootEmbed, monsterAttackedEmbed, monsterDefeatedEmbed, statusEmbed, monsterEnragedEmbed,
+	monsterStunnedEmbed, monsterStunAppliedEmbed,
+} = require('../components/embeds');
 const init_keyv = require('../keyv_stores/init_keyv');
 const { newInit, nextTurn, uniqueUsers, getModifierString, getACModifiers, procModifiers,
 	modifierCategories, modifierTypes, cullModifiers, getUserDecks,
@@ -13,7 +15,9 @@ const { unpinChannelPins } = require('../functions/chat_utils');
 const { rollFromString } = require('../functions/roll_utils');
 
 const validMonsters = getValidMonsters();
-const monsterChoices = validMonsters.map(monster => {return { name:monster, value: monster };});
+const monstersData = validMonsters.map(monsterId => getMonster(monsterId));
+const monsterChoices = validMonsters.map(monsterId => {return { name: monsterId, value: monsterId };});
+const fightableMonsters = monstersData.filter(monster => !monster.isRetired).map(monster => {return { name: monster.id, value: monster.id };});
 const categoryChoices = Object.entries(modifierCategories).map((value) => {return { name: value[1], value: value[0] };});
 const typeChoices = Object.entries(modifierTypes).map((value) => {return { name: value[1], value: value[0] };});
 
@@ -36,16 +40,13 @@ module.exports = {
 			subcommand
 				.setName('fight')
 				.setDescription('Fight a specific Monster')
-				.addStringOption(option => option.setName('name').setDescription('Monster Name').addChoices(...monsterChoices).setRequired(true)),
+				.addStringOption(option => option.setName('name').setDescription('Monster Name').addChoices(...fightableMonsters).setRequired(true)),
 		)
 		.addSubcommand(subcommand =>
 			subcommand
 				.setName('loot')
 				.setDescription('Loot a specific monster')
-				.addIntegerOption(option => option.setName('damagetaken').setDescription('Damage taken in the fight').setRequired(true))
-				.addStringOption(option => option.setName('moonphase').setDescription('The Current Phase of the Moon')
-					.addChoices([{ name: 'New Moon', value: 'new' }, { name:'Waxing Crescent', value: 'waxc' }, { name: 'First Quarter', value: 'firstq' }, { name:'Waxing Gibbous', value: 'waxg' }, { name:'Full Moon', value: 'fullm' }, { name:'Waning Gibbous', value: 'waneg' }, { name:'Third Quarter', value: 'thirdq' }, { name:'Waning Crescent', value: 'wanec' }]).setRequired(true))
-				.addStringOption(option => option.setName('phonenum').setDescription('The Last 3 Digits of your Phone Number').setMinLength(3).setMaxLength(3).setRequired(true)),
+				.addIntegerOption(option => option.setName('damagetaken').setDescription('Damage taken in the fight').setRequired(true)),
 		)
 		.addSubcommand(subcommand =>
 			subcommand
@@ -59,6 +60,12 @@ module.exports = {
 				.setName('damage')
 				.setDescription('Damage the current monster')
 				.addIntegerOption(option => option.setName('dmg').setDescription('Damage').setRequired(true)),
+		)
+		.addSubcommand(subcommand =>
+			subcommand
+				.setName('stun')
+				.setDescription('Apply Stun to the monster')
+				.addIntegerOption(option => option.setName('amount').setDescription('Stun Amount').setRequired(true)),
 		)
 		.addSubcommand(subcommand =>
 			subcommand
@@ -119,11 +126,10 @@ module.exports = {
 		const subCommand = interaction.options.getSubcommand();
 
 		if (subCommand === 'list') {
-			const monstersData = validMonsters.map(monsterId => getMonster(monsterId));
 			const retiredMonsters = monstersData.filter(monster => monster?.isRetired).sort((a, b) => a.name.localeCompare(b.name)).sort((a, b) => a.scale - b.scale);
-			const fightableMonsters = monstersData.filter(monster => !(monster?.isRetired)).sort((a, b) => a.name.localeCompare(b.name)).sort((a, b) => a.scale - b.scale);
+			const nonRetiredMonsters = monstersData.filter(monster => !(monster?.isRetired)).sort((a, b) => a.name.localeCompare(b.name)).sort((a, b) => a.scale - b.scale);
 			let outputText = '__**List of Fightable Monsters**__\n';
-			fightableMonsters.forEach(monster => {outputText += `${(monster.isPreview) ? `*${monster.name}` : `**${monster.name}**`} [${monster.id}] - Scale ${monster.scale}${monster.isPreview ? ' [Preview]' : ''}${(monster.isPreview) ? '*' : ''}\n`;});
+			nonRetiredMonsters.forEach(monster => {outputText += `${(monster.isPreview) ? `*${monster.name}` : `**${monster.name}**`} [${monster.id}] - Scale ${monster.scale}${monster.isPreview ? ' [Preview]' : ''}${(monster.isPreview) ? '*' : ''}\n`;});
 			outputText += '\n__**List of Retired Monsters**__\n';
 			retiredMonsters.forEach(monster => {outputText += `*${monster.name} [${monster.id}] - Scale ${monster.scale} ${typeof monster.isRetired === 'string' || monster.isRetired instanceof String ? `[${monster.isRetired}]` : '[Retired]'}*\n`;});
 			interaction.reply(outputText);
@@ -222,25 +228,51 @@ module.exports = {
 
 				await interaction.editReply({ embeds: [monsterAttackedEmbed(monster, dmg, currentInit.damageDealt, attackRoll, rolledAC, monsterCurseDieResult, (monster.curseDie || 5) + curseMod, flatMod, totalDefense)] });
 
-				if (monsterHit && concCheck(currentInit.damageDealt, monster.damageThreshold)) {
-					currentInit.looting = true;
-					currentInit.users = uniqueUsers(currentInit.users);
-					const userList = currentInit.users.map(usr => usr.userID);
-					await interaction.followUp({ embeds: [monsterDefeatedEmbed(userList)] });
-					const encounterId = await getEncounterID(channelId);
-					const endTime = Date.now();
-					await db.query('UPDATE encounters SET rounds = ?, endTime = ?, status = ?, modifiersApplied = ? WHERE encounterId = ?', {
-						replacements: [currentInit.round, endTime, 'Finished', currentInit.modifiersApplied, encounterId],
-						type: QueryTypes.UPDATE,
-					});
-					await logDPR(encounterId, currentInit.dpr);
+				if (monsterHit) {
+					if (concCheck(currentInit.damageDealt, monster.damageThreshold)) {
+						currentInit.looting = true;
+						currentInit.users = uniqueUsers(currentInit.users);
+						const userList = currentInit.users.map(usr => usr.userID);
+						await interaction.followUp({ embeds: [monsterDefeatedEmbed(userList)] });
+						const encounterId = await getEncounterID(channelId);
+						const endTime = Date.now();
+						await db.query('UPDATE encounters SET rounds = ?, endTime = ?, status = ?, modifiersApplied = ? WHERE encounterId = ?', {
+							replacements: [currentInit.round, endTime, 'Finished', currentInit.modifiersApplied, encounterId],
+							type: QueryTypes.UPDATE,
+						});
+						await logDPR(encounterId, currentInit.dpr);
+					}
+					else if (!currentInit.enraged && currentInit.damageDealt >= monster.enrageThreshold) {
+						currentInit.enraged = true;
+						await interaction.followUp({ embeds: [monsterEnragedEmbed(monster)] });
+					}
 				}
-				else if (subCommand === 'attack') {
+				if (!currentInit.looting && subCommand === 'attack') {
 					const outputText = procModifiers(currentInit.modifiers, 'defend');
 					currentInit.modifiers = cullModifiers(currentInit.modifiers);
 					if (outputText) {
 						await interaction.followUp(outputText);
 					}
+				}
+				await init_keyv.set(channelId, currentInit);
+			}
+			else {
+				await interaction.editReply('No monster is being fought in this channel!');
+			}
+		}
+		else if (subCommand === 'stun') {
+			await interaction.deferReply();
+			const currentInit = await init_keyv.get(channelId);
+			const monster = currentInit?.monster;
+			const stunAmount = interaction.options.getInteger('amount');
+			if (monster) {
+				const stunMax = 2 + Math.floor(monster.scale / 5);
+				currentInit.stunMeter += stunAmount;
+				await interaction.editReply({ embeds: [monsterStunAppliedEmbed(monster, stunAmount, currentInit.stunMeter)] });
+				if (currentInit.stunCount < stunMax && currentInit.stunMeter >= monster.stunThreshold) {
+					currentInit.stunCount++;
+					currentInit.stunMeter = 0;
+					await interaction.followUp({ embeds: [monsterStunnedEmbed(monster, currentInit.stunCount, stunMax)] });
 				}
 				await init_keyv.set(channelId, currentInit);
 			}

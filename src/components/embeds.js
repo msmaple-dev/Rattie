@@ -140,7 +140,7 @@ function wikiListEmbed(wikis, currentPage, wikiCount, selectLimit) {
 }
 
 function monsterEmbed(monster) {
-	const { id, name, description, scale, mechanics, basicAction, size, damageThreshold, armorClass, curseDie, isPreview, isRetired } = monster;
+	const { id, name, description, scale, mechanics, basicAction, size, enrage, enrageThreshold, stun, stunThreshold, damageThreshold, armorClass, curseDie, isPreview, isRetired } = monster;
 	const midpoint = damageThreshold && damageThreshold?.length && Math.floor(damageThreshold?.length / 2);
 	const medianHP = midpoint ? (damageThreshold.length % 2 === 1 ?	damageThreshold[midpoint] :	(damageThreshold[midpoint - 1] + damageThreshold[midpoint]) / 2) : (damageThreshold || null);
 	const embed = new EmbedBuilder().setTitle(`${name} (${id}) - Scale ${scale}`).setDescription(`*${isPreview ? '???\n[This monster is not yet available to fight.]' : description}${isRetired ? '\n\n [This monster cannot be fought without performing a Summoning Circle ritual]' : ''}*`).setColor(monster_color);
@@ -148,8 +148,12 @@ function monsterEmbed(monster) {
 		(size !== null && { name: 'Size', value: `${size}`, inline: true }),
 		(medianHP !== null && { name: 'Median HP', value: `${medianHP}`, inline: true }),
 		(armorClass !== null && { name: 'AC Roll', value: `${Array.isArray(armorClass) ? armorClass.map(rollCode => rollCode.join('d')).join('+') + '+1d' + (curseDie || 5) : armorClass + '+1d' + (curseDie || 5)}`, inline: true }),
+		(enrageThreshold !== null && { name: 'Enrage Threshold', value: `${enrageThreshold}`, inline: true }),
+		(stunThreshold !== null && { name: 'Stun Threshold', value: `${stunThreshold}`, inline: true }),
 		(mechanics !== null && { name: 'Mechanics', value: mechanics }),
 		(basicAction !== null && { name: 'Instinct', value: basicAction }),
+		(enrage !== null && { name: 'Enrage', value: enrage }),
+		(stun !== null && { name: 'Stun', value: stun }),
 	].filter(a => a);
 	embed.addFields(...fields);
 	return embed;
@@ -184,6 +188,30 @@ function monsterDefeatedEmbed(users) {
 	return new EmbedBuilder().setTitle('Monster Down!').setDescription(`The following users must do \`\`/monster loot\`\` before init will close:${users.map(usr => `<@${usr}>`).join(', ')}`).setColor(monster_color);
 }
 
+function monsterEnragedEmbed(monster) {
+	console.log(monster);
+	return new EmbedBuilder()
+		.setTitle(`${monster.name} Enraged!`)
+		.setDescription('*The monster cannot be Stunned or have its Stun Bar Increase from further actions while enraged. If it was already Stunned, it will still apply its Enrage Effect.\nAfter the Monster has used its Enrage Effect once, it stops being enraged at the start of its next turn.*')
+		.addFields([{ name: 'Enrage Effect', value: monster.enrage }])
+		.setColor(monster_color);
+}
+
+function monsterStunAppliedEmbed(monster, stunAmount, totalStun) {
+	return new EmbedBuilder()
+		.setTitle(`Applying ${stunAmount} Stun to The ${monster.name}!`)
+		.setDescription(`${stunAmount} Applied (${totalStun}/${monster.stunThreshold})`)
+		.setColor(monster_color);
+}
+
+function monsterStunnedEmbed(monster, stunCount, stunMax) {
+	return new EmbedBuilder()
+		.setTitle(`${monster.name} Stunned (${stunCount}/${stunMax})!`)
+		.setDescription('*All players gain +3 Value on their Strikes on their next turn.\nUntil the start of the next round, the monster cannot take Actions or Reactions, including its Instinct and Card.*')
+		.addFields([{ name: 'Stun Effect', value: monster.stun }])
+		.setColor(monster_color);
+}
+
 function tagInfoEmbed(tag) {
 	const embed = new EmbedBuilder().setTitle(`Tag: ${tag.name}`);
 	embed.setColor(monster_color);
@@ -195,4 +223,4 @@ function tagInfoEmbed(tag) {
 	return embed;
 }
 
-module.exports = { statusEmbed, tarotEmbed, wikiEmbed, wikiListEmbed, monsterEmbed, lootEmbed, monsterAttackedEmbed, monsterDefeatedEmbed, tagInfoEmbed };
+module.exports = { statusEmbed, tarotEmbed, wikiEmbed, wikiListEmbed, monsterEmbed, lootEmbed, monsterAttackedEmbed, monsterDefeatedEmbed, tagInfoEmbed, monsterEnragedEmbed, monsterStunnedEmbed, monsterStunAppliedEmbed };

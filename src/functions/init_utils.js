@@ -21,6 +21,9 @@ function newInit(users = [], monster = {}, isRaid = false) {
 		modifiers: [],
 		modifiersApplied: 0,
 		monsterCards: monster && attackCardsToObject(monster.attackCards),
+		stunCount: 0,
+		stunMeter: 0,
+		enraged: false,
 	};
 }
 

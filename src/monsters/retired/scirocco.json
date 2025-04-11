@@ -15,5 +15,6 @@
       "Crashing Dunes | *Melee Instinct.*\nAll characters are targeted by this Strike. Melee. 25 Burn. Targets with cover against this Strike only take 10 Burn.\nThe Scirocco has halved movement this turn.",
       "Swallowed By The Storm | *Melee Instinct.*\nThe Scirocco Skirmisher Steps adjacent to the last character to successfully Strike it, then forces a DC23 Save against the effects of the Grapple quirk. This DC is reduced by 2 for each time the Scirocco Skirmisher is struck this turn, to a minimum of 15. If a character is grappled by the Scirocco Skirmisher, it gains an additional action and its Instinct becomes: Use **Red Horizon** with all actions.\n**Red Horizon:** *Melee. Agile. 16 Burn.*"
     ],
-    "IsPreview": false
+    "IsPreview": false,
+    "isRetired": true
   }

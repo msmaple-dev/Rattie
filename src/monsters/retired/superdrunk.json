@@ -21,5 +21,6 @@
     "The Night Never Ends | Stride 8 Squares to get into Melee with as many enemies as possible, then performs One More Bottle.\n**One More Bottle**: Stride up to 3 Squares towards the closest enemy, then Strike an enemy for 23 Rend. If this hits, I repeat this action again ignoring Multi-Attack Penalty.",
     "Blood Is Wine, and Brother I'm a Sommelier | Stride 5 Squares up to twice to get into Melee with as many enemies as possible, then Strikes all enemies within Starburst 2 for 23 Pierce at +1 to hit for every 30 damage I've taken. Increase the damage by 8 for each Stride I didn't use. I heal for all damage dealt.",
     "Crashout | Strike every enemy for 30 - X Burn, where X is the number of Squares between us doubling X if Line of Sight is broken. Destroy all terrain within Starbust 4 of me. I suffer 10 damage."
-  ]
+  ],
+  "isRetired": "Retired (April Fools)"
 }

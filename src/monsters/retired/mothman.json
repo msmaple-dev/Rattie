@@ -15,5 +15,6 @@
       "Haunting Burst | All Feared targets and all targets in Line of Sight must make a DC17 Save. On failure, they take 10 Hollow. The Mothman then Steps behind a target who failed their save, chosen randomly",
       "Blot Out the Sky | When this card is drawn, all squares outside of a 8x8 centered on The Mothman become Swarm terrain. This terrain lasts until the next time this card is drawn.\nCharacters not adjacent to The Mothman make a DC19 Save against 25 Rend and Tear Asunder.\n\n*Swarm:* Characters other than The Mothman who enter or end an action within this terrain must make a DC 15 save. On failure, they take 6 Rend, become Feared, and suffer a stacking -2 to Defend until the start of their next turn."
     ],
-    "IsPreview": false
+    "IsPreview": false,
+    "isRetired": true
   }

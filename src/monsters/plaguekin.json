@@ -1,18 +1,23 @@
 {
-  "ID": "plaguekin",
-  "Name": "The Plaguekin Matron",
-  "Description": "A disgusting creature of wounds, pus, and fur. It radiates filth and hate, and its brood brings the slow death.",
-  "Scale": 4,
-  "Mechanics": "Enters battle with two Ratlings 2 squares away from it and each other. When a Ratling is killed, or when the Plaguekin gains a defensive secondary success, it creates a 1x1 square of **Miasma**. If two squares of Miasma touch, the oldest one instead becomes a 3x3. If two 3x3s touch, they instead become a 5x5, and so on.\n\n**Miasma**: Ending an action within the Miasma forces a DC 15 save against **Plague**.\n\n**Plague**: You have -1 Curse Die Size. Every second stack also increases the damage you take from all sources by your Scale. Recovery. Rats are immune to the Plague.",
-  "BasicAction": "The Rat will move if within a dangerous effect. Then it will Breed, and Frenzy. Remaining actions are spent on Carrier's Bite or Carrier's Spit.\n\n**Step**: 2 Squares\n**Stride**: 6 Squares\n\n**Breed**: Create a Ratling within 3 squares.\n\n**Frenzy**: All Rat Minions complete their Instinct.\n\n**Carrier's Bite**: Melee. 15 Rend. Apply **Plague**.\n\n**Carrier's Spit**: Ranged. 10 Bash. Apply **Plague**.\n\n**Ratling**: Strides 6 squares into melee with the closest target. Will then bite as per Carrier's Bite at 8 Rend. Dies if hit by a Strike of Scale 1 or more, or in two Strikes of Scale 0.5.",
-  "Size": "4x4",
-  "ArmorClass": 12,
-  "DamageThreshold": 280,
-  "AttackCards": [
-    "Protect the Swarm | Instinct Change: Utilize Frenzy an amount of times equal to the amount of Rat Minions on the field, to a maximum of three. Use remaining actions on Breed.",
-    "Queen's Consort | Breed will create a Ratlord, rather then a Ratling.\n\n**Ratlord**: Strides 8 squares, or Steps 2 squares, to the target that dealt the most damage to the Plaguekin Rat this turn. Will choose a different target if unable to reach the main target without an Attack of Oppurtunity, with the same parameters. Use's Lord's Clawblade with two remaining actions. Dies if hit by a Strike of Scale 2, or multiple Strikes totalling Scale 2. Creates a 3x3 of Miasma on death, rather then a 1x1.\n\n**Lord's Clawblade**: 10 Slash with +2 to hit. Applies Plague.",
-    "Mother's Wrath | Instinct Change: Move to the target that killed the most Rat Minions this turn, if needed. Use remaining actions on Carrier's Bite, with +4 to hit. Will use Frenzy as a free action, with aggro redirected to the same target.",
-    "Plaguespreader | All squares within 4 of the Plaguekin Rat are turned into Miasma. Any characters in the area when it is created must save against it twice, at DC 18.\n\nBreed will create a Sporeborn, rather then a Ratling.\n\n**Sporeborn**: Strides 10 squares into a 3x3 with as many targets as possible. Explodes, targetting all enemies in a centered 3x3 for 8 Burn 8 Bash, and turning that area into Miasma. Becomes a Ratling after.",
-    "Cycle of Life | Remove all Miasma within 4 of me. Heal HP equal to the total amount of consumed Miasma.\n\n Breed will create a Shaman, rather then a Ratling.\n\n**Shaman**: Strides 5 squares or Steps 1 square out of melee. Will then use Vitality Steal, targetting the closest enemy for 10 Hollow. On a hit, will heal .5 Scale of damage from all Rat Minions, and heal the Plaguekin Rat for 10. Dies if hit by a Strike of Scale 1.5, or multiples Strikes totalling Scale 1.5"
-  ]
-}
+    "ID": "plaguekin",
+    "Name": "The Plaguekin Matron",
+    "Description": "A disgusting creature of wounds, pus, and fur. It radiates filth and hate, and its brood brings the slow death. They plague the sewers and subways, spreading filth and sickness as they scamper underfoot.",
+    "Scale": 4,
+    "Mechanics": "The Plaguekin Matron enters battle with two Ratlings 2 squares away from it on opposite sides of it. When a Ratling dies, place a 1x1 of Miasma in its square after removing it. When the Plaguekin Matron scores a defensive Secondary Success, create a 1x1 of Miasma adjacent to the Plaguekin in the square closest to the attacker. If two 1x1s of Miasma are adjacent, the oldest one becomes a 3x3. If two 3x3s of Miasma are adjacent, the oldest one becomes a 5x5. In either case, remove the newest one. Miasma cannot be removed from the map, except for when the Plaguekin Matron becomes Stunned at which point all Miasma is removed.\n\n**Miasma:** Moving into or ending an action within the Miasma forces a DC17 Save against Plague,\n**Plague:** You have -1 Curse Die Size. ",
+    "Enrage": "For each character, place a number of Ratlings equal to its Scale 2 squares away from them. Each Ratling immediately performs Carrier's Spit at 6 Value, prioritizing the nearest character.",
+    "Stun": "Remove all Miasma in addition to the normal Stunned effects.",
+    "BasicAction": "If the Plaguekin Matron is within a dangerous terrain effect, it will move out of that effect. Perform Breed. Perform Frenzy. Perform Carrier's Bite or Carrier's Spit with remaining actions, moving if there are no valid targets.\n\n**Stride:** 6 Squares.\n**Step:** 2 Squares.\n\n**Breed:** Utility. Place a Ratling within 3 Squares.\n**Frenzy:** Utility. All Minions perform their instinct.\n**Carrier's Bite:** Melee. 13 Rend. On-Hit: Suffer Plague.\n**Carrier's Spit:** Ranged. 13 Bash. On-Hit: Suffer Plague.\n\n**Ratling:** Strides 6 squares towards the closest target, if not already adjacent. Performs Carrier's Bite at 8 Value. Has 10 AC, dies if hit by Scale 1 of Strikes, dealing 4 damage to the Monster.",
+    "Size": "4x4",
+    "ArmorClass": 13,
+    "DamageThreshold": 180,
+    "EnrageThreshold": 70,
+    "StunThreshold": 35,
+    "AttackCards": [
+      "Protect The Swarm | The Plaguekin Matron's Instinct becomes:\nPerform Frenzy a number of times equal to the number of Minions on the field. Perform Breed with remaining actions.",
+      "Queen's Consort | Breed will create a Ratlord rather than a Ratling.\n\n**Ratlord:** Stride 8 Squares or Steps 2 Squares, prioritizing the target that dealt the most damage to the Plaguekin Matron this turn. Perform Carrier's Bite at 10 Value with +2 Accuracy, twice. Dies if hit by Scale 2 of Strikes, dealing 8 damage to the Monster. Creates a 3x3 of Miasma instead of a 1x1.", 
+      "Plaguespreader | Utility. All squares within 4sq of the Plaguekin Matron become Miasma. Characters within Miasma save twice against it at DC15.\n\nBreed will create a Sporeling rather than a Ratling.\n\n**Sporeling:** Strides 10 Squares trying to get adjacent or diagonal to as many characters as possible, then explode. Perform a Melee Strike against all characters within a 3x3 centered on it, dealing 8 Burn 8 Bash. Then that area becomes Miasma, and the Sporeborn becomes a Ratling.",
+      "Cycle of Life | Boost. Consume all miasma within 4 squares of the Plaguekin Matron. The Plaguekin Matron heals 1 HP for every 3 squares removed.\n\nBreed will create a Shaman rather than a Ratling.\n\n**Shaman:** Steps 2 squares out of melee if in melee. Perform a Ranged Strike on the closest target, dealing 10 Hollow and healing the Plaguekin Rat 4 HP regardless of hit. Identical to a Ratling in everything but Instinct.",
+      "Mother's Wrath | If not adjacent, move, prioritizing the target who killed the most Minions this turn, then the closest target. Perform Carrier's Bite with remaining actions, with +7 Accuracy. After performing its Instinct, it will perform Frenzy as a free action and all Minions will prioritize the same target it did."
+    ],
+    "IsPreview": false
+  }

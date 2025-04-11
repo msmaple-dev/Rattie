@@ -15,5 +15,6 @@
       "Illusory Crabs | When this card is drawn the Wavecaller Mermaid gains a *Seafoam Copy* and conjures two *Mist Illusion: Crab*s adjacent to two different targets. *Mist Illusion: Crab*s have Lockdown and one Reaction, striking with **Condensation Claw**.\n***Condensation Claw:*** *Melee. 19 Shock.*",
       "Illusory Lions | When this card is drawn, the Wavecaller Mermaid conjures two *Mist Illusion: Lion*s adjacent to the two furthest characters. Each *Mist Illusion: Lion* prioritizes the character it was conjured adjacent to when moving, and uses **Pounce** after moving.\n***Pounce:*** *If adjacent to a character, they make a DC18 Save. On a failure, they cannot move and have -4 to defend until the end of their next turn.*"
     ],
-    "IsPreview": false
+    "IsPreview": false,
+    "isRetired": true
   }

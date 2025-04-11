@@ -15,5 +15,5 @@
     "Go for the Kill | Instinct Shift: Utilize Pounce on the character who has used the most Ranged Strikes this fight within range, ties broken by the character with the least HP. Use remaining actions on Choke if Pounce succeeded, or Clutched Weaponry otherwise.\n\n**Pounce**: Step up to 12 squares. Then, force the enemy to make a DC 17 Save against **Grappled** and **Tripped**, as per the Quirks.\n\n**Choke**: Melee. 14 Hollow at +2 Accuracy. Ethereal.",
     "Carve for Profit | Instinct Shift: Utilize Apperate to become adjacent to the target with the most Hexes, ties broken by the character with the least HP. Utilize Drain with remaining actions.\n\n**Apperate**: Teleport anywhere as per a step.\n\n**Drain**: Melee. 10 Hollow, Ethereal. Each Hex on the target adds +2 Accuracy and +3 damage. Heal HP equal to the damage dealt."
   ],
-  "isRetired": "Dead"
+  "isRetired": true
 }
