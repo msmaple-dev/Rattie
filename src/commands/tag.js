@@ -50,7 +50,8 @@ module.exports = {
 				.setName('delete')
 				.setDescription('Delete a tag')
 				.addStringOption(option => option.setName('name').setDescription('Tag Name').setRequired(true))
-				.addBooleanOption(option => option.setName('private').setDescription('Search for Private or Public Tags?').setRequired(false)),
+				.addBooleanOption(option => option.setName('private').setDescription('Search for Private or Public Tags?').setRequired(false))
+				.addBooleanOption(option => option.setName('admin').setDescription('Deletes a tag you don\'t own. [Admin Only]')),
 		)
 		.addSubcommand(subcommand =>
 			subcommand
@@ -151,22 +152,28 @@ module.exports = {
 		else if (subCommand === 'delete') {
 			const tagName = interaction.options.getString('name')?.toLowerCase();
 			const isPrivate = interaction.options.getBoolean('private') || false;
+			const isAdmin = interaction.options.getBoolean('admin') || false;
 
-			const query = 'SELECT * from tags WHERE tags.name = ? AND tags.ownerId = ? AND tags.isPrivate = ?';
-			const matchingTags = await db.query(query, {
-				replacements: [tagName, sqlUserID, isPrivate],
-				type: QueryTypes.SELECT,
-			});
-
-			if (matchingTags?.length > 0) {
-				await db.query('DELETE FROM tags WHERE tags.name = ? AND tags.ownerId = ? AND tags.isPrivate = ?', {
-					replacements: [tagName, sqlUserID, isPrivate],
-					type: QueryTypes.DELETE,
-				});
-				interaction.reply(`Deleted ${isPrivate ? 'private ' : ''}tag ${tagName}!`);
+			if (isAdmin && !interaction.member.roles.cache.some(role => role.name === 'Game Lead')) {
+				await interaction.reply('Admin Deletes Require Game Lead Permissions!');
 			}
 			else {
-				await interaction.reply(`There are no ${isPrivate ? 'Private ' : ''}Tags named ${tagName} that you own!`);
+				const query = `SELECT * from tags WHERE tags.name = ? ${!isAdmin ? 'AND tags.ownerId = ?' : ''} AND tags.isPrivate = ?`;
+				const matchingTags = await db.query(query, {
+					replacements: isAdmin ? [tagName, isPrivate] : [tagName, sqlUserID, isPrivate],
+					type: QueryTypes.SELECT,
+				});
+
+				if (matchingTags?.length > 0) {
+					await db.query(`DELETE FROM tags WHERE tags.name = ? ${!isAdmin ? 'AND tags.ownerId = ?' : ''} AND tags.isPrivate = ?`, {
+						replacements: isAdmin ? [tagName, isPrivate] : [tagName, sqlUserID, isPrivate],
+						type: QueryTypes.DELETE,
+					});
+					interaction.reply(`Deleted ${isPrivate ? 'private ' : ''}tag ${tagName}!`);
+				}
+				else {
+					await interaction.reply(`There are no ${isPrivate ? 'Private ' : ''}Tags named ${tagName} that you own!`);
+				}
 			}
 		}
 		else if (subCommand === 'clear') {
