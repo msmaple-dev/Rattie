@@ -10,11 +10,11 @@
     "Size": "3x3 in the center of the map.",
     "ArmorClass": 12,
     "DamageThreshold": 390,
-    "EnrageThreshold": 40,
+    "EnrageThreshold": 125,
     "StunThreshold": 48,
     "AttackCards": [
       "Visual Learner | *Watcher’s Vision: South and SW*\n**Spectate** instead targets the character who performed the most non-Strike actions on their last turn, and targets a Starburst 2 centered on them. **Spectate** draws an additional Status this turn.",
-      "Petrifying Gaze | *Watcher’s Vision: West and Northwest*\nAll characters within The Watcher’s Vision make a DC17 Save. On a failure, they suffer *Petrifying Malaise*.\n\n**Petrifying Malaise:* All non-stride actions lose 3/5/7 Value per scale. You may take 3/5/7 damage to ignore this per action, otherwise Recovery 2.\n(Reminder: When reducing Value, you may reduce the Stun dealt by actions)", 
+      "Petrifying Gaze | *Watcher’s Vision: West and Northwest*\nUtility. All characters within The Watcher’s Vision make a DC17 Save. On a failure, they suffer *Petrifying Malaise*.\n\n**Petrifying Malaise:* All non-stride actions lose 3/5/7 Value per scale. You may take 3/5/7 damage to ignore this per action, otherwise Recovery 2.\n(Reminder: When reducing Value, you may reduce the Stun dealt by actions)", 
       "Disintegrating Leer | *Watcher’s Vision: North and Northeast*\n**Spectate** is replaced with **Sight Based Assimilation**.\n\n**Sight Based Assimilation:** Melee, infinite range. 13 Burn. On hit: Inflict Ablaze 4 times before drawing the Status.",
       "Beguile | *Watcher’s Vision: East and Southeast*\nWhen this card is drawn, for the rest of the round, when a character takes a stack of Beheld they make a DC15 Save. On failure, their first action next round must be a Stride ending within the Watcher’s Vision and you gain any amount of additional squares of movement necessary to reach the nearest square. You may take an additional stack of Beheld to automatically pass this Save.",
       "Devouring Eye (Monster) | *Watcher’s Vision: Two randomly determined directions*\nEveryone suffers 5 squares of Knockback towards the Watcher, plus an additional 5 squares for each stack of Beheld they have. Characters who end this Knockback adjacent to the Watcher suffer 4 Rend Statuses and a two stacks of Beheld."
