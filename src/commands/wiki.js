@@ -32,6 +32,7 @@ const fieldChoices = [
 	{ name: 'renown', value: 'renown' },
 	{ name: 'scent', value: 'scent' },
 	{ name: 'appearance', value: 'appearance' },
+	{ name: 'pneumaappearance', value: 'pneumaappearance' },
 	{ name: 'image', value: 'image' },
 	{ name: 'source', value: 'source' },
 	{ name: 'icon', value: 'icon' },
@@ -75,6 +76,7 @@ module.exports = {
 				.addStringOption(option => option.setName('renown').setDescription('Your Warlock\'s renown, if relevant').setRequired(false))
 				.addStringOption(option => option.setName('scent').setDescription('The Warlock\'s Scent').setRequired(false))
 				.addStringOption(option => option.setName('appearance').setDescription('Warlock Appearance').setRequired(false))
+				.addStringOption(option => option.setName('pneumaappearance').setDescription('Your Pneuma\'s Color & Appearance').setRequired(false))
 				.addStringOption(option => option.setName('image').setDescription('Appearance Image URL').setRequired(false))
 				.addStringOption(option => option.setName('source').setDescription('Appearance Image Source URL').setRequired(false))
 				.addStringOption(option => option.setName('icon').setDescription('Icon Image URL').setRequired(false))
@@ -132,7 +134,7 @@ module.exports = {
 					}
 					propertyLengths.sort((a, b) => (b[1] - a[1]));
 					let outputString = `__**Length of Fields in Wiki "${wikiName}"**__\n`;
-					const checkedFields = ['warlockName', 'quote', 'about', 'faction', 'appearance', 'abilities', 'scent'];
+					const checkedFields = ['warlockName', 'quote', 'about', 'faction', 'appearance', 'pneumaappearance', 'abilities', 'scent'];
 					const totalSum = propertyLengths.reduce((accumulator, currentVal) => (accumulator + currentVal[1]), 0);
 					const checkedPropertyLength = propertyLengths.filter((property => checkedFields.includes(property[0]))).reduce((accumulator, currentVal) => (accumulator + currentVal[1]), 0);
 					outputString += propertyLengths.map((property) => (`${checkedFields.includes(property[0]) ? `**${property[0]}**` : property[0]}: ${property[1]}`)).join('\n');
@@ -225,13 +227,14 @@ module.exports = {
 			const source = interaction.options.getString('source') || null;
 			const icon = interaction.options.getString('icon') || null;
 			const appearance = interaction.options.getString('appearance') || null;
+			const pneumaAppearance = interaction.options.getString('pneumaappearance') || null;
 			const abilities = interaction.options.getString('abilities') || null;
 			const color = interaction.options.getString('color') || null;
 			const pronouns = interaction.options.getString('pronouns') || null;
 			const scent = interaction.options.getString('scent') || null;
 			const renown = interaction.options.getString('renown') !== null ? interaction.options.getString('renown') : null;
-			const updatableValues = [warlockName, quote, about, age, scale, faction, appearance, image, source, icon, abilities, color, pronouns, scent, renown];
-			const updatableFields = ['warlockName', 'quote', 'about', 'age', 'scale', 'faction', 'appearance', 'image', 'source', 'icon', 'abilities', 'color', 'pronouns', 'scent', 'renown'];
+			const updatableValues = [warlockName, quote, about, age, scale, faction, appearance, pneumaAppearance, image, source, icon, abilities, color, pronouns, scent, renown];
+			const updatableFields = ['warlockName', 'quote', 'about', 'age', 'scale', 'faction', 'appearance', 'pneumaappearance', 'image', 'source', 'icon', 'abilities', 'color', 'pronouns', 'scent', 'renown'];
 			const setFields = updatableValues.map((value, index) => value && `${updatableFields[index]} = ?`).filter(a => a !== null).join(', ');
 
 			if (updatableValues.filter(a => a)?.length <= 0) {

@@ -55,6 +55,7 @@ function wikiEmbed(wiki) {
 		name,
 		warlockName,
 		appearance,
+		pneumaAppearance,
 		quote,
 		scale,
 		age,
@@ -91,12 +92,12 @@ function wikiEmbed(wiki) {
 	const footerText = footerElements.filter(e => e?.length > 0).join(' | ');
 	const headerFields = [
 		(age !== null && { name: 'Age', value: age, inline: true }),
-		(scale !== null && { name: 'Scale', value: scale, inline: true }),
+		((scale !== null || renown !== null) && { name: `${scale !== null ? 'Scale' : ''}${scale !== null && renown !== null ? ' / ' : ''}${renown !== null ? 'Renown' : ''}`, value: [scale, renown].join(' / '), inline: true }),
 		(faction !== null && { name: 'Faction', value: faction, inline: true }),
-		(renown !== null && { name: 'Renown', value: renown, inline: true }),
 	].filter(a => a);
 	const descFields = [
-		(scent !== null && { name: 'Warlock Scent', value: scent }),
+		(scent !== null && { name: 'Warlock Scent', value: scent, inline: true }),
+		(pneumaAppearance !== null && { name: 'Pneuma', value: pneumaAppearance, inline: true }),
 		(about !== null && { name: `About ${warlockName || name}`, value: `${parseLinebreaks(about)}` }),
 		((appearance || source) && {
 			name: 'Appearance',

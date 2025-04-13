@@ -30,6 +30,9 @@ const Wikis = db.define('wikis', {
 	appearance:  {
 		type: Sequelize.TEXT,
 	},
+	pneumaAppearance:  {
+		type: Sequelize.TEXT,
+	},
 	image:  {
 		type: Sequelize.TEXT,
 	},

@@ -24,6 +24,7 @@ function newInit(users = [], monster = {}, isRaid = false) {
 		stunCount: 0,
 		stunMeter: 0,
 		enraged: false,
+		enragedMeter: 0,
 	};
 }
 

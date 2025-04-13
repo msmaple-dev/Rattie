@@ -223,6 +223,7 @@ module.exports = {
 				if (subCommand === 'damage' || attackRoll >= totalDefense) {
 					monsterHit = dmg > 0;
 					currentInit.damageDealt += dmg;
+					currentInit.enragedMeter += Math.max(dmg, 0);
 					currentInit.dpr[currentInit.round] = currentInit.dpr[currentInit.round] ? currentInit.dpr[currentInit.round] + dmg : dmg;
 				}
 
@@ -242,8 +243,9 @@ module.exports = {
 						});
 						await logDPR(encounterId, currentInit.dpr);
 					}
-					else if (!currentInit.enraged && currentInit.damageDealt >= monster.enrageThreshold) {
+					else if (currentInit.enragedMeter >= monster.enrageThreshold) {
 						currentInit.enraged = true;
+						currentInit.enragedMeter = 0;
 						await interaction.followUp({ embeds: [monsterEnragedEmbed(monster)] });
 					}
 				}
