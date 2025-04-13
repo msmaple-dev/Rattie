@@ -96,8 +96,8 @@ function wikiEmbed(wiki) {
 		(faction !== null && { name: 'Faction', value: faction, inline: true }),
 	].filter(a => a);
 	const descFields = [
-		(scent !== null && { name: 'Warlock Scent', value: scent, inline: true }),
-		(pneumaAppearance !== null && { name: 'Pneuma', value: pneumaAppearance, inline: true }),
+		(scent !== null && { name: 'Warlock Scent', value: scent }),
+		(pneumaAppearance !== null && { name: 'Pneuma Appearance', value: pneumaAppearance }),
 		(about !== null && { name: `About ${warlockName || name}`, value: `${parseLinebreaks(about)}` }),
 		((appearance || source) && {
 			name: 'Appearance',
