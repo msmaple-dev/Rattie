@@ -4,7 +4,7 @@
   "Description": "Bearers of fickle winds, Sky Centipedes are blown about by the currents of pneuma that come with great misfortune and disastrous storms. Their segmented insectoid bodies are held aloft by a thousand and one wings, each flap stirring up ill omen and misfortune as they scurry through the air.",
   "Mechanics": "No Unique Mechanics",
   "Monsters": ["direrat", "gobmage", "gobwar", "hobgoblin", "minihydra", "ogre", "ratswarm"],
-  "UniqueRoomModifiers": [],
+  "UniqueRoomModifiers": {},
   "MinimumScale": 3,
   "Rooms": 6,
   "MiniBosses": [3],

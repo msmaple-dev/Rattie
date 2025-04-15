@@ -19,6 +19,7 @@ function newInit(users = [], monster = {}, isRaid = false) {
 		raidLoot: isRaid ? {} : null,
 		raidFloor: isRaid ? [] : null,
 		currentRoom: isRaid ? {} : null,
+		roomDescriptions: isRaid ? [] : null,
 		roomNumber: isRaid ? 0 : null,
 		raidScale: isRaid ? 0 : null,
 		looting: false,
