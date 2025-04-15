@@ -180,8 +180,9 @@ module.exports = {
 				if (currentInit.raid?.id) {
 					if (currentInit.raid?.currentFloor[roomNum - 1]) {
 						outputText = `**Moving to Room ${roomNum}**\n`;
+						outputText += currentInit.roomDescriptions[roomNum - 1];
 						outputText += await goToRoom(currentInit, roomNum, channelId);
-						// TODO: Show all monster descriptions on entry
+
 					}
 					else {
 						outputText = `Invalid Room Index (${roomNum})`;

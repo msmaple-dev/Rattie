@@ -19,6 +19,31 @@ const raidScaleProgressions = {
 	normal: [0.5, 1, 1.25, 1.25, 1.5, 1.5, 2],
 };
 
+const defaultModifiers = {
+	negative: [
+		'All squares are Flaming.',
+		'Players have halved Stride distance and cannot step.',
+		'Ranged Strikes targeting Monsters further than 3 squares away have -3 Accuracy.',
+		'Players take 3 damage when using Boosts, Banes, or Utilities.',
+		'Players must make a DC15 Save at the end of their turn vs a Burn status.',
+		'Players must make a DC15 Save at the end of their turn vs a Shock status.',
+		'Monsters move twice as many squares.',
+		'Strikes cannot affect more than one target. Two-Action Strikes cannot affect more than two targets.',
+		'Players cannot treat any character as an Ally and cannot benefit from the effects of other Players.',
+		'Players cannot clear Statuses.',
+	],
+	positive: [
+		'Players have +2 value on Strikes.',
+		'If a Strike deals Knockback, it always results in a Wallbang.',
+		'Monsters have -3 to Saves.',
+		'Players heal 3 on a successful Strike.',
+		'Players heal 3 at the end of their turn.',
+		'Players take 2 less damage from Monster actions.',
+		'All Players have Show-Off, they gain 1 Panache at the start of their turn.',
+		'Monsters move half as much.',
+	],
+};
+
 for (const file of raidTypeFiles) {
 	const filePath = path.join(raidTypePath, file);
 	let raid = require(filePath);
@@ -65,13 +90,16 @@ function generateFloor(currentInit, rooms = 2) {
 	currentInit.currentRound = 0;
 	const totalInitScale = getTotalInitScale(currentInit);
 	currentInit.roomNumber++;
-	const outputArray = [];
 	for (let i = 0; i < rooms; i++) {
-		const room = generateRoomMonsters(currentInit.raid, currentInit.roomNumber, totalInitScale);
+		const room = {
+			monsters: generateRoomMonsters(currentInit.raid, currentInit.roomNumber, totalInitScale),
+			modifiers: generateRoomModifiers(currentInit.raid),
+		};
 		currentInit.raidFloor.push(room);
-		outputArray.push(`Room ${i + 1} (Level ${currentInit.roomNumber}, Scale ${totalInitScale}): ${getMonsterString(room)}`);
+		currentInit.roomDescriptions.push(`Room ${i + 1} (Level ${currentInit.roomNumber}, Scale ${totalInitScale}): ${getMonsterString(room.monsters)}${room.modifiers ? '\n**Modifiers**' +
+			'- ' + room.modifiers.join('\n- ') : ''}`);
 	}
-	return 'Choose One with ``/raid continue``:\n' + outputArray.join('\nOR\n') + '\n OR do ``/raid end`` to end the raid.';
+	return 'Choose One with ``/raid continue``:\n' + currentInit.roomDescriptions.join('\nOR\n') + '\n OR do ``/raid end`` to end the raid.';
 }
 
 function getMonsterString(room) {
@@ -81,8 +109,22 @@ function getMonsterString(room) {
 async function goToRoom(currentInit, roomId, channelId) {
 	currentInit.currentRoom = currentInit.raidFloor[roomId - 1];
 	currentInit.currentFloor = [];
+	currentInit.roomDescriptions = [];
 	await init_keyv.set(channelId, currentInit);
 	return await nextTurn(channelId);
+}
+
+function generateRoomModifiers(raid) {
+	const hasModifier = roll(2) > 1;
+	if (hasModifier) {
+		const uniqueMods = raid.uniqueRoomModifiers;
+		const positives = defaultModifiers.positive.concat(uniqueMods?.positive || []);
+		const negatives = defaultModifiers.negative.concat(uniqueMods?.positive || []);
+		return [unweightedSelect(positives), unweightedSelect(negatives)];
+	}
+	else {
+		return [];
+	}
 }
 
 function generateRoomMonsters(raid, roomNum, raidScale) {
