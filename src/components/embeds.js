@@ -253,4 +253,4 @@ function tagInfoEmbed(tag) {
 	return embed;
 }
 
-module.exports = { statusEmbed, tarotEmbed, wikiEmbed, wikiListEmbed, monsterEmbed, raidEmbed, lootEmbed, monsterAttackedEmbed, monsterDefeatedEmbed, tagInfoEmbed, monsterEnragedEmbed, monsterStunnedEmbed, monsterStunAppliedEmbed, raidEmbed };
+module.exports = { statusEmbed, tarotEmbed, wikiEmbed, wikiListEmbed, monsterEmbed, raidEmbed, lootEmbed, monsterAttackedEmbed, monsterDefeatedEmbed, tagInfoEmbed, monsterEnragedEmbed, monsterStunnedEmbed, monsterStunAppliedEmbed };
