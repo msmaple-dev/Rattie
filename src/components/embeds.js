@@ -193,7 +193,7 @@ function monsterEnragedEmbed(monster) {
 	console.log(monster);
 	return new EmbedBuilder()
 		.setTitle(`${monster.name} Enraged!`)
-		.setDescription('*The monster cannot be Stunned or have its Stun Bar Increase from further actions while enraged. If it was already Stunned, it will still apply its Enrage Effect.\nAfter the Monster has used its Enrage Effect once, it stops being enraged at the start of its next turn.*')
+		.setDescription('*The monster is now enraged! After the Monster has used its Enrage Effect once, it stops being enraged at the start of its next turn.*')
 		.addFields([{ name: 'Enrage Effect', value: monster.enrage }])
 		.setColor(monster_color);
 }
