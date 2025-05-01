@@ -11,7 +11,7 @@
     "ArmorClass": 12,
     "DamageThreshold": 390,
     "EnrageThreshold": 125,
-    "StunThreshold": 48,
+    "StunThreshold": 24,
     "AttackCards": [
       "Visual Learner | *Watcher’s Vision: South and SW*\n**Spectate** instead targets the character who performed the most non-Strike actions on their last turn, and targets a Starburst 2 centered on them. **Spectate** draws an additional Status this turn.",
       "Petrifying Gaze | *Watcher’s Vision: West and Northwest*\nUtility. All characters within The Watcher’s Vision make a DC17 Save. On a failure, they suffer *Petrifying Malaise*.\n\n**Petrifying Malaise:* All non-stride actions lose 3/5/7 Value per scale. You may take 3/5/7 damage to ignore this per action, otherwise Recovery 2.\n(Reminder: When reducing Value, you may reduce the Stun dealt by actions)", 

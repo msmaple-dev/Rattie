@@ -11,7 +11,7 @@
     "ArmorClass": 10,
     "DamageThreshold": 300,
     "EnrageThreshold": 120,
-    "StunThreshold": 40,
+    "StunThreshold": 20,
     "AttackCards": [
       "Pillars of Ivory | Each characer with a stack of *Bone Spur* explodes in a Starburst 2 centered on them. All characters within these Starbursts (including the exploding character) must make a DC12 Save, with a +1 to the DC for each stack of *Bone Spur* the exploding character has. On a failure, they suffer 4 Pierce. Characters must save against every Starburst they are in, but combine the damage from each failed Save.",
       "The Empire Grows | When this card is drawn, each character makes a DC15 Save. On a failure, they gain a stack of *Bone Spur*. This turn, characters with a stack of *Bone Spur* leave Calcitrant Terrain in each square they leave while moving (including through forced movement).", 

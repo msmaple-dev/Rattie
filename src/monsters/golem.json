@@ -11,7 +11,7 @@
     "ArmorClass": 10,
     "DamageThreshold": 365,
     "EnrageThreshold": 100,
-    "StunThreshold": 50,
+    "StunThreshold": 25,
     "AttackCards": [
       "Instinct Shift: Aggressive | *Pneumic Arsenal: Stride towards the nearest character, then* ***Pummel.***\n\nPneuma Flare has +2 Starburst size, deals +5 damage.\n\n**Pummel:** Melee, Reach, 20 Bash. On-Hit: Step, then if you end adjacent to a different character, Pummel them.",
       "Instinct Shift: Evasive | *Pneumic Arsenal: Stride out of adjacency, ignoring Lockdown, then* ***Pneuma Bolt.***\n\nPneuma Bolt is a 1x100 line, has +3 Accuracy and +5 damage, and deals Pierces.", 

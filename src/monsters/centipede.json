@@ -11,7 +11,7 @@
     "ArmorClass": 12,
     "DamageThreshold": 195,
     "EnrageThreshold": 40,
-    "StunThreshold": 35,
+    "StunThreshold": 17,
     "AttackCards": [
       "Ill Winds Blow | *Ill Omen: Boost, Bane.*\nInstinct becomes:\nIf not adjacent, move to the nearest target. Perform **Fickle Winds** with remaining actions, prioritizing hitting as many targets as possible\n\n**Fickle Winds:** Melee. Normal 6 Cone. 10 Hollow, On-Hit: suffer Misfortune.",
       "Unrelenting Unluck | *Ill Omen: Utility, Defend.*\n**Tail Whip** gains Agile and rotates the entire way around the Sky Centipede’s head (effectively becoming a Starburst 3 centered on the head).\nThe Monster’s Instinct becomes:\nIf not adjacent to a character, move so the Head is within 3 squares of as many targets as possible. Perform **Tail Whip** with remaining actions.", 
