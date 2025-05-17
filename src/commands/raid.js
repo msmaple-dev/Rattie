@@ -1,7 +1,7 @@
 const { SlashCommandBuilder } = require('discord.js');
 const { raidEmbed } = require('../components/embeds');
 const { getValidRaidMonsters, getValidRaids, getRaid, generateRoom, getRaidExperience, getMonstersForRaid,
-	generateFloor, goToRoom, getMonsterString, getRaidID,
+	generateFloor, goToRoom, getMonsterString, getRaidID, getRaidMonster,
 } = require('../functions/raid_utils');
 const { newInit, getUserDecks } = require('../functions/init_utils');
 const init_keyv = require('../keyv_stores/init_keyv');
@@ -114,7 +114,8 @@ module.exports = {
 			await interaction.deferReply();
 			const raid = structuredClone(getRaid(raidType));
 			if (raid) {
-				const embed = raidEmbed(raid);
+				const fetchedMonsters = raid?.monsters.map(monster => getRaidMonster(monster)).filter(a => a);
+				const embed = raidEmbed(raid, fetchedMonsters);
 				if (subCommand === 'create') {
 					if (raid.isPreview) {
 						await interaction.editReply('You cannot fight that monster yet!');
