@@ -149,7 +149,8 @@ module.exports = {
 							identifier: `${monster.name}'s Draw`,
 							initVal: 100,
 							decks: {},
-						}, { userID: userID, identifier: `${monster.name} Acts`, initVal: 1, decks: {} }], monster);
+							privateInfo: '',
+						}, { userID: userID, identifier: `${monster.name} Acts`, initVal: 1, decks: {}, privateInfo: '' }], monster);
 						startingInit.monsterLibrary = await getUserDecks(0);
 						await init_keyv.set(channelId, startingInit);
 

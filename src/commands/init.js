@@ -40,7 +40,7 @@ module.exports = {
 				outputText = `Changed User ${userIdentifier ? `${userIdentifier} (<@${userID}>)` : `<@${userID}>`} Init to ${initVal}`;
 			}
 			else {
-				currentUsers.push({ userID: userID, identifier: userIdentifier, initVal: initVal, decks: decks });
+				currentUsers.push({ userID: userID, identifier: userIdentifier, initVal: initVal, decks: decks, privateInfo: '' });
 				outputText = `Added User ${userIdentifier ? `${userIdentifier} (<@${userID}>)` : `<@${userID}>`} at Init ${initVal}`;
 				if (!userIdentifier) {
 					postInitTag = true;
@@ -51,7 +51,7 @@ module.exports = {
 			await init_keyv.set(channelId, currentInit);
 		}
 		else {
-			const startingInit = newInit([{ userID: userID, identifier: userIdentifier, initVal: initVal, decks: decks }]);
+			const startingInit = newInit([{ userID: userID, identifier: userIdentifier, initVal: initVal, decks: decks, privateInfo: '' }]);
 			await init_keyv.set(channelId, startingInit);
 			outputText = `Started new Init with User ${userIdentifier ? `${userIdentifier} (<@${userID}>)` : `<@${userID}>`} at Init ${initVal}`;
 			if (!userIdentifier) {
