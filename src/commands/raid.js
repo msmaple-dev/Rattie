@@ -1,6 +1,6 @@
 const { SlashCommandBuilder } = require('discord.js');
-const { raidEmbed } = require('../components/embeds');
-const { getValidRaidMonsters, getValidRaids, getRaid, generateRoom, getRaidExperience, getMonstersForRaid,
+const { raidEmbed, monsterAttackedEmbed } = require('../components/embeds');
+const { getValidRaidMonsters, getValidRaids, getRaid, getRaidExperience,
 	generateFloor, goToRoom, getMonsterString, getRaidID, getRaidMonster,
 } = require('../functions/raid_utils');
 const { newInit, getUserDecks } = require('../functions/init_utils');
@@ -8,6 +8,7 @@ const init_keyv = require('../keyv_stores/init_keyv');
 const db = require('../database');
 const { QueryTypes } = require('sequelize');
 const { unpinChannelPins } = require('../functions/chat_utils');
+const { rollAC } = require('../functions/roll_utils');
 
 const validRaids = getValidRaids();
 const validRaidMonsters = getValidRaidMonsters();
@@ -63,6 +64,19 @@ module.exports = {
 		)
 		.addSubcommand(subcommand =>
 			subcommand
+				.setName('end')
+				.setDescription('Stops a Raid after clearing a room.'),
+		)
+		.addSubcommand(subcommand =>
+			subcommand
+				.setName('attack')
+				.setDescription('Attacks a specific raid monster type.')
+				.addIntegerOption(option => option.setName('roll').setDescription('Attack Roll').setRequired(true))
+				.addIntegerOption(option => option.setName('dmg').setDescription('Damage').setRequired(true))
+				.addStringOption(option => option.setName('name').setDescription('Monster Name').addChoices(...raidMonsterChoices).setRequired(true)),
+		)
+		.addSubcommand(subcommand =>
+			subcommand
 				.setName('status')
 				.setDescription('Shows the current room # & It\'s Monsters'),
 		)
@@ -82,14 +96,6 @@ module.exports = {
 				.setName('monster')
 				.setDescription('Shows information on a hunt monster')
 				.addStringOption(option => option.setName('name').setDescription('Monster Name').addChoices(...raidMonsterChoices).setRequired(true)),
-		)
-		.addSubcommand(subcommand =>
-			subcommand
-				.setName('test')
-				.setDescription('Tests Raids')
-				.addStringOption(option => option.setName('type').setDescription('Raid Type').addChoices(...raidChoices).setRequired(true))
-				.addIntegerOption(option => option.setName('room').setDescription('Room #').setRequired(true))
-				.addIntegerOption(option => option.setName('scale').setDescription('Participant Scale').setRequired(false)),
 		),
 	async execute(interaction) {
 		const userID = interaction.user.id;
@@ -118,7 +124,7 @@ module.exports = {
 				const embed = raidEmbed(raid, fetchedMonsters);
 				if (subCommand === 'create') {
 					if (raid.isPreview) {
-						await interaction.editReply('You cannot fight that monster yet!');
+						await interaction.editReply('You cannot start that raid yet!');
 					}
 					// Checks if channel type is a thread
 					else if (interaction.channel?.type !== 11) {
@@ -157,6 +163,7 @@ module.exports = {
 
 			if (currentInit) {
 				if (currentInit?.round === 0 && currentInit?.raid?.id) {
+					// TODO: ADD SCALE CHECK
 					outputText = '**Raid Start!**\n';
 					outputText += generateFloor(currentInit);
 					await init_keyv.set(channelId, currentInit);
@@ -179,9 +186,9 @@ module.exports = {
 
 			if (currentInit) {
 				if (currentInit.raid?.id) {
-					if (currentInit.raid?.currentFloor[roomNum - 1]) {
+					if (currentInit.raidFloor[roomNum - 1]) {
 						outputText = `**Moving to Room ${roomNum}**\n`;
-						outputText += currentInit.roomDescriptions[roomNum - 1];
+						outputText += '*' + currentInit.roomDescriptions[roomNum - 1] + '*\n';
 						outputText += await goToRoom(currentInit, roomNum, channelId);
 
 					}
@@ -216,6 +223,17 @@ module.exports = {
 			else {outputText = 'There is no raid in this channel!';}
 			await interaction.editReply(outputText);
 		}
+		else if (subCommand === 'attack') {
+			await interaction.deferReply();
+			const attackRoll = interaction.options.getInteger('roll');
+			const dmg = interaction.options.getInteger('dmg');
+			const monster = getRaidMonster(interaction.options.getString('monster'));
+			const [rolledAC, monsterCurseDieResult] = rollAC(monster.armorClass, (monster.curseDie || 5));
+			let totalDefense = parseInt(rolledAC) + monsterCurseDieResult;
+			if (Array.isArray(rolledAC)) {totalDefense = rolledAC.map(acRolls => Math.max(...acRolls)).reduce((a, b) => a + b) + monsterCurseDieResult;}
+
+			await interaction.editReply({ embeds: [monsterAttackedEmbed(monster, dmg, 0, attackRoll, rolledAC, monsterCurseDieResult, (monster.curseDie || 5), 0, totalDefense)] });
+		}
 		else if (subCommand === 'end' || subCommand === 'loss') {
 			await interaction.deferReply();
 			const currentInit = await init_keyv.get(channelId) ?? 0;
@@ -223,18 +241,18 @@ module.exports = {
 
 			if (currentInit) {
 				if (currentInit?.raid?.id) {
-					if (subCommand === 'end' && currentInit.currentRoom !== {}) {
+					if (subCommand === 'end' && currentInit.currentRoom?.monsters) {
 						outputText = 'You cannot use ``/raid end`` while in an active room!';
 					}
 					else {
 						const raidId = await getRaidID(channelId);
 						const endTime = Date.now();
 						await db.query('UPDATE raids SET rooms = ?, status = ?, endTime = ? WHERE raidId = ?', {
-							replacements: [currentInit.currentRoom - 1, 'Finished', endTime, raidId],
+							replacements: [currentInit.roomNumber - 1, subCommand === 'end' ? 'Finished' : 'Conceded', endTime, raidId],
 							type: QueryTypes.UPDATE,
 						});
 						// TODO: Add Total Loot to outputText
-						outputText = `Raid Ended at Room ${currentInit.currentRoom}!\n**Total Exp: ${getRaidExperience(currentInit.raid, currentInit.roomNumber, subCommand === 'loss')}**\n**Total Loot:**`;
+						outputText = `Raid Ended at Room ${currentInit.roomNumber - 1}!\n**Total Exp: ${getRaidExperience(currentInit.raid, currentInit.roomNumber, subCommand === 'loss')}**\n**Total Loot:**`;
 						await init_keyv.delete(channelId);
 						await unpinChannelPins(interaction.channel);
 					}
@@ -245,50 +263,6 @@ module.exports = {
 			}
 			else {outputText = 'There is no raid in this channel!';}
 			await interaction.editReply(outputText);
-		}
-		else if (subCommand === 'test') {
-			await interaction.deferReply();
-			const raid = structuredClone(getRaid(raidType));
-			const roomNum = interaction.options.getInteger('room');
-			const raidScale = interaction.options.getInteger('scale') || 3;
-			if (raid) {
-				raid.monsters = getMonstersForRaid(raid);
-				const room = generateRoom(raid, roomNum, raidScale);
-				const roomString = `Room ${roomNum} (Scale ${raidScale}): ${getMonsterString(room)}`;
-				const estimatedXP = getRaidExperience(raid, roomNum);
-				const outputString = roomString + `\nEstimated XP Earned So Far (Unfinished Raid): ${estimatedXP}`;
-				// if (interaction.options.getSubcommand() === 'fight') {
-				// 	if (raid.isPreview) {
-				// 		await interaction.editReply('You cannot fight that monster yet!');
-				// 	}
-				// 	else {
-				// 		const startingInit = newInit([{
-				// 			userID: userID,
-				// 			identifier: `${raid.name}'s Draw`,
-				// 			initVal: 100,
-				// 			decks: {},
-				// 		}, { userID: userID, identifier: `${raid.name} Acts`, initVal: 1, decks: {} }], raid);
-				// 		startingInit.monsterLibrary = await getUserDecks(0);
-				// 		await init_keyv.set(channelId, startingInit);
-				//
-				// 		// Checks if channel type is a thread, then logs if it is
-				// 		if (interaction.channel?.type === 11) {
-				// 			await db.query('INSERT INTO encounters (channelId, rounds, startTime, endTime, monster) VALUES (?, ?, ?, ?, ?)', {
-				// 				replacements: [channelId, null, Date.now(), null, raid.id],
-				// 				type: QueryTypes.INSERT,
-				// 			});
-				// 		}
-				// 		await interaction.editReply(`Started new fight against ${raid.name}, managed by <@${userID}>!`);
-				// 		await interaction.followUp({ embeds: [embed] }).then(msg => msg.pin('Monster Hunt Pin'));
-				// 	}
-				// }
-				// else {
-				await interaction.editReply(outputString);
-				// }
-			}
-			else {
-				await interaction.editReply(`Invalid Monster Name "${raid}"`);
-			}
 		}
 	},
 };

@@ -1,7 +1,7 @@
 const { SlashCommandBuilder } = require('discord.js');
 const db = require('../database');
 const { QueryTypes } = require('sequelize');
-const { getMonster, drawDefaultLoot, drawMonsterCard, getValidMonsters, logDPR, getEncounterID, rollAC, getMonsterCards,
+const { getMonster, drawDefaultLoot, drawMonsterCard, getValidMonsters, logDPR, getEncounterID, getMonsterCards,
 	concCheck,
 } = require('../functions/monster_utils');
 const { monsterEmbed, lootEmbed, monsterAttackedEmbed, monsterDefeatedEmbed, statusEmbed, monsterEnragedEmbed,
@@ -12,7 +12,7 @@ const { newInit, nextTurn, uniqueUsers, getModifierString, getACModifiers, procM
 	modifierCategories, modifierTypes, cullModifiers, getUserDecks,
 } = require('../functions/init_utils');
 const { unpinChannelPins } = require('../functions/chat_utils');
-const { rollFromString } = require('../functions/roll_utils');
+const { rollFromString, rollAC } = require('../functions/roll_utils');
 
 const validMonsters = getValidMonsters();
 const monstersData = validMonsters.map(monsterId => getMonster(monsterId));

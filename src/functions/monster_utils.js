@@ -1,4 +1,4 @@
-const { weightedSelect, drawDeck, roll, unweightedSelect, arrayRoll } = require('./roll_utils');
+const { weightedSelect, drawDeck, unweightedSelect } = require('./roll_utils');
 const { camelizeKeys } = require('./string_utils');
 const path = require('node:path');
 const fs = require('node:fs');
@@ -127,15 +127,6 @@ function getMonsterCards(monsterName) {
 	return embedArray;
 }
 
-function rollAC(baseAC, curseDie = 5) {
-	if (Array.isArray(baseAC)) {
-		return [arrayRoll(baseAC), roll(curseDie)];
-	}
-	else {
-		return [baseAC, roll(curseDie)];
-	}
-}
-
 async function logDPR(encounterId, dprArray) {
 	const dprValues = dprArray?.slice(1).map((dpr, index) => {return { encounterId: encounterId, round: index, damage: dpr };});
 	await DPR.bulkCreate(dprValues);
@@ -154,4 +145,4 @@ async function initializeParticipants(encounterId, users) {
 	await Participants.bulkCreate(userValues);
 }
 
-module.exports = { drawMonsterCard, drawDefaultLoot, getMonster, getValidMonsters, logDPR, getEncounterID, initializeParticipants, rollAC, getMonsterCards, attackCardsToObject, concCheck };
+module.exports = { drawMonsterCard, drawDefaultLoot, getMonster, getValidMonsters, logDPR, getEncounterID, initializeParticipants, getMonsterCards, attackCardsToObject, concCheck };

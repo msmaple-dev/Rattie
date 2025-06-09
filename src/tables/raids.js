@@ -25,7 +25,7 @@ const Raids = db.define('raids', {
 		type: Sequelize.TEXT,
 	},
 	status: {
-		type: Sequelize.ENUM('Active', 'Finished', 'Lost', 'Invalid'),
+		type: Sequelize.ENUM('Active', 'Finished', 'Lost/Conceded', 'Invalid'),
 		defaultValue: 'Active',
 		allowNull: false,
 	},

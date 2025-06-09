@@ -196,4 +196,13 @@ function rollFromString(inputText, scale = 0, modifiers = [], category = '') {
 	return rolledDice > 100 ? `Please keep rolls to under 100 dice. (Attempted to roll ${rolledDice} dice)` : rollString(rolls, mod, note, multi);
 }
 
-module.exports = { roll, arrayRoll, rollString, weightedSelect, selectFromWeightedString, unweightedSelect, drawDeck, rollFromString, explicitParse, rollResultsToString };
+function rollAC(baseAC, curseDie = 5) {
+	if (Array.isArray(baseAC)) {
+		return [arrayRoll(baseAC), roll(curseDie)];
+	}
+	else {
+		return [baseAC, roll(curseDie)];
+	}
+}
+
+module.exports = { roll, arrayRoll, rollString, weightedSelect, selectFromWeightedString, unweightedSelect, drawDeck, rollFromString, explicitParse, rollResultsToString, rollAC };

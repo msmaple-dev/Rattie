@@ -1,4 +1,4 @@
-const { camelizeKeys } = require('./string_utils');
+const { camelizeKeys, toProperCase } = require('./string_utils');
 const path = require('node:path');
 const fs = require('node:fs');
 const { unweightedSelect, roll } = require('./roll_utils');
@@ -96,19 +96,19 @@ function generateFloor(currentInit, rooms = 2) {
 			modifiers: generateRoomModifiers(currentInit.raid),
 		};
 		currentInit.raidFloor.push(room);
-		currentInit.roomDescriptions.push(`Room ${i + 1} (Level ${currentInit.roomNumber}, Scale ${totalInitScale}): ${getMonsterString(room.monsters)}${room.modifiers ? '\n**Modifiers**' +
-			'- ' + room.modifiers.join('\n- ') : ''}`);
+		currentInit.roomDescriptions.push(`__Room #${i + 1} (Level ${currentInit.roomNumber}, Scale ${totalInitScale})__\nMonsters: ${getMonsterString(room.monsters)}\nModifiers${room.modifiers?.length ? '\n' +
+			'- ' + room.modifiers.join('\n- ') : ': N/A'}`);
 	}
-	return 'Choose One with ``/raid continue``:\n' + currentInit.roomDescriptions.join('\nOR\n') + '\n OR do ``/raid end`` to end the raid.';
+	return 'Choose One with ``/raid continue``:\n' + currentInit.roomDescriptions.join('\n**OR**\n') + '\n**OR**\nDo ``/raid end`` to end the raid.';
 }
 
 function getMonsterString(room) {
-	return Object.entries(room).map(([monster, count]) => count + ' ' + monster).join(', ');
+	return Object.entries(room).map(([monster, count]) => count + ' ' + toProperCase(monster)).join(', ');
 }
 
 async function goToRoom(currentInit, roomId, channelId) {
 	currentInit.currentRoom = currentInit.raidFloor[roomId - 1];
-	currentInit.currentFloor = [];
+	currentInit.raidFloor = [];
 	currentInit.roomDescriptions = [];
 	await init_keyv.set(channelId, currentInit);
 	return await nextTurn(channelId);
@@ -139,7 +139,8 @@ function generateRoomMonsters(raid, roomNum, raidScale) {
 	else {
 		raidScaling = raidScaleProp;
 	}
-	const raidMonsterArray = Object.values(raid.monsters);
+	const raidMonsterNames = Object.values(raid.monsters);
+	const raidMonsterArray = raidMonsterNames.map(raidMonsterName => getRaidMonster(raidMonsterName));
 	const roomScaleMult = raidScaling[Math.min(roomNum, raidScaling.length - 1)];
 	let roomScale = (isMiniBoss || isBoss) ? 3 : Math.round(roomScaleMult * raidScale * 2) / 2;
 
@@ -162,6 +163,7 @@ function generateRoomMonsters(raid, roomNum, raidScale) {
 		if (validMonsters?.length <= 0) {
 			break;
 		}
+		// TODO: Scale 0.5-1 Monsters cant be used unless a scale 1 or less gap exists
 		// Select a random valid monster
 		const selectedMonster = unweightedSelect(validMonsters);
 		// Get max count for that monster (scaleBudget / monsterScale)

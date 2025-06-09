@@ -183,7 +183,7 @@ async function getUserScale(userId) {
 }
 
 function getTotalInitScale(init) {
-	return init.users?.reduce((total, user) => total + user.scale, 0) || 0;
+	return init.users.reduce((total, user) => total + parseInt(user?.scale || 0) || 0, 0);
 }
 
 module.exports = { nextTurn, newInit, getUserDecks, uniqueUsers, procModifiers, getACModifiers, getModifierString, cullModifiers, getUserScale, getTotalInitScale, modifierCategories, modifierTypes };
