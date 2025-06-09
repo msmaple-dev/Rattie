@@ -11,7 +11,15 @@ async function checkReminders(client) {
 
 	if (expiredReminders?.length > 0) {
 		for (const reminder of expiredReminders) {
-			const channel = await client.channels.fetch(`${reminder.channelId}`);
+			let channel;
+			try {
+				channel = await client.channels.fetch(`${reminder.channelId}`);
+			}
+			catch (e) {
+				if (e instanceof DiscordAPIError) {
+					console.log('Missing channel error!', e);
+				}
+			}
 			if (channel && channel?.messages) {
 				try {
 					const originalReminderMessage = await channel.messages.fetch(reminder.messageId);
